@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36202.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monero", "Monero\Monero.csproj", "{DA177BA4-AA4F-48DB-8F0A-F15D04B84A5F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monero.Common", "Monero.Common\Monero.Common.csproj", "{1334D351-09C8-44DA-BB30-BC1874F81C77}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monero.Daemon", "Monero.Daemon\Monero.Daemon.csproj", "{75CC96D9-DE45-4DF8-8D48-D9B2B014250E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monero.Wallet", "Monero.Wallet\Monero.Wallet.csproj", "{28E917FF-785A-44D4-BF4E-A7CC19BFE6AD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DA177BA4-AA4F-48DB-8F0A-F15D04B84A5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA177BA4-AA4F-48DB-8F0A-F15D04B84A5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA177BA4-AA4F-48DB-8F0A-F15D04B84A5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA177BA4-AA4F-48DB-8F0A-F15D04B84A5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1334D351-09C8-44DA-BB30-BC1874F81C77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1334D351-09C8-44DA-BB30-BC1874F81C77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1334D351-09C8-44DA-BB30-BC1874F81C77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1334D351-09C8-44DA-BB30-BC1874F81C77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75CC96D9-DE45-4DF8-8D48-D9B2B014250E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75CC96D9-DE45-4DF8-8D48-D9B2B014250E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75CC96D9-DE45-4DF8-8D48-D9B2B014250E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75CC96D9-DE45-4DF8-8D48-D9B2B014250E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28E917FF-785A-44D4-BF4E-A7CC19BFE6AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28E917FF-785A-44D4-BF4E-A7CC19BFE6AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28E917FF-785A-44D4-BF4E-A7CC19BFE6AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28E917FF-785A-44D4-BF4E-A7CC19BFE6AD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C480CC3D-8189-4C97-B020-CDE0AF543791}
+	EndGlobalSection
+EndGlobal
