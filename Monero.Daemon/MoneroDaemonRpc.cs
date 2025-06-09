@@ -5,9 +5,44 @@ namespace Monero.Daemon
 {
     public class MoneroDaemonRpc : MoneroDaemonDefault
     {
-        public override void AddListener(MoneroDaemonListener listener)
+        private MoneroRpcConnection _rpc;
+
+        public MoneroDaemonRpc(MoneroRpcConnection connection)
         {
-            throw new NotImplementedException();
+            _rpc = connection;
+        }
+
+        public MoneroDaemonRpc(string uri, string? username = null, string? password = null)
+        {
+            _rpc = new MoneroRpcConnection(uri, username, password);
+        }
+
+        public MoneroRpcConnection GetRpcConnection()
+        {
+            return _rpc;
+        }
+
+        public void SetProxyUri(string uri)
+        {
+            _rpc.SetProxyUri(uri);
+        }
+
+        public string? GetProxyUri()
+        {
+            return _rpc.GetProxyUri();
+        }
+
+        public bool IsConnected()
+        {
+            try
+            {
+                GetVersion();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public override MoneroDaemonUpdateCheckResult CheckForUpdate()
@@ -141,11 +176,6 @@ namespace Monero.Daemon
         }
 
         public override MoneroBlockHeader GetLastBlockHeader()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override List<MoneroDaemonListener> GetListeners()
         {
             throw new NotImplementedException();
         }

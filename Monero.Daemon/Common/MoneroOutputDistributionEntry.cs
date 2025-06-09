@@ -1,12 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace Monero.Daemon.Common
 {
     public class MoneroOutputDistributionEntry
     {
+        private ulong amount;
+        private uint _base;
+        private List<uint> distribution;
+        private ulong startHeight;
+
+        public ulong GetAmount()
+        {
+            return amount;
+        }
+
+        public void SetAmount(ulong amount)
+        {
+            this.amount = amount;
+        }
+
+        public uint GetBase()
+        {
+            return _base;
+        }
+
+        public void SetBase(uint _base)
+        {
+            this._base = _base;
+        }
+
+        public List<uint> GetDistribution()
+        {
+            return distribution;
+        }
+
+        public void SetDistribution(List<uint> distribution)
+        {
+            this.distribution = distribution;
+        }
+
+        public ulong GetStartHeight()
+        {
+            return startHeight;
+        }
+
+        public void SetStartHeight(ulong startHeight)
+        {
+            this.startHeight = startHeight;
+        }
     }
 }

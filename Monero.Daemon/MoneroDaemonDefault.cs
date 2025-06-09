@@ -5,7 +5,16 @@ namespace Monero.Daemon
 {
     public abstract class MoneroDaemonDefault : MoneroDaemon
     {
-        public abstract void AddListener(MoneroDaemonListener listener);
+        protected List<MoneroDaemonListener> _listeners = [];
+        protected Dictionary<ulong, MoneroBlockHeader> _cachedHeaders = [];
+
+        public virtual void AddListener(MoneroDaemonListener listener)
+        {
+            lock (_listeners)
+            {
+                _listeners.Add(listener);
+            }
+        }
 
         public abstract MoneroDaemonUpdateCheckResult CheckForUpdate();
 
@@ -55,7 +64,7 @@ namespace Monero.Daemon
 
         public abstract MoneroDaemonInfo GetInfo();
 
-        public MoneroKeyImage.SpentStatus GetKeyImageSpentStatus(string keyImage)
+        public virtual MoneroKeyImage.SpentStatus GetKeyImageSpentStatus(string keyImage)
         {
             return GetKeyImageSpentStatuses([keyImage])[0];
         }
@@ -66,7 +75,10 @@ namespace Monero.Daemon
 
         public abstract MoneroBlockHeader GetLastBlockHeader();
 
-        public abstract List<MoneroDaemonListener> GetListeners();
+        public virtual List<MoneroDaemonListener> GetListeners()
+        {
+            return [.. _listeners];
+        }
 
         public abstract MoneroMiningStatus GetMiningStatus();
 
@@ -104,16 +116,19 @@ namespace Monero.Daemon
 
         public abstract MoneroPruneResult PruneBlockchain(bool check);
 
-        public void RelayTxByHash(string txHash)
+        public virtual void RelayTxByHash(string txHash)
         {
             RelayTxsByHash([txHash]);
         }
 
         public abstract void RelayTxsByHash(List<string> txHashes);
 
-        public void RemoveListener(MoneroDaemonListener listener)
+        public virtual void RemoveListener(MoneroDaemonListener listener)
         {
-            throw new NotImplementedException();
+            lock(_listeners)
+            {
+                _listeners.Remove(listener);
+            }
         }
 
         public abstract void ResetDownloadLimit();
@@ -126,7 +141,7 @@ namespace Monero.Daemon
 
         public abstract void SetOutgoingPeerLimit(int limit);
 
-        public void SetPeerBan(MoneroBan ban)
+        public virtual void SetPeerBan(MoneroBan ban)
         {
             SetPeerBans([ban]);
         }
@@ -141,7 +156,7 @@ namespace Monero.Daemon
 
         public abstract void StopMining();
 
-        public void SubmitBlock(string blockBlob)
+        public virtual void SubmitBlock(string blockBlob)
         {
             SubmitBlocks([blockBlob]);
         }
