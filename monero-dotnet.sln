@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monero.Daemon", "Monero.Dae
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monero.Wallet", "Monero.Wallet\Monero.Wallet.csproj", "{28E917FF-785A-44D4-BF4E-A7CC19BFE6AD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monero.Test", "Monero.Test\Monero.Test.csproj", "{52865523-9C79-4815-B9FB-82A051C576F3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{28E917FF-785A-44D4-BF4E-A7CC19BFE6AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28E917FF-785A-44D4-BF4E-A7CC19BFE6AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28E917FF-785A-44D4-BF4E-A7CC19BFE6AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52865523-9C79-4815-B9FB-82A051C576F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52865523-9C79-4815-B9FB-82A051C576F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52865523-9C79-4815-B9FB-82A051C576F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52865523-9C79-4815-B9FB-82A051C576F3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
