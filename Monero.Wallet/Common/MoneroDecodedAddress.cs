@@ -22,6 +22,11 @@ namespace Monero.Wallet.Common
             _networkType = decodedAddress._networkType;
         }
 
+        public MoneroDecodedAddress Clone()
+        {
+            return new MoneroDecodedAddress(this);
+        }
+
         public string GetAddress()
         {
             return _address;

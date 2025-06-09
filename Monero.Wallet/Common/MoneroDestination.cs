@@ -4,9 +4,9 @@ namespace Monero.Wallet.Common
     public class MoneroDestination
     {
         private string _address;
-        private long _amount;
+        private ulong _amount;
 
-        public MoneroDestination(string address, long amount)
+        public MoneroDestination(string address, ulong amount)
         {
             _address = address;
             _amount = amount;
@@ -17,6 +17,8 @@ namespace Monero.Wallet.Common
             _address = destination._address;
             _amount = destination._amount;
         }
+
+        public MoneroDestination Clone() { return new MoneroDestination(this); }
 
         public string GetAddress()
         {
@@ -29,12 +31,12 @@ namespace Monero.Wallet.Common
             return this;
         }
 
-        public long GetAmount()
+        public ulong GetAmount()
         {
             return _amount;
         }
 
-        public MoneroDestination SetAmount(long amount)
+        public MoneroDestination SetAmount(ulong amount)
         {
             _amount = amount;
             return this;

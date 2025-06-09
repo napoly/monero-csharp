@@ -26,17 +26,17 @@ namespace Monero.Common
             stealthPublicKey = output.stealthPublicKey;
         }
 
-        public MoneroOutput Clone()
+        public virtual MoneroOutput Clone()
         {
             return new MoneroOutput(this);
         }
 
-        public MoneroTx GetTx()
+        public virtual MoneroTx GetTx()
         {
             return tx;
         }
 
-        public MoneroOutput SetTx(MoneroTx tx)
+        public virtual MoneroOutput SetTx(MoneroTx tx)
         {
             this.tx = tx;
             return this;

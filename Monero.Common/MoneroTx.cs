@@ -96,7 +96,7 @@ namespace Monero.Common
             if (tx.signatures != null) this.signatures = new List<string>(tx.signatures);
         }
 
-        public MoneroTx Clone()
+        public virtual MoneroTx Clone()
         {
             return new MoneroTx(this);
         }
@@ -122,7 +122,7 @@ namespace Monero.Common
             return hash;
         }
 
-        public MoneroTx SetHash(string hash)
+        public virtual MoneroTx SetHash(string hash)
         {
             this.hash = hash;
             return this;
@@ -243,7 +243,7 @@ namespace Monero.Common
             return unlockTime;
         }
 
-        public MoneroTx SetUnlockTime(ulong unlockTime)
+        public virtual MoneroTx SetUnlockTime(ulong? unlockTime)
         {
             this.unlockTime = unlockTime;
             return this;
@@ -364,7 +364,7 @@ namespace Monero.Common
             return inputs;
         }
 
-        public MoneroTx SetInputs(List<MoneroOutput> inputs)
+        public virtual MoneroTx SetInputs(List<MoneroOutput> inputs)
         {
             this.inputs = inputs;
             return this;
@@ -375,7 +375,7 @@ namespace Monero.Common
             return outputs;
         }
 
-        public MoneroTx SetOutputs(List<MoneroOutput> outputs)
+        public virtual MoneroTx SetOutputs(List<MoneroOutput> outputs)
         {
             this.outputs = outputs;
             return this;
@@ -469,7 +469,7 @@ namespace Monero.Common
             return this;
         }
 
-        public string GetLastFailedHash()
+        public string? GetLastFailedHash()
         {
             return lastFailedHash;
         }

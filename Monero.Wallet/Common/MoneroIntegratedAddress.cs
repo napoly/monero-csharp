@@ -21,6 +21,11 @@ namespace Monero.Wallet.Common
             _integratedAddress = integratedAddress._integratedAddress;
         }
 
+        public MoneroIntegratedAddress Clone()
+        {
+            return new MoneroIntegratedAddress(this);
+        }
+
         public string GetStandardAddress()
         {
             return _standardAddress;
