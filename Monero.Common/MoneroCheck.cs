@@ -10,7 +10,7 @@ namespace Monero.Common
     {
         protected bool _isGood;
     
-        public MoneroCheck(bool isGood)
+        public MoneroCheck(bool isGood = false)
         {
             _isGood = isGood;
         }

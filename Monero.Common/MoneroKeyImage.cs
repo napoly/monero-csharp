@@ -25,6 +25,11 @@ namespace Monero.Common
             _signature = keyImage._signature;
         }
 
+        public MoneroKeyImage Clone()
+        {
+            return new MoneroKeyImage(this);
+        }
+
         public static SpentStatus ParseStatus(int status)
         {
             if (status == 1) return SpentStatus.NOT_SPENT;
