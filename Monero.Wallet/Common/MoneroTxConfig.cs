@@ -1,4 +1,6 @@
 ﻿using Monero.Common;
+using System.Text;
+using System.Web;
 
 namespace Monero.Wallet.Common
 {
@@ -37,6 +39,42 @@ namespace Monero.Wallet.Common
             keyImage = config.keyImage;
         }
 
+        public string GetPaymentUri()
+        {
+            return GetPaymentUri(this);
+        }
+
+        public static string GetPaymentUri(MoneroTxConfig config)
+        {
+            if (config.GetAddress() == null)
+                throw new ArgumentException("Payment URI requires an address");
+
+            var sb = new StringBuilder();
+            sb.Append("monero:");
+            sb.Append(config.GetAddress());
+
+            var paramSb = new StringBuilder();
+
+            if (config.GetAmount() != null)
+                paramSb.Append("&tx_amount=").Append(MoneroUtils.AtomicUnitsToXmr(config.GetAmount()));
+
+            if (!string.IsNullOrEmpty(config.GetRecipientName()))
+                paramSb.Append("&recipient_name=").Append(HttpUtility.UrlEncode(config.GetRecipientName()));
+
+            if (!string.IsNullOrEmpty(config.GetNote()))
+                paramSb.Append("&tx_description=").Append(HttpUtility.UrlEncode(config.GetNote()));
+
+            if (!string.IsNullOrEmpty(config.GetPaymentId()))
+                throw new ArgumentException("Standalone payment id deprecated, use integrated address instead");
+
+            string paramStr = paramSb.ToString();
+            if (paramStr.Length > 0)
+                paramStr = "?" + paramStr.Substring(1); // Replace first '&' with '?'
+
+            return sb.ToString() + paramStr;
+        }
+
+
         public MoneroTxConfig Clone()
         {
             return new MoneroTxConfig(this);
@@ -72,8 +110,8 @@ namespace Monero.Wallet.Common
 
         public ulong GetAmount()
         {
-            if (this.destinations == null || this.destinations.Count != 1) throw new MoneroError("Cannot Get amount because MoneroTxConfig does not have exactly one destination");
-            return this.destinations[0].GetAmount();
+            if (destinations == null || destinations.Count != 1) throw new MoneroError("Cannot Get amount because MoneroTxConfig does not have exactly one destination");
+            return destinations[0].GetAmount();
         }
 
         public MoneroTxConfig addDestination(string address, ulong amount)

@@ -10,7 +10,7 @@ namespace Monero.Common
         
         private bool _printStackTrace = false;
         
-        public MoneroRpcConnection(string? uri, string? username = null, string? password = null, string? zmqUri = null, int priority = 0) : base(uri, null, priority)
+        public MoneroRpcConnection(string? uri = null, string? username = null, string? password = null, string? zmqUri = null, int priority = 0) : base(uri, null, priority)
         {
             _username = username;
             _password = password;
@@ -31,22 +31,28 @@ namespace Monero.Common
             return new MoneroRpcConnection(this);
         }
 
-        public override bool IsConnected()
+        public override bool? IsConnected()
         {
-            if (_isAuthenticated != null) return _isOnline && (bool)_isAuthenticated;
+            if (_isAuthenticated != null) return _isOnline == true && _isAuthenticated == true;
             return _isOnline;
+        }
+
+        public override bool? IsAuthenticated()
+        {
+            return _isAuthenticated;
         }
 
         public override bool CheckConnection(long timeoutMs)
         {
             lock (this)
             {
-                bool isOnlineBefore = _isOnline;
+                bool? isOnlineBefore = _isOnline;
                 bool? isAuthenticatedBefore = _isAuthenticated;
                 long startTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                 try
                 {
-                    SendJsonRequest("get_version", null, timeoutMs);
+                    var request = new MoneroJsonRpcRequest("get_version");
+                    SendJsonRequest(request, timeoutMs);
 
                     _isOnline = true;
                     _isAuthenticated = true;
@@ -71,9 +77,33 @@ namespace Monero.Common
                         }
                     }
                 }
-                if (_isOnline) _responseTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - startTime;
+                if (_isOnline == true) _responseTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - startTime;
                 return isOnlineBefore != _isOnline || isAuthenticatedBefore != _isAuthenticated;
             }
+        }
+
+        public override MoneroRpcConnection SetAttribute(string key, string value)
+        {
+            _attributes[key] = value;
+            return this;
+        }
+
+        public override MoneroRpcConnection SetUri(string? uri)
+        {
+            _uri = uri;
+            return this;
+        }
+
+        public override MoneroRpcConnection SetProxyUri(string? uri)
+        {
+            _proxyUri = uri;
+            return this;
+        }
+
+        public override MoneroRpcConnection SetPriority(int priority)
+        {
+            _priority = priority;
+            return this;
         }
 
         public string? GetUsername()

@@ -10,7 +10,7 @@ namespace Monero.Common
         protected long _timeoutMs;
         protected long? _responseTime;
         protected Dictionary<string, string?> _attributes = [];
-        protected bool _isOnline = false;
+        protected bool? _isOnline;
 
         public MoneroConnection(string? uri = null, string? proxyUri = null, int priority = 0, long timeoutMs = 2000)
         {
@@ -30,6 +30,8 @@ namespace Monero.Common
             _responseTime = other._responseTime;
         }
 
+        public abstract bool? IsAuthenticated();
+
         public virtual bool? IsOnline()
         {
             return _isOnline;
@@ -40,7 +42,7 @@ namespace Monero.Common
             return _attributes.GetValueOrDefault(key, null);
         }
 
-        public MoneroConnection SetAttribute(string key, string value)
+        public virtual MoneroConnection SetAttribute(string key, string value)
         {
             _attributes[key] = value;
             return this;
@@ -92,7 +94,7 @@ namespace Monero.Common
             return _responseTime;
         }
 
-        public abstract bool IsConnected();
+        public abstract bool? IsConnected();
 
         public abstract bool CheckConnection(long timeoutMs);
 

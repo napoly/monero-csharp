@@ -7,11 +7,14 @@ namespace Monero.Common
         private readonly int integratedAddressCode;
         private readonly int subaddressCode;
 
-        public MoneroNetwork(int primaryAddressCode, int integratedAddressCode, int subaddressCode)
+        public readonly MoneroNetworkType Type;
+
+        public MoneroNetwork(int primaryAddressCode, int integratedAddressCode, int subaddressCode, MoneroNetworkType type)
         {
             this.primaryAddressCode = primaryAddressCode;
             this.integratedAddressCode = integratedAddressCode;
             this.subaddressCode = subaddressCode;
+            Type = type;
         }
 
         public int GetPrimaryAddressCode()
@@ -40,20 +43,22 @@ namespace Monero.Common
                 _ => throw new MoneroError("Invalid network type to parse: " + networkTypeStr),
             };
         }
+
+        public static readonly MoneroNetwork[] Types = [new MoneroNetworkMainnet(), new MoneroNetworkTestnet(), new MoneroNetworkStagenet()];
     }
 
     public class MoneroNetworkMainnet : MoneroNetwork
     {
-        public MoneroNetworkMainnet(): base(18, 19, 42) { }
+        public MoneroNetworkMainnet(): base(18, 19, 42, MoneroNetworkType.MAINNET) { }
     }
 
     public class MoneroNetworkTestnet : MoneroNetwork
     {
-        public MoneroNetworkTestnet() : base(53, 54, 63) { }
+        public MoneroNetworkTestnet() : base(53, 54, 63, MoneroNetworkType.TESTNET) { }
     }
 
     public class MoneroNetworkStagenet : MoneroNetwork
     {
-        public MoneroNetworkStagenet() : base(24, 25, 36) { }
+        public MoneroNetworkStagenet() : base(24, 25, 36, MoneroNetworkType.STAGENET) { }
     }
 }

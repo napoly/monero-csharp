@@ -1,13 +1,4 @@
-﻿using Monero.Common;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using System.Collections.ObjectModel;
 
 namespace Monero.Common
 {
@@ -35,11 +26,11 @@ namespace Monero.Common
             }
         }
 
-        private class ConnectionComparator : Comparer<MoneroRpcConnection> {
-            public MoneroRpcConnection? currentConnection;
+        private class ConnectionComparator : Comparer<MoneroConnection> {
+            public MoneroConnection? currentConnection;
             public ConnectionPriorityComparator priorityComparator = new ConnectionPriorityComparator();
 
-            public override int Compare(MoneroRpcConnection? c1, MoneroRpcConnection? c2)
+            public override int Compare(MoneroConnection? c1, MoneroConnection? c2)
             {
 
                 // current connection is first
@@ -66,19 +57,20 @@ namespace Monero.Common
 
         }
 
+        private TaskLooper? poller;
         private readonly object _listenersLock = new();
         private readonly object _connectionsLock = new();
 
-        private MoneroRpcConnection? _currentConnection;
-        private List<MoneroRpcConnection> _connections = [];
+        private MoneroConnection? _currentConnection;
+        private List<MoneroConnection> _connections = [];
         private List<MoneroConnectionManagerListener> _listeners = [];
         //private ConnectionComparator _connectionComparator = new ConnectionComparator();
         private bool _autoSwitch = DEFAULT_AUTO_SWITCH;
         private long _timeoutMs = DEFAULT_TIMEOUT;
         //private TaskLooper poller;
-        private Dictionary<MoneroRpcConnection, List<long?>> _responseTimes = [];
+        private Dictionary<MoneroConnection, List<long?>> _responseTimes = [];
 
-        private void OnConnectionChanged(MoneroRpcConnection? connection)
+        private void OnConnectionChanged(MoneroConnection? connection)
         {
             lock (_listenersLock)
             {
@@ -89,13 +81,13 @@ namespace Monero.Common
             }
         }
 
-        private MoneroRpcConnection? GetBestConnectionFromPrioritizedResponses(List<MoneroRpcConnection> responses)
+        private MoneroConnection? GetBestConnectionFromPrioritizedResponses(List<MoneroConnection> responses)
         {
 
             // get best response
-            MoneroRpcConnection? bestResponse = null;
+            MoneroConnection? bestResponse = null;
 
-            foreach (MoneroRpcConnection connection in responses)
+            foreach (MoneroConnection connection in responses)
             {
                 if (connection.IsConnected() == true && (bestResponse == null || connection.GetResponseTime() < bestResponse.GetResponseTime())) bestResponse = connection;
             }
@@ -104,7 +96,7 @@ namespace Monero.Common
             if (bestResponse == null) return null;
 
             // use best response if disconnected
-            MoneroRpcConnection bestConnection = GetConnection();
+            MoneroConnection bestConnection = GetConnection();
             if (bestConnection == null || bestConnection.IsConnected() != true) return bestResponse;
 
             var priorityComparator = new ConnectionPriorityComparator();
@@ -116,7 +108,7 @@ namespace Monero.Common
             if (!_responseTimes.ContainsKey(bestConnection)) return bestConnection;
 
             // check if a connection is consistently better
-            foreach (MoneroRpcConnection connection in responses)
+            foreach (MoneroConnection connection in responses)
             {
                 if (connection == bestConnection) continue;
                 if (!_responseTimes.ContainsKey(connection) || _responseTimes[connection].Count < MIN_BETTER_RESPONSES) continue;
@@ -134,12 +126,12 @@ namespace Monero.Common
             return bestConnection;
         }
 
-        private MoneroRpcConnection? UpdateBestConnectionInPriority()
+        private MoneroConnection? UpdateBestConnectionInPriority()
         {
             if (!_autoSwitch) return null;
-            foreach (List<MoneroRpcConnection> prioritizedConnections in GetConnectionsInAscendingPriority())
+            foreach (List<MoneroConnection> prioritizedConnections in GetConnectionsInAscendingPriority())
             {
-                MoneroRpcConnection bestConnectionFromResponses = GetBestConnectionFromPrioritizedResponses(prioritizedConnections);
+                MoneroConnection bestConnectionFromResponses = GetBestConnectionFromPrioritizedResponses(prioritizedConnections);
                 if (bestConnectionFromResponses != null)
                 {
                     SetConnection(bestConnectionFromResponses);
@@ -150,17 +142,17 @@ namespace Monero.Common
             return null;
         }
 
-        private MoneroRpcConnection? ProcessResponses(Collection<MoneroRpcConnection> responses)
+        private MoneroConnection? ProcessResponses(Collection<MoneroConnection> responses)
         {
 
             // add new connections
-            foreach (MoneroRpcConnection connection in responses)
+            foreach (MoneroConnection connection in responses)
             {
                 if (!_responseTimes.ContainsKey(connection)) _responseTimes.Add(connection, []);
             }
             
             // insert response times or null
-            foreach (KeyValuePair<MoneroRpcConnection, List<long?>> responseTime in _responseTimes.ToList())
+            foreach (KeyValuePair<MoneroConnection, List<long?>> responseTime in _responseTimes.ToList())
             {
                 responseTime.Value.Add(0);
                 responseTime.Value.Add(responses.Contains(responseTime.Key) ? responseTime.Key.GetResponseTime() : null);
@@ -173,18 +165,18 @@ namespace Monero.Common
             return UpdateBestConnectionInPriority();
         }
 
-        private List<List<MoneroRpcConnection>> GetConnectionsInAscendingPriority()
+        private List<List<MoneroConnection>> GetConnectionsInAscendingPriority()
         {
             lock(_connectionsLock) {
-                Dictionary<int, List<MoneroRpcConnection>> connectionPriorities = [];
+                Dictionary<int, List<MoneroConnection>> connectionPriorities = [];
 
-                foreach (MoneroRpcConnection connection in _connections)
+                foreach (MoneroConnection connection in _connections)
                 {
-                    if (!connectionPriorities.ContainsKey(connection.GetPriority())) connectionPriorities.Add(connection.GetPriority(), new List<MoneroRpcConnection>());
+                    if (!connectionPriorities.ContainsKey(connection.GetPriority())) connectionPriorities.Add(connection.GetPriority(), new List<MoneroConnection>());
                     connectionPriorities[connection.GetPriority()].Add(connection);
                 }
-                List<List<MoneroRpcConnection>> prioritizedConnections = [];
-                foreach (List<MoneroRpcConnection> priorityConnections in connectionPriorities.Values) prioritizedConnections.Add(priorityConnections);
+                List<List<MoneroConnection>> prioritizedConnections = [];
+                foreach (List<MoneroConnection> priorityConnections in connectionPriorities.Values) prioritizedConnections.Add(priorityConnections);
                 if (connectionPriorities.ContainsKey(0))
                 {
                     var first = prioritizedConnections[0]; // move priority 0 to end
@@ -195,18 +187,97 @@ namespace Monero.Common
             }
         }
 
-        private bool CheckConnections(List<MoneroRpcConnection> connections, List<MoneroRpcConnection>? excludedConnections)
+        private bool CheckConnections(List<MoneroConnection> connections, List<MoneroConnection>? excludedConnections)
         {
             throw new NotImplementedException("");
         }
 
-        private void CheckPrioritizedConnections(List<MoneroRpcConnection>? excludedConnections)
+        private void CheckPrioritizedConnections(List<MoneroConnection>? excludedConnections)
         {
-            foreach (List<MoneroRpcConnection> prioritizedConnections in GetConnectionsInAscendingPriority())
+            foreach (List<MoneroConnection> prioritizedConnections in GetConnectionsInAscendingPriority())
             {
                 bool hasConnection = CheckConnections(prioritizedConnections, excludedConnections);
                 if (hasConnection) return;
             }
+        }
+
+        private void StartPollingConnection(long periodMs)
+        {
+            poller = new TaskLooper(() => {
+                try { CheckConnection(); }
+                catch (Exception e) { MoneroUtils.Log(0, e.StackTrace != null ? e.StackTrace : ""); }
+            });
+            poller.Start(periodMs);
+        }
+
+        private void StartPollingConnections(long periodMs)
+        {
+            poller = new TaskLooper(() => {
+                try { CheckConnections(); }
+                catch (Exception e) { MoneroUtils.Log(0, e.StackTrace != null ? e.StackTrace : ""); }
+            });
+            poller.Start(periodMs);
+        }
+
+        private void StartPollingPrioritizedConnections(long periodMs, List<MoneroConnection>? excludedConnections = null)
+        {
+            poller = new TaskLooper(() => {
+                try { CheckPrioritizedConnections(excludedConnections); }
+                catch (Exception e) { MoneroUtils.Log(0, e.StackTrace != null ? e.StackTrace : ""); }
+            });
+            poller.Start(periodMs);
+        }
+
+        public MoneroConnectionManager StartPolling(long? periodMs = null, bool? autoSwitch = null, long? timeoutMs = null, PollType? pollType = null, List<MoneroConnection>? excludedConnections = null)
+        {
+
+            // apply defaults
+            if (periodMs == null) periodMs = DEFAULT_POLL_PERIOD;
+            if (autoSwitch != null) SetAutoSwitch((bool)autoSwitch);
+            if (timeoutMs != null) SetTimeout(timeoutMs);
+            if (pollType == null) pollType = PollType.PRIORITIZED;
+
+            // stop polling
+            StopPolling();
+
+            // start polling
+            switch (pollType)
+            {
+                case PollType.CURRENT:
+                    StartPollingConnection((long)periodMs);
+                    break;
+                case PollType.ALL:
+                    StartPollingConnections((long)periodMs);
+                    break;
+                case PollType.PRIORITIZED:
+                default:
+                    StartPollingPrioritizedConnections((long)periodMs, excludedConnections);
+                    break;
+            }
+            return this;
+        }
+
+        public MoneroConnectionManager StopPolling()
+        {
+            if (poller != null) poller.Stop();
+            poller = null;
+            return this;
+        }
+
+        public long GetTimeout()
+        {
+            return _timeoutMs;
+        }
+
+        public MoneroConnectionManager SetTimeout(long? timeoutMs)
+        {
+            if (timeoutMs == null)
+            {
+                _timeoutMs = DEFAULT_TIMEOUT;
+                return this;
+            }
+            _timeoutMs = (long)timeoutMs;
+            return this;
         }
 
         public bool GetAutoSwitch()
@@ -282,7 +353,7 @@ namespace Monero.Common
             }
         }
 
-        public bool HasConnection(MoneroRpcConnection connection)
+        public bool HasConnection(MoneroConnection connection)
         {
             lock (_connectionsLock)
             {
@@ -290,7 +361,7 @@ namespace Monero.Common
             }
         }
 
-        public bool HasConnection(string uri)
+        public bool HasConnection(string? uri)
         {
             lock (_connectionsLock)
             {
@@ -298,15 +369,17 @@ namespace Monero.Common
             }
         }
 
-        public bool IsConnected()
+        public bool? IsConnected()
         {
             lock (_connectionsLock)
             {
-                return _currentConnection != null && _currentConnection.IsConnected();
+                if (_currentConnection == null) return false;
+                
+                return _currentConnection.IsConnected();
             }
         }
 
-        public MoneroConnectionManager AddConnection(MoneroRpcConnection connection)
+        public MoneroConnectionManager AddConnection(MoneroConnection connection)
         {
             lock (_connectionsLock)
             {
@@ -318,12 +391,12 @@ namespace Monero.Common
             return this;
         }
 
-        public MoneroConnectionManager AddConnection(string uri, string? username = null, string? password = null, string? zmqUri = null)
+        public MoneroConnectionManager AddRpcConnection(string uri, string? username = null, string? password = null, string? zmqUri = null)
         {
             return AddConnection(new MoneroRpcConnection(uri, username, password, zmqUri));
         }
 
-        public MoneroRpcConnection? GetConnection(string uri)
+        public MoneroConnection? GetConnection(string? uri)
         {
             lock (_connectionsLock)
             {
@@ -331,7 +404,7 @@ namespace Monero.Common
             }
         }
 
-        public MoneroConnectionManager SetConnection(MoneroRpcConnection? connection)
+        public MoneroConnectionManager SetConnection(MoneroConnection? connection)
         {
             lock (_connectionsLock)
             {
@@ -348,7 +421,7 @@ namespace Monero.Common
 
                 if (string.IsNullOrEmpty(uri)) throw new MoneroError("Connection is missing URI");
 
-                MoneroRpcConnection? existingConnection = GetConnection(uri);
+                MoneroConnection? existingConnection = GetConnection(uri);
                 if (existingConnection != null) 
                 {
                     RemoveConnection(existingConnection);
@@ -362,7 +435,12 @@ namespace Monero.Common
             return this;
         }
 
-        public MoneroRpcConnection? GetConnection()
+        public MoneroConnectionManager SetConnection(string uri, string? username = null, string? password = null, string? zmqUri = null)
+        {
+            return SetConnection(new MoneroRpcConnection(uri, username, password, zmqUri));
+        }
+
+        public MoneroConnection? GetConnection()
         {
             lock (_connectionsLock)
             {
@@ -370,7 +448,7 @@ namespace Monero.Common
             }
         }
 
-        public List<MoneroRpcConnection> GetConnections()
+        public List<MoneroConnection> GetConnections()
         {
             lock (_connectionsLock)
             {
@@ -378,7 +456,15 @@ namespace Monero.Common
             }
         }
 
-        public MoneroConnectionManager RemoveConnection(MoneroRpcConnection connection)
+        public List<MoneroRpcConnection> GetRpcConnections()
+        {
+            lock (_connectionsLock)
+            {
+                return _connections.OfType<MoneroRpcConnection>().ToList();
+            }
+        }
+
+        public MoneroConnectionManager RemoveConnection(MoneroConnection connection)
         {
             lock (_connectionsLock)
             {
@@ -392,18 +478,34 @@ namespace Monero.Common
             return this;
         }
 
+        public MoneroConnectionManager RemoveConnection(string uri)
+        {
+            lock (_connectionsLock)
+            {
+                var connection = _connections.Find((connection => connection.GetUri() == uri));
+                if (connection == null) return this; // no connection found
+                _connections.Remove(connection);
+                if (_currentConnection == connection)
+                {
+                    _currentConnection = null;
+                    OnConnectionChanged(null);
+                }
+            }
+            return this;
+        }
+
         public MoneroConnectionManager CheckConnection()
         {
             bool connectionChanged = false;
-            MoneroRpcConnection? connection = GetConnection();
+            MoneroConnection? connection = GetConnection();
             if (connection != null)
             {
                 if (connection.CheckConnection(_timeoutMs)) connectionChanged = true;
                 ProcessResponses([connection]);
             }
-            if (_autoSwitch && !IsConnected())
+            if (_autoSwitch == true && IsConnected() == false)
             {
-                MoneroRpcConnection bestConnection = GetBestAvailableConnection([connection]);
+                MoneroConnection bestConnection = GetBestAvailableConnection([connection]);
                 if (bestConnection != null)
                 {
                     SetConnection(bestConnection);
@@ -419,7 +521,7 @@ namespace Monero.Common
             return CheckConnections(_connections, null);
         }
 
-        public MoneroRpcConnection GetBestAvailableConnection(List<MoneroRpcConnection> excludedConnections)
+        public MoneroConnection GetBestAvailableConnection(List<MoneroConnection>? excludedConnections = null)
         {
             throw new NotImplementedException("This method is not implemented yet. Please implement the logic to get the best available connection excluding the specified connections.");
         }
@@ -438,6 +540,16 @@ namespace Monero.Common
                 _currentConnection = null;
                 OnConnectionChanged(null);
             }
+            return this;
+        }
+    
+        public MoneroConnectionManager Reset()
+        {
+            RemoveListeners();
+            //StopPolling();
+            Clear();
+            _timeoutMs = DEFAULT_TIMEOUT;
+            _autoSwitch = DEFAULT_AUTO_SWITCH;
             return this;
         }
     }
