@@ -21,6 +21,8 @@ namespace Monero.Wallet.Common
         private bool sweepEachSubaddress;
         private string keyImage;
 
+        public MoneroTxConfig() { }
+
         public MoneroTxConfig(MoneroTxConfig config)
         {
             destinations = [.. config.destinations];
@@ -97,7 +99,7 @@ namespace Monero.Wallet.Common
         public MoneroTxConfig SetAmount(ulong amount)
         {
             if (this.destinations != null && this.destinations.Count > 1) throw new MoneroError("Cannot Set amount because MoneroTxConfig already has multiple destinations");
-            if (this.destinations == null || this.destinations.Count == 0) addDestination(new MoneroDestination(null, amount));
+            if (this.destinations == null || this.destinations.Count == 0) AddDestination(new MoneroDestination(null, amount));
             else this.destinations[0].SetAmount(amount);
             return this;
         }
@@ -114,12 +116,12 @@ namespace Monero.Wallet.Common
             return destinations[0].GetAmount();
         }
 
-        public MoneroTxConfig addDestination(string address, ulong amount)
+        public MoneroTxConfig AddDestination(string address, ulong amount)
         {
-            return addDestination(new MoneroDestination(address, amount));
+            return AddDestination(new MoneroDestination(address, amount));
         }
 
-        public MoneroTxConfig addDestination(MoneroDestination destination)
+        public MoneroTxConfig AddDestination(MoneroDestination destination)
         {
             if (this.destinations == null) this.destinations = new List<MoneroDestination>();
             this.destinations.Add(destination);
