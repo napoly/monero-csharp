@@ -9,12 +9,12 @@ namespace Monero.Daemon.Common
         {
         }
 
-        public string getDownloadPath()
+        public string GetDownloadPath()
         {
             return downloadPath;
         }
 
-        public void setDownloadPath(string downloadPath)
+        public void SetDownloadPath(string downloadPath)
         {
             this.downloadPath = downloadPath;
         }

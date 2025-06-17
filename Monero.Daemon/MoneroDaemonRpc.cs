@@ -60,11 +60,6 @@ namespace Monero.Daemon
             throw new NotImplementedException();
         }
 
-        public override void FlushTxPool()
-        {
-            throw new NotImplementedException();
-        }
-
         public override void FlushTxPool(List<string> txHashes)
         {
             throw new NotImplementedException();
@@ -85,17 +80,17 @@ namespace Monero.Daemon
             throw new NotImplementedException();
         }
 
-        public override MoneroBlock GetBlockByHeight(long blockHeight)
+        public override MoneroBlock GetBlockByHeight(ulong blockHeight)
         {
             throw new NotImplementedException();
         }
 
-        public override string GetBlockHash()
+        public override string GetBlockHash(ulong height)
         {
             throw new NotImplementedException();
         }
 
-        public override List<string> GetBlockHashes(List<string> blockHashes, long startHeight)
+        public override List<string> GetBlockHashes(List<string> blockHashes, ulong startHeight)
         {
             throw new NotImplementedException();
         }
@@ -105,32 +100,32 @@ namespace Monero.Daemon
             throw new NotImplementedException();
         }
 
-        public override MoneroBlockHeader GetBlockHeaderByHeight(long blockHeight)
+        public override MoneroBlockHeader GetBlockHeaderByHeight(ulong blockHeight)
         {
             throw new NotImplementedException();
         }
 
-        public override List<MoneroBlockHeader> GetBlockHeadersByRange(long startHeight, long endHeight)
+        public override List<MoneroBlockHeader> GetBlockHeadersByRange(ulong startHeight, ulong endHeight)
         {
             throw new NotImplementedException();
         }
 
-        public override List<MoneroBlock> GetBlocksByHash(List<string> blockHashes, long startHeight, bool prune)
+        public override List<MoneroBlock> GetBlocksByHash(List<string> blockHashes, ulong startHeight, bool prune)
         {
             throw new NotImplementedException();
         }
 
-        public override List<MoneroBlock> GetBlocksByHeight(List<long> blockHeights)
+        public override List<MoneroBlock> GetBlocksByHeight(List<ulong> blockHeights)
         {
             throw new NotImplementedException();
         }
 
-        public override List<MoneroBlock> GetBlocksByRange(long startHeight, long endHeight)
+        public override List<MoneroBlock> GetBlocksByRange(ulong startHeight, ulong endHeight)
         {
             throw new NotImplementedException();
         }
 
-        public override List<MoneroBlock> GetBlocksByRangeChunked(long startHeight, long endHeight)
+        public override List<MoneroBlock> GetBlocksByRangeChunked(ulong startHeight, ulong endHeight)
         {
             throw new NotImplementedException();
         }
@@ -155,7 +150,7 @@ namespace Monero.Daemon
             throw new NotImplementedException();
         }
 
-        public override long GetHeight()
+        public override ulong GetHeight()
         {
             throw new NotImplementedException();
         }
@@ -185,12 +180,17 @@ namespace Monero.Daemon
             throw new NotImplementedException();
         }
 
-        public override List<MoneroOutputDistributionEntry> GetOutputDistribution(List<long> amounts, bool isCumulative, long startHeight, long endHeight)
+        public override MoneroMinerTxSum GetMinerTxSum(ulong height, ulong numBlocks)
         {
             throw new NotImplementedException();
         }
 
-        public override List<MoneroOutputHistogramEntry> GetOutputHistogram(List<long> amounts, int minCount, int maxCount, bool isUnlocked, int recentCutoff)
+        public override List<MoneroOutputDistributionEntry> GetOutputDistribution(List<ulong> amounts, bool isCumulative, ulong startHeight, ulong endHeight)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override List<MoneroOutputHistogramEntry> GetOutputHistogram(List<ulong>? amounts = null, int? minCount = null, int? maxCount = null, bool? isUnlocked = null, int? recentCutoff = null)
         {
             throw new NotImplementedException();
         }
@@ -275,12 +275,12 @@ namespace Monero.Daemon
             throw new NotImplementedException();
         }
 
-        public override void ResetDownloadLimit()
+        public override int ResetDownloadLimit()
         {
             throw new NotImplementedException();
         }
 
-        public override void ResetUploadLimit()
+        public override int ResetUploadLimit()
         {
             throw new NotImplementedException();
         }
@@ -310,7 +310,7 @@ namespace Monero.Daemon
             throw new NotImplementedException();
         }
 
-        public override void StartMining(string address, long numThreads, bool isBackground, bool ignoreBattery)
+        public override void StartMining(string address, ulong numThreads, bool isBackground, bool ignoreBattery)
         {
             throw new NotImplementedException();
         }

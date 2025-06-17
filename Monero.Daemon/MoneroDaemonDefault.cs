@@ -22,7 +22,15 @@ namespace Monero.Daemon
 
         public abstract MoneroDaemonUpdateDownloadResult DownloadUpdate(string path);
 
-        public abstract void FlushTxPool();
+        public virtual void FlushTxPool()
+        {
+            FlushTxPool([]);
+        }
+
+        public virtual void FlushTxPool(string txHash)
+        {
+            FlushTxPool([txHash]);
+        }
 
         public abstract void FlushTxPool(List<string> txHashes);
 
@@ -32,25 +40,25 @@ namespace Monero.Daemon
 
         public abstract MoneroBlock GetBlockByHash(string blockHash);
 
-        public abstract MoneroBlock GetBlockByHeight(long blockHeight);
+        public abstract MoneroBlock GetBlockByHeight(ulong blockHeight);
 
-        public abstract string GetBlockHash();
+        public abstract string GetBlockHash(ulong height);
 
-        public abstract List<string> GetBlockHashes(List<string> blockHashes, long startHeight);
+        public abstract List<string> GetBlockHashes(List<string> blockHashes, ulong startHeight);
 
         public abstract MoneroBlockHeader GetBlockHeaderByHash(string blockHash);
 
-        public abstract MoneroBlockHeader GetBlockHeaderByHeight(long blockHeight);
+        public abstract MoneroBlockHeader GetBlockHeaderByHeight(ulong blockHeight);
 
-        public abstract List<MoneroBlockHeader> GetBlockHeadersByRange(long startHeight, long endHeight);
+        public abstract List<MoneroBlockHeader> GetBlockHeadersByRange(ulong startHeight, ulong endHeight);
 
-        public abstract List<MoneroBlock> GetBlocksByHash(List<string> blockHashes, long startHeight, bool prune);
+        public abstract List<MoneroBlock> GetBlocksByHash(List<string> blockHashes, ulong startHeight, bool prune);
 
-        public abstract List<MoneroBlock> GetBlocksByHeight(List<long> blockHeights);
+        public abstract List<MoneroBlock> GetBlocksByHeight(List<ulong> blockHeights);
 
-        public abstract List<MoneroBlock> GetBlocksByRange(long startHeight, long endHeight);
+        public abstract List<MoneroBlock> GetBlocksByRange(ulong startHeight, ulong endHeight);
 
-        public abstract List<MoneroBlock> GetBlocksByRangeChunked(long startHeight, long endHeight);
+        public abstract List<MoneroBlock> GetBlocksByRangeChunked(ulong startHeight, ulong endHeight);
 
         public abstract MoneroBlockTemplate GetBlockTemplate(string walletAddress, int? reserveSize = null);
 
@@ -58,9 +66,11 @@ namespace Monero.Daemon
 
         public abstract MoneroFeeEstimate GetFeeEstimate(int? graceBlocks = null);
 
+        public abstract MoneroMinerTxSum GetMinerTxSum(ulong height, ulong numBlocks);
+
         public abstract MoneroHardForkInfo GetHardForkInfo();
 
-        public abstract long GetHeight();
+        public abstract ulong GetHeight();
 
         public abstract MoneroDaemonInfo GetInfo();
 
@@ -82,9 +92,9 @@ namespace Monero.Daemon
 
         public abstract MoneroMiningStatus GetMiningStatus();
 
-        public abstract List<MoneroOutputDistributionEntry> GetOutputDistribution(List<long> amounts, bool isCumulative, long startHeight, long endHeight);
+        public abstract List<MoneroOutputDistributionEntry> GetOutputDistribution(List<ulong> amounts, bool isCumulative, ulong startHeight, ulong endHeight);
 
-        public abstract List<MoneroOutputHistogramEntry> GetOutputHistogram(List<long> amounts, int minCount, int maxCount, bool isUnlocked, int recentCutoff);
+        public abstract List<MoneroOutputHistogramEntry> GetOutputHistogram(List<ulong>? amounts = null, int? minCount = null, int? maxCount = null, bool? isUnlocked = null, int? recentCutoff = null);
 
         public abstract List<MoneroOutput> GetOutputs(List<MoneroOutput> outputs);
 
@@ -131,9 +141,9 @@ namespace Monero.Daemon
             }
         }
 
-        public abstract void ResetDownloadLimit();
+        public abstract int ResetDownloadLimit();
 
-        public abstract void ResetUploadLimit();
+        public abstract int ResetUploadLimit();
 
         public abstract void SetDownloadLimit(int limit);
 
@@ -150,7 +160,7 @@ namespace Monero.Daemon
 
         public abstract void SetUploadLimit(int limit);
 
-        public abstract void StartMining(string address, long numThreads, bool isBackground, bool ignoreBattery);
+        public abstract void StartMining(string address, ulong numThreads, bool isBackground, bool ignoreBattery);
 
         public abstract void Stop();
 

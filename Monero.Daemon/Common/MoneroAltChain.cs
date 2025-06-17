@@ -1,7 +1,4 @@
 ﻿
-using System.Numerics;
-using System.Runtime.InteropServices;
-
 namespace Monero.Daemon.Common
 {
     public class MoneroAltChain
@@ -14,7 +11,7 @@ namespace Monero.Daemon.Common
 
         public MoneroAltChain() { }
 
-        public List<string> getBlockHashes()
+        public List<string> GetBlockHashes()
         {
             return blockHashes;
         }
