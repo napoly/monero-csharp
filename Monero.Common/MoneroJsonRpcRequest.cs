@@ -5,26 +5,26 @@ namespace Monero.Common
 
     public class MoneroJsonRpcRequest : MoneroHttpRequest
     {
-        [JsonProperty("jsonrpc")]
+        [JsonProperty("jsonrpc", Order = 0)]
         public readonly static string Version = "2.0";
 
-        [JsonProperty("method")]
+        [JsonProperty("method", Order = 1)]
         public readonly string Method;
 
-        public MoneroJsonRpcRequest(string method)
+        [JsonProperty("params", Order = 2, NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, object>? Params;
+
+        public MoneroJsonRpcRequest(string method, Dictionary<string, object>? parameters = null)
         {
             Method = method;
-        }
-    }
-
-    public class MoneroJsonRpcRequest<T> : MoneroJsonRpcRequest
-    {
-        [JsonProperty("params")]
-        public T Params;
-
-        public MoneroJsonRpcRequest(string method, T parameters) : base(method)
-        {
             Params = parameters;
         }
+
+    }
+
+    public class MoneroJsonRpcResponse
+    {
+        [JsonProperty("result")]
+        public Dictionary<string, object>? Result;
     }
 }

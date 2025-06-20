@@ -17,6 +17,17 @@ namespace Monero.Common
             _zmqUri = zmqUri;
         }
 
+        public bool Equals(MoneroRpcConnection? other)
+        {
+            if (other == null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return base.Equals(other) &&
+                   _username == other._username &&
+                   _password == other._password &&
+                   _zmqUri == other._zmqUri &&
+                   _isAuthenticated == other._isAuthenticated;
+        }
+
         public MoneroRpcConnection(MoneroRpcConnection other) : base(other)
         {
             _username = other._username;
@@ -139,5 +150,24 @@ namespace Monero.Common
             throw new NotImplementedException("SendJsonRequest(): not implemented");
         }
 
+        public MoneroJsonRpcResponse SendJsonRequest(string method, List<string> parameters, long timeoutMs = 2000)
+        {
+            throw new NotImplementedException("SendJsonRequest(): not implemented");
+        }
+
+        public MoneroJsonRpcResponse SendJsonRequest(string method, Dictionary<string, object>? parameters = null, long timeoutMs = 2000)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Dictionary<string, object> SendPathRequest(string method, Dictionary<string, object>? parameters = null, long timeoutMs = 2000)
+        {
+            throw new NotImplementedException("SendPathRequest(): not implemented");
+        }
+
+        public byte[] SendBinaryRequest(string method, Dictionary<string, object>? parameters = null, long timeoutMs = 2000)
+        {
+            throw new NotImplementedException("SendBinaryRequest(): not implemented");
+        }
     }
 }

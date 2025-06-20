@@ -3,7 +3,7 @@ namespace Monero.Common
 {
     public class MoneroKeyImage
     {
-        private string _hex;
+        private string? _hex;
         private string? _signature;
 
         public enum SpentStatus
@@ -13,7 +13,7 @@ namespace Monero.Common
             TX_POOL
         }
 
-        public MoneroKeyImage(string hex, string? signature = null)
+        public MoneroKeyImage(string? hex = null, string? signature = null)
         {
             _hex = hex;
             _signature = signature;
@@ -39,12 +39,12 @@ namespace Monero.Common
             throw new MoneroError("Invalid integer value for spent status: " + status);
         }
 
-        public string GetHex()
+        public string? GetHex()
         {
             return _hex;
         }
 
-        public MoneroKeyImage SetHex(string hex)
+        public MoneroKeyImage SetHex(string? hex)
         {
             _hex = hex;
             return this;
@@ -61,7 +61,7 @@ namespace Monero.Common
             return this;
         }
 
-        public MoneroKeyImage Merge(MoneroKeyImage keyImage)
+        public MoneroKeyImage Merge(MoneroKeyImage? keyImage)
         {
             if (keyImage == this) return this;
 

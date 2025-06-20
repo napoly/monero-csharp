@@ -1,5 +1,5 @@
 ﻿
-namespace Monero.Wallet.Common
+namespace Monero.Common
 {
     public enum MoneroAddressType
     {

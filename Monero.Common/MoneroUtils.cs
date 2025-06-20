@@ -1,10 +1,9 @@
-﻿using Monero.Wallet.Common;
-using Org.BouncyCastle.Crypto.Digests;
-using Org.BouncyCastle.Utilities.Encoders;
-using System;
-using System.Numerics;
+﻿using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
+using Org.BouncyCastle.Crypto.Digests;
+using Org.BouncyCastle.Utilities.Encoders;
+
 
 namespace Monero.Common
 {
@@ -17,6 +16,7 @@ namespace Monero.Common
             return "0.0.1";
         }
 
+        public static readonly uint RING_SIZE = 16;
         private static int LOG_LEVEL = 0;
         private static ulong AU_PER_XMR = 1000000000000;
         private static readonly int NUM_MNEMONIC_WORDS = 25;
@@ -239,11 +239,11 @@ namespace Monero.Common
             LOG_LEVEL = level;
         }
 
-        public static BigInteger XmrToAtomicUnits(double amountXmr)
+        public static ulong XmrToAtomicUnits(double amountXmr)
         {
             // Usa decimal per precisione e converte a BigInteger con arrotondamento
             decimal precise = Math.Round((decimal)amountXmr * XMR_AU_MULTIPLIER, 0, MidpointRounding.AwayFromZero);
-            return new BigInteger(precise);
+            return ((ulong)new BigInteger(precise));
         }
 
         public static double AtomicUnitsToXmr(BigInteger amountAtomicUnits)
@@ -318,6 +318,11 @@ namespace Monero.Common
             return new MoneroDecodedAddress(address, (MoneroAddressType)addressType, networkType.Type);
         }
 
+        public static MoneroIntegratedAddress GetIntegratedAddress(MoneroNetworkType networkType, string standardAddress, string? paymentId = null)
+        {
+            throw new NotImplementedException();
+        }
+
         private static bool IsValidAddressHash(string decodedAddrStr)
         {
             if (string.IsNullOrEmpty(decodedAddrStr) || decodedAddrStr.Length < 8)
@@ -355,7 +360,7 @@ namespace Monero.Common
                 bin[i] = address[i];
             }
 
-            int fullBlockCount = (int)Math.Floor(bin.Length / FULL_ENCODED_BLOCK_SIZE);
+            int fullBlockCount = (int)Math.Floor((float)bin.Length / FULL_ENCODED_BLOCK_SIZE);
             int lastBlockSize = bin.Length % FULL_ENCODED_BLOCK_SIZE;
             int lastBlockDecodedSize = ENCODED_BLOCK_SIZE[lastBlockSize];
             if (lastBlockDecodedSize < 0)
@@ -448,7 +453,8 @@ namespace Monero.Common
             byte[] res = new byte[hexStr.Length / 2];
             for (int i = 0; i < hexStr.Length / 2; ++i)
             {
-                res[i] = (byte)int.Parse(hexStr.Substring(i * 2, i * 2 + 2), 16);
+                var substr = hexStr.Substring(i * 2, i * 2 + 2);
+                res[i] = (byte)int.Parse(substr, 16);
             }
             return res;
         }
@@ -461,6 +467,11 @@ namespace Monero.Common
                 builder.Append(string.Format("%02x", i));
             }
             return builder.ToString();
+        }
+
+        public static Dictionary<string, object> BinaryBlocksToMap(byte[] blocks)
+        {
+            throw new NotImplementedException("");
         }
     }
 }

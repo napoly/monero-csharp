@@ -1,25 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace Monero.Common
 {
     public class MoneroCheck
     {
-        protected bool _isGood;
+        protected bool isGood;
     
         public MoneroCheck(bool isGood = false)
         {
-            _isGood = isGood;
+            this.isGood = isGood;
         }
 
-        public bool IsGood() { return _isGood; }
+        public virtual bool IsGood() { return isGood; }
 
-        public MoneroCheck SetIsGood(bool isGood)
+        public virtual MoneroCheck SetIsGood(bool isGood)
         {
-            _isGood = isGood;
+            this.isGood = isGood;
             return this;
         }
     }

@@ -1,6 +1,5 @@
-﻿using Monero.Common;
-
-namespace Monero.Wallet.Common
+﻿
+namespace Monero.Common
 {
     public class MoneroDecodedAddress
     {

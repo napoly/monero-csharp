@@ -3,7 +3,7 @@ namespace Monero.Common
 {
     public class MoneroInvalidPaymentIdError : MoneroError
     {
-        private string paymentId;
+        private readonly string paymentId;
 
         public MoneroInvalidPaymentIdError(string paymentId): base("Invalid payment id provided: " + paymentId)
         {

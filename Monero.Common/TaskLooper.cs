@@ -7,7 +7,7 @@ namespace Monero.Common
     public class TaskLooper
     {
         private readonly Action _task;
-        private long _periodInMs;
+        private ulong _periodInMs;
         private CancellationTokenSource _cts;
         private Task _loopTask;
         private readonly object _lock = new object();
@@ -30,7 +30,7 @@ namespace Monero.Common
             }
         }
 
-        public TaskLooper Start(long periodInMs, bool targetFixedPeriod = false)
+        public TaskLooper Start(ulong periodInMs, bool targetFixedPeriod = false)
         {
             if (periodInMs <= 0)
                 throw new ArgumentException("Period must be greater than 0 ms", nameof(periodInMs));
@@ -46,7 +46,7 @@ namespace Monero.Common
                 {
                     while (!_cts.Token.IsCancellationRequested)
                     {
-                        var startTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                        var startTime = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
                         try
                         {
@@ -59,10 +59,10 @@ namespace Monero.Common
 
                         if (_cts.Token.IsCancellationRequested) break;
 
-                        long delay = _periodInMs;
+                        ulong delay = _periodInMs;
                         if (targetFixedPeriod)
                         {
-                            var elapsed = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - startTime;
+                            var elapsed = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - startTime;
                             delay = Math.Max(0, _periodInMs - elapsed);
                         }
 
@@ -94,7 +94,7 @@ namespace Monero.Common
             }
         }
 
-        public void SetPeriodInMs(long periodInMs)
+        public void SetPeriodInMs(ulong periodInMs)
         {
             if (periodInMs <= 0)
                 throw new ArgumentException("Period must be greater than 0 ms");

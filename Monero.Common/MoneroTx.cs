@@ -106,34 +106,34 @@ namespace Monero.Common
             return block;
         }
 
-        public MoneroTx SetBlock(MoneroBlock block)
+        public virtual MoneroTx SetBlock(MoneroBlock? block)
         {
             this.block = block;
             return this;
         }
 
-        public ulong? GetHeight()
+        public virtual ulong? GetHeight()
         {
-            return GetBlock() == null ? null : GetBlock().GetHeight();
+            return GetBlock()?.GetHeight();
         }
 
-        public string? GetHash()
+        public virtual string? GetHash()
         {
             return hash;
         }
 
-        public virtual MoneroTx SetHash(string hash)
+        public virtual MoneroTx SetHash(string? hash)
         {
             this.hash = hash;
             return this;
         }
 
-        public uint? GetVersion()
+        public virtual uint? GetVersion()
         {
             return version;
         }
 
-        public MoneroTx SetVersion(uint version)
+        public virtual MoneroTx SetVersion(uint? version)
         {
             this.version = version;
             return this;
@@ -144,7 +144,7 @@ namespace Monero.Common
             return isMinerTx;
         }
 
-        public MoneroTx SetIsMinerTx(bool IsMinerTx)
+        public virtual MoneroTx SetIsMinerTx(bool? IsMinerTx)
         {
             this.isMinerTx = IsMinerTx;
             return this;
@@ -155,7 +155,7 @@ namespace Monero.Common
             return paymentId;
         }
 
-        public MoneroTx SetPaymentId(string paymentId)
+        public virtual MoneroTx SetPaymentId(string? paymentId)
         {
             this.paymentId = paymentId;
             return this;
@@ -166,7 +166,7 @@ namespace Monero.Common
             return fee;
         }
 
-        public MoneroTx SetFee(ulong fee)
+        public virtual MoneroTx SetFee(ulong? fee)
         {
             this.fee = fee;
             return this;
@@ -177,7 +177,7 @@ namespace Monero.Common
             return ringSize;
         }
 
-        public MoneroTx SetRingSize(uint ringSize)
+        public virtual MoneroTx SetRingSize(uint? ringSize)
         {
             this.ringSize = ringSize;
             return this;
@@ -188,7 +188,7 @@ namespace Monero.Common
             return relay;
         }
 
-        public MoneroTx SetRelay(bool relay)
+        public virtual MoneroTx SetRelay(bool? relay)
         {
             this.relay = relay;
             return this;
@@ -199,7 +199,7 @@ namespace Monero.Common
             return isRelayed;
         }
 
-        public MoneroTx SetIsRelayed(bool IsRelayed)
+        public virtual MoneroTx SetIsRelayed(bool? IsRelayed)
         {
             isRelayed = IsRelayed;
             return this;
@@ -210,7 +210,7 @@ namespace Monero.Common
             return isConfirmed;
         }
 
-        public MoneroTx SetIsConfirmed(bool IsConfirmed)
+        public virtual MoneroTx SetIsConfirmed(bool? IsConfirmed)
         {
             this.isConfirmed = IsConfirmed;
             return this;
@@ -221,7 +221,7 @@ namespace Monero.Common
             return inTxPool;
         }
 
-        public MoneroTx SetInTxPool(bool inTxPool)
+        public virtual MoneroTx SetInTxPool(bool? inTxPool)
         {
             this.inTxPool = inTxPool;
             return this;
@@ -232,7 +232,7 @@ namespace Monero.Common
             return numConfirmations;
         }
 
-        public MoneroTx SetNumConfirmations(ulong numConfirmations)
+        public virtual MoneroTx SetNumConfirmations(ulong? numConfirmations)
         {
             this.numConfirmations = numConfirmations;
             return this;
@@ -254,7 +254,7 @@ namespace Monero.Common
             return lastRelayedTimestamp;
         }
 
-        public MoneroTx SetLastRelayedTimestamp(ulong lastRelayedTimestamp)
+        public virtual MoneroTx SetLastRelayedTimestamp(ulong? lastRelayedTimestamp)
         {
             this.lastRelayedTimestamp = lastRelayedTimestamp;
             return this;
@@ -265,7 +265,7 @@ namespace Monero.Common
             return receivedTimestamp;
         }
 
-        public MoneroTx SetReceivedTimestamp(ulong receivedTimestamp)
+        public virtual MoneroTx SetReceivedTimestamp(ulong? receivedTimestamp)
         {
             this.receivedTimestamp = receivedTimestamp;
             return this;
@@ -276,7 +276,7 @@ namespace Monero.Common
             return isDoubleSpendSeen;
         }
 
-        public MoneroTx SetIsDoubleSpendSeen(bool IsDoubleSpend)
+        public virtual MoneroTx SetIsDoubleSpendSeen(bool? IsDoubleSpend)
         {
             this.isDoubleSpendSeen = IsDoubleSpend;
             return this;
@@ -287,7 +287,7 @@ namespace Monero.Common
             return key;
         }
 
-        public MoneroTx SetKey(string key)
+        public virtual MoneroTx SetKey(string? key)
         {
             this.key = key;
             return this;
@@ -298,7 +298,7 @@ namespace Monero.Common
             return fullHex;
         }
 
-        public MoneroTx SetFullHex(string fullHex)
+        public virtual MoneroTx SetFullHex(string? fullHex)
         {
             this.fullHex = fullHex;
             return this;
@@ -309,7 +309,7 @@ namespace Monero.Common
             return prunedHex;
         }
 
-        public MoneroTx SetPrunedHex(string prunedHex)
+        public virtual MoneroTx SetPrunedHex(string? prunedHex)
         {
             this.prunedHex = prunedHex;
             return this;
@@ -320,7 +320,7 @@ namespace Monero.Common
             return prunableHex;
         }
 
-        public MoneroTx SetPrunableHex(string prunableHex)
+        public virtual MoneroTx SetPrunableHex(string? prunableHex)
         {
             this.prunableHex = prunableHex;
             return this;
@@ -331,7 +331,7 @@ namespace Monero.Common
             return prunableHash;
         }
 
-        public MoneroTx SetPrunableHash(string prunableHash)
+        public virtual MoneroTx SetPrunableHash(string? prunableHash)
         {
             this.prunableHash = prunableHash;
             return this;
@@ -342,7 +342,7 @@ namespace Monero.Common
             return size;
         }
 
-        public MoneroTx SetSize(ulong size)
+        public virtual MoneroTx SetSize(ulong? size)
         {
             this.size = size;
             return this;
@@ -353,7 +353,7 @@ namespace Monero.Common
             return weight;
         }
 
-        public MoneroTx SetWeight(ulong weight)
+        public virtual MoneroTx SetWeight(ulong? weight)
         {
             this.weight = weight;
             return this;
@@ -386,7 +386,7 @@ namespace Monero.Common
             return outputIndices;
         }
 
-        public MoneroTx SetOutputIndices(List<ulong> outputIndices)
+        public virtual MoneroTx SetOutputIndices(List<ulong> outputIndices)
         {
             this.outputIndices = outputIndices;
             return this;
@@ -397,7 +397,7 @@ namespace Monero.Common
             return metadata;
         }
 
-        public MoneroTx SetMetadata(string metadata)
+        public virtual MoneroTx SetMetadata(string? metadata)
         {
             this.metadata = metadata;
             return this;
@@ -408,7 +408,7 @@ namespace Monero.Common
             return extra;
         }
 
-        public MoneroTx SetExtra(byte[] extra)
+        public virtual MoneroTx SetExtra(byte[] extra)
         {
             this.extra = extra;
             return this;
@@ -419,7 +419,7 @@ namespace Monero.Common
             return rctSignatures;
         }
 
-        public MoneroTx SetRctSignatures(object rctSignatures)
+        public virtual MoneroTx SetRctSignatures(object rctSignatures)
         {
             this.rctSignatures = rctSignatures;
             return this;
@@ -430,7 +430,7 @@ namespace Monero.Common
             return rctSigPrunable;
         }
 
-        public MoneroTx SetRctSigPrunable(object rctSigPrunable)
+        public virtual MoneroTx SetRctSigPrunable(object rctSigPrunable)
         {
             this.rctSigPrunable = rctSigPrunable;
             return this;
@@ -441,7 +441,7 @@ namespace Monero.Common
             return isKeptByBlock;
         }
 
-        public MoneroTx SetIsKeptByBlock(bool IsKeptByBlock)
+        public virtual MoneroTx SetIsKeptByBlock(bool? IsKeptByBlock)
         {
             isKeptByBlock = IsKeptByBlock;
             return this;
@@ -452,7 +452,7 @@ namespace Monero.Common
             return isFailed;
         }
 
-        public MoneroTx SetIsFailed(bool IsFailed)
+        public virtual MoneroTx SetIsFailed(bool? IsFailed)
         {
             this.isFailed = IsFailed;
             return this;
@@ -463,7 +463,7 @@ namespace Monero.Common
             return lastFailedHeight;
         }
 
-        public MoneroTx SetLastFailedHeight(ulong lastFailedHeight)
+        public virtual MoneroTx SetLastFailedHeight(ulong? lastFailedHeight)
         {
             this.lastFailedHeight = lastFailedHeight;
             return this;
@@ -474,7 +474,7 @@ namespace Monero.Common
             return lastFailedHash;
         }
 
-        public MoneroTx SetLastFailedHash(string lastFailedHash)
+        public virtual MoneroTx SetLastFailedHash(string? lastFailedHash)
         {
             this.lastFailedHash = lastFailedHash;
             return this;
@@ -485,7 +485,7 @@ namespace Monero.Common
             return maxUsedBlockHeight;
         }
 
-        public MoneroTx SetMaxUsedBlockHeight(ulong maxUsedBlockHeight)
+        public virtual MoneroTx SetMaxUsedBlockHeight(ulong? maxUsedBlockHeight)
         {
             this.maxUsedBlockHeight = maxUsedBlockHeight;
             return this;
@@ -496,7 +496,7 @@ namespace Monero.Common
             return maxUsedBlockHash;
         }
 
-        public MoneroTx SetMaxUsedBlockHash(string maxUsedBlockHash)
+        public virtual MoneroTx SetMaxUsedBlockHash(string? maxUsedBlockHash)
         {
             this.maxUsedBlockHash = maxUsedBlockHash;
             return this;
@@ -507,10 +507,128 @@ namespace Monero.Common
             return signatures;
         }
 
-        public MoneroTx SetSignatures(List<string> signatures)
+        public virtual MoneroTx SetSignatures(List<string> signatures)
         {
             this.signatures = signatures;
             return this;
+        }
+
+        public MoneroTx Merge(MoneroTx tx)
+        {
+            if (this == tx) return this;
+
+            // merge blocks if they're different
+            if (this.GetBlock() != tx.GetBlock())
+            {
+                if (this.GetBlock() == null)
+                {
+                    this.SetBlock(tx.GetBlock());
+                    this.GetBlock().GetTxs().Set(this.GetBlock().GetTxs().IndexOf(tx), this); // update block to point to this tx
+                }
+                else if (tx.GetBlock() != null)
+                {
+                    this.GetBlock().Merge(tx.GetBlock()); // comes back to merging txs
+                    return this;
+                }
+            }
+
+            // otherwise merge tx fields
+            this.SetHash(GenUtils.Reconcile(this.GetHash(), tx.GetHash()));
+            this.SetVersion(GenUtils.Reconcile(this.GetVersion(), tx.GetVersion()));
+            this.SetPaymentId(GenUtils.Reconcile(this.GetPaymentId(), tx.GetPaymentId()));
+            this.SetFee(GenUtils.Reconcile(this.GetFee(), tx.GetFee()));
+            this.SetRingSize(GenUtils.Reconcile(this.GetRingSize(), tx.GetRingSize()));
+            this.SetIsConfirmed(GenUtils.Reconcile(this.IsConfirmed(), tx.IsConfirmed(), null, true, null));  // tx can become confirmed
+            this.SetIsMinerTx(GenUtils.Reconcile(this.IsMinerTx(), tx.IsMinerTx(), null, null, null));
+            this.SetRelay(GenUtils.Reconcile(this.GetRelay(), tx.GetRelay(), null, true, null));        // tx can become relayed
+            this.SetIsRelayed(GenUtils.Reconcile(this.IsRelayed(), tx.IsRelayed(), null, true, null));  // tx can become relayed
+            this.SetIsDoubleSpendSeen(GenUtils.Reconcile(this.IsDoubleSpendSeen(), tx.IsDoubleSpendSeen(), null, true, null)); // double spend can become seen
+            this.SetKey(GenUtils.Reconcile(this.GetKey(), tx.GetKey()));
+            this.SetFullHex(GenUtils.Reconcile(this.GetFullHex(), tx.GetFullHex()));
+            this.SetPrunedHex(GenUtils.Reconcile(this.GetPrunedHex(), tx.GetPrunedHex()));
+            this.SetPrunableHex(GenUtils.Reconcile(this.GetPrunableHex(), tx.GetPrunableHex()));
+            this.SetPrunableHash(GenUtils.Reconcile(this.GetPrunableHash(), tx.GetPrunableHash()));
+            this.SetSize(GenUtils.Reconcile(this.GetSize(), tx.GetSize()));
+            this.SetWeight(GenUtils.Reconcile(this.GetWeight(), tx.GetWeight()));
+            this.SetOutputIndices(GenUtils.Reconcile(this.GetOutputIndices(), tx.GetOutputIndices()));
+            this.SetMetadata(GenUtils.Reconcile(this.GetMetadata(), tx.GetMetadata()));
+            this.SetExtra(GenUtils.ReconcileByteArrays(this.GetExtra(), tx.GetExtra()));
+            this.SetRctSignatures(GenUtils.Reconcile(this.GetRctSignatures(), tx.GetRctSignatures()));
+            this.SetRctSigPrunable(GenUtils.Reconcile(this.GetRctSigPrunable(), tx.GetRctSigPrunable()));
+            this.SetIsKeptByBlock(GenUtils.Reconcile(this.IsKeptByBlock(), tx.IsKeptByBlock()));
+            this.SetIsFailed(GenUtils.Reconcile(this.IsFailed(), tx.IsFailed(), null, true, null));
+            this.SetLastFailedHeight(GenUtils.Reconcile(this.GetLastFailedHeight(), tx.GetLastFailedHeight()));
+            this.SetLastFailedHash(GenUtils.Reconcile(this.GetLastFailedHash(), tx.GetLastFailedHash()));
+            this.SetMaxUsedBlockHeight(GenUtils.Reconcile(this.GetMaxUsedBlockHeight(), tx.GetMaxUsedBlockHeight()));
+            this.SetMaxUsedBlockHash(GenUtils.Reconcile(this.GetMaxUsedBlockHash(), tx.GetMaxUsedBlockHash()));
+            this.SetSignatures(GenUtils.Reconcile(this.GetSignatures(), tx.GetSignatures()));
+            this.SetUnlockTime(GenUtils.Reconcile(this.GetUnlockTime(), tx.GetUnlockTime()));
+            this.SetNumConfirmations(GenUtils.Reconcile(this.GetNumConfirmations(), tx.GetNumConfirmations(), null, null, true)); // num confirmations can increase
+
+            // merge inputs
+            if (tx.GetInputs() != null)
+            {
+                foreach (MoneroOutput merger in tx.GetInputs())
+                {
+                    bool merged = false;
+                    merger.SetTx(this);
+                    if (this.GetInputs() == null) this.SetInputs([]);
+                    foreach (MoneroOutput mergee in this.GetInputs())
+                    {
+                        if (mergee.GetKeyImage().GetHex().Equals(merger.GetKeyImage().GetHex()))
+                        {
+                            mergee.Merge(merger);
+                            merged = true;
+                            break;
+                        }
+                    }
+                    if (!merged) this.GetInputs().Add(merger);
+                }
+            }
+
+            // merge outputs
+            if (tx.GetOutputs() != null)
+            {
+                foreach (MoneroOutput output in tx.GetOutputs()) output.SetTx(this);
+                if (this.GetOutputs() == null) this.SetOutputs(tx.GetOutputs());
+                else
+                {
+
+                    // merge outputs if key image or stealth public key present, otherwise append
+                    foreach (MoneroOutput merger in tx.GetOutputs())
+                    {
+                        bool merged = false;
+                        merger.SetTx(this);
+                        foreach (MoneroOutput mergee in this.GetOutputs())
+                        {
+                            if ((merger.GetKeyImage() != null && mergee.GetKeyImage().GetHex().Equals(merger.GetKeyImage().GetHex())) ||
+                                (merger.GetStealthPublicKey() != null && mergee.GetStealthPublicKey().Equals(merger.GetStealthPublicKey())))
+                            {
+                                mergee.Merge(merger);
+                                merged = true;
+                                break;
+                            }
+                        }
+                        if (!merged) this.GetOutputs().Add(merger); // append output
+                    }
+                }
+            }
+
+            // handle unrelayed -> relayed -> confirmed
+            if (this.IsConfirmed() == true)
+            {
+                this.SetInTxPool(false);
+                this.SetReceivedTimestamp(null);
+                this.SetLastRelayedTimestamp(null);
+            }
+            else
+            {
+                this.SetInTxPool(GenUtils.Reconcile(this.InTxPool(), tx.InTxPool(), null, true, null)); // unrelayed -> tx pool
+                this.SetReceivedTimestamp(GenUtils.Reconcile(this.GetReceivedTimestamp(), tx.GetReceivedTimestamp(), null, null, false)); // take earliest receive time
+                this.SetLastRelayedTimestamp(GenUtils.Reconcile(this.GetLastRelayedTimestamp(), tx.GetLastRelayedTimestamp(), null, null, true));  // take latest relay time
+            }
+
+            return this;  // for chaining
         }
     }
 }

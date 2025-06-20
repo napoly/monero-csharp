@@ -3,6 +3,6 @@ namespace Monero.Common
 {
     public interface MoneroConnectionManagerListener
     {
-        void OnConnectionChanged(MoneroConnection? connection);
+        void OnConnectionChanged(MoneroRpcConnection? connection);
     }
 }
