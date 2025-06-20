@@ -4,10 +4,7 @@ using Monero.Daemon.Common;
 using Monero.Test.Utils;
 using Monero.Wallet;
 using Monero.Wallet.Common;
-using NUnit.Framework;
-using System.Threading;
 using System.Collections.ObjectModel;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Monero.Test;
 
@@ -17,17 +14,30 @@ public class TestMoneroDaemonRpc
     private static MoneroWalletRpc wallet;
 
     private static readonly bool LITE_MODE = false;
-    private static bool TEST_NON_RELAYS = true;
-    private static bool TEST_RELAYS = true; // creates and relays outgoing txs
-    private static bool TEST_NOTIFICATIONS = true;
+    private static readonly bool TEST_NON_RELAYS = true;
+    private static readonly bool TEST_RELAYS = true; // creates and relays outgoing txs
+    private static readonly bool TEST_NOTIFICATIONS = true;
 
-    private static TestContext BINARY_BLOCK_CTX = new TestContext();
+    private static readonly TestContext BINARY_BLOCK_CTX = new();
 
     [SetUp]
     public void Setup()
     {
-        // Initialization code can go here if needed
+        BINARY_BLOCK_CTX.hasHex = false;
+        BINARY_BLOCK_CTX.headerIsFull = false;
+        BINARY_BLOCK_CTX.hasTxs = true;
+        BINARY_BLOCK_CTX.txContext = new();
+        BINARY_BLOCK_CTX.txContext.isPruned = false;
+        BINARY_BLOCK_CTX.txContext.isConfirmed = true;
+        BINARY_BLOCK_CTX.txContext.fromGetTxPool = false;
+        BINARY_BLOCK_CTX.txContext.hasOutputIndices = false;
+        BINARY_BLOCK_CTX.txContext.fromBinaryBlock = true;
+        daemon = TestUtils.GetDaemonRpc();
+        wallet = TestUtils.GetWalletRpc();
+        TestUtils.WALLET_TX_TRACKER.Reset();
     }
+
+    #region Non Relays Tests
 
     [Test]
     public void TestGetVersion()
@@ -61,7 +71,7 @@ public class TestMoneroDaemonRpc
     {
         Assert.That(TEST_NON_RELAYS);
         MoneroBlockHeader lastHeader = daemon.GetLastBlockHeader();
-        string hash = daemon.GetBlockHash(lastHeader.GetHeight());
+        string hash = daemon.GetBlockHash((ulong)lastHeader.GetHeight());
         Assert.That(hash != null);
         Assert.That(64 == hash.Length);
     }
@@ -92,13 +102,13 @@ public class TestMoneroDaemonRpc
 
         // retrieve by hash of last block
         MoneroBlockHeader lastHeader = daemon.GetLastBlockHeader();
-        string hash = daemon.GetBlockHash(lastHeader.GetHeight());
+        string hash = daemon.GetBlockHash((ulong)lastHeader.GetHeight());
         MoneroBlockHeader header = daemon.GetBlockHeaderByHash(hash);
         TestBlockHeader(header, true);
         Assert.That(lastHeader == header);
 
         // retrieve by hash of previous to last block
-        hash = daemon.GetBlockHash(lastHeader.GetHeight() - 1);
+        hash = daemon.GetBlockHash((ulong)lastHeader.GetHeight() - 1);
         header = daemon.GetBlockHeaderByHash(hash);
         TestBlockHeader(header, true);
         Assert.That(lastHeader.GetHeight() - 1 == (ulong)header.GetHeight());
@@ -112,12 +122,12 @@ public class TestMoneroDaemonRpc
 
         // retrieve by height of last block
         MoneroBlockHeader lastHeader = daemon.GetLastBlockHeader();
-        MoneroBlockHeader header = daemon.GetBlockHeaderByHeight(lastHeader.GetHeight());
+        MoneroBlockHeader header = daemon.GetBlockHeaderByHeight((ulong)lastHeader.GetHeight());
         TestBlockHeader(header, true);
         Assert.That(lastHeader == header);
 
         // retrieve by height of previous to last block
-        header = daemon.GetBlockHeaderByHeight(lastHeader.GetHeight() - 1);
+        header = daemon.GetBlockHeaderByHeight((ulong)lastHeader.GetHeight() - 1);
         TestBlockHeader(header, true);
         Assert.That(lastHeader.GetHeight() - 1 == (ulong)header.GetHeight());
     }
@@ -165,17 +175,17 @@ public class TestMoneroDaemonRpc
 
         // retrieve by hash of last block
         MoneroBlockHeader lastHeader = daemon.GetLastBlockHeader();
-        string hash = daemon.GetBlockHash(lastHeader.GetHeight());
+        string hash = daemon.GetBlockHash((ulong)lastHeader.GetHeight());
         MoneroBlock block = daemon.GetBlockByHash(hash);
         TestBlock(block, ctx);
-        Assert.That(daemon.GetBlockByHeight(block.GetHeight()) == block);
+        Assert.That(daemon.GetBlockByHeight((ulong)block.GetHeight()) == block);
         Assert.That(null == block.GetTxs());
 
         // retrieve by hash of previous to last block
-        hash = daemon.GetBlockHash(lastHeader.GetHeight() - 1);
+        hash = daemon.GetBlockHash((ulong)lastHeader.GetHeight() - 1);
         block = daemon.GetBlockByHash(hash);
         TestBlock(block, ctx);
-        Assert.That(daemon.GetBlockByHeight(lastHeader.GetHeight() - 1) == block);
+        Assert.That(daemon.GetBlockByHeight((ulong)lastHeader.GetHeight() - 1) == block);
         Assert.That(null == block.GetTxs());
     }
 
@@ -201,12 +211,12 @@ public class TestMoneroDaemonRpc
 
         // retrieve by height of last block
         MoneroBlockHeader lastHeader = daemon.GetLastBlockHeader();
-        MoneroBlock block = daemon.GetBlockByHeight(lastHeader.GetHeight());
+        MoneroBlock block = daemon.GetBlockByHeight((ulong)lastHeader.GetHeight());
         TestBlock(block, ctx);
-        Assert.That(daemon.GetBlockByHeight(block.GetHeight()) == block);
+        Assert.That(daemon.GetBlockByHeight((ulong)block.GetHeight()) == block);
 
         // retrieve by height of previous to last block
-        block = daemon.GetBlockByHeight(lastHeader.GetHeight() - 1);
+        block = daemon.GetBlockByHeight((ulong)lastHeader.GetHeight() - 1);
         TestBlock(block, ctx);
         Assert.That(lastHeader.GetHeight() - 1 == (ulong)block.GetHeight());
     }
@@ -810,6 +820,27 @@ public class TestMoneroDaemonRpc
         }
     }
 
+    // Can get an output distribution (binary)
+    [Test]
+    public void TestGetOutputDistributionBinary()
+    {
+        Assert.That(TEST_NON_RELAYS);
+        List<ulong> amounts = [];
+        amounts.Add(0);
+        amounts.Add(1);
+        amounts.Add(10);
+        amounts.Add(100);
+        amounts.Add(1000);
+        amounts.Add(10000);
+        amounts.Add(100000);
+        amounts.Add(1000000);
+        List<MoneroOutputDistributionEntry> entries = daemon.GetOutputDistribution(amounts);
+        foreach (MoneroOutputDistributionEntry entry in entries)
+        {
+            TestOutputDistributionEntry(entry);
+        }
+    }
+
     // Can get general information
     [Test]
     public void TestGetGeneralInformation()
@@ -1184,8 +1215,138 @@ public class TestMoneroDaemonRpc
         } catch (MoneroError e) {
             Assert.That("Should have thrown error" != e.Message);
         }
-  }
-  
+    }
+
+    #endregion
+
+    #region Relay Tests
+
+    // Can submit a tx in hex format to the pool and relay in one call
+    [Test]
+    public void TestSubmitAndRelayTxHex()
+    {
+        Assert.That(TEST_RELAYS && !LITE_MODE);
+
+        // wait one time for wallet txs in the pool to clear
+        // TODO monero-project: update from pool does not prevent creating double spend tx
+        TestUtils.WALLET_TX_TRACKER.WaitForWalletTxsToClearPool(wallet);
+
+        // create 2 txs, the second will double spend outputs of first
+        MoneroTx tx1 = GetUnrelayedTx(wallet, 2); // TODO: this test requires tx to be from/to different accounts else the occlusion issue (#4500) causes the tx to not be recognized by the wallet at all
+        MoneroTx tx2 = GetUnrelayedTx(wallet, 2);
+
+        // submit and relay tx1
+        MoneroSubmitTxResult result = daemon.SubmitTxHex(tx1.GetFullHex());
+        Assert.That(true == result.IsRelayed());
+        TestSubmitTxResultGood(result);
+
+        // tx1 is in the pool
+        List<MoneroTx> txs = daemon.GetTxPool();
+        bool found = false;
+        foreach (MoneroTx aTx in txs)
+        {
+            if (aTx.GetHash().Equals(tx1.GetHash()))
+            {
+                Assert.That(true == aTx.IsRelayed());
+                found = true;
+                break;
+            }
+        }
+        Assert.That(found, "Tx1 was not found after being submitted to the daemon's tx pool");
+
+        // tx1 is recognized by the wallet
+        wallet.Sync();
+        wallet.GetTx(tx1.GetHash());
+
+        // submit and relay tx2 hex which double spends tx1
+        result = daemon.SubmitTxHex(tx2.GetFullHex());
+        Assert.That(true == result.IsRelayed());
+        TestSubmitTxResultDoubleSpend(result);
+
+        // tx2 is in not the pool
+        txs = daemon.GetTxPool();
+        found = false;
+        foreach (MoneroTx aTx in txs)
+        {
+            if (aTx.GetHash().Equals(tx2.GetHash()))
+            {
+                found = true;
+                break;
+            }
+        }
+        Assert.That(!found, "Tx2 should not be in the pool because it double spends tx1 which is in the pool");
+
+        // all wallets will need to wait for tx to confirm in order to properly sync
+        TestUtils.WALLET_TX_TRACKER.Reset();
+    }
+
+    // Can submit a tx in hex format to the pool then relay
+    [Test]
+    public void TestSubmitThenRelayTxHex()
+    {
+        Assert.That(TEST_RELAYS && !LITE_MODE);
+        TestUtils.WALLET_TX_TRACKER.WaitForWalletTxsToClearPool(wallet);
+        MoneroTx tx =GetUnrelayedTx(wallet, 1);
+        TestSubmitThenRelay([tx]);
+    }
+
+    // Can submit txs in hex format to the pool then relay
+    [Test]
+    public void TestSubmitThenRelayTxHexes()
+    {
+        Assert.That(TEST_RELAYS && !LITE_MODE);
+        TestUtils.WALLET_TX_TRACKER.WaitForWalletTxsToClearPool(wallet);
+        List<MoneroTx> txs = [];
+        txs.Add(GetUnrelayedTx(wallet, 1));
+        txs.Add(GetUnrelayedTx(wallet, 2));  // TODO: accounts cannot be re-used across send tests else isRelayed is true; wallet needs to update?
+        TestSubmitThenRelay(txs);
+    }
+
+    #endregion
+
+    #region Notification Tests
+
+    // Can notify listeners when a new block is added to the chain
+    [Test]
+    public void TestBlockListener()
+    {
+        Assert.That(!LITE_MODE && TEST_NOTIFICATIONS);
+
+        try
+        {
+            // start mining if possible to help push the network along
+            string address = wallet.GetPrimaryAddress();
+            try { daemon.StartMining(address, 8, false, true); }
+            catch (MoneroError e) { }
+
+            // register a listener
+            MoneroDaemonListener listener = new MoneroDaemonListener();
+            daemon.AddListener(listener);
+
+            // wait for next block notification
+            MoneroBlockHeader header = daemon.WaitForNextBlockHeader();
+            daemon.RemoveListener(listener); // unregister listener so daemon does not keep polling
+            TestBlockHeader(header, true);
+
+            // test that listener was called with equivalent header
+            Assert.That(header == listener.GetLastBlockHeader());
+        }
+        catch (MoneroError e)
+        {
+            throw e;
+        }
+        finally
+        {
+
+            // stop mining
+            try { daemon.StopMining(); }
+            catch (MoneroError e) { }
+        }
+    }
+
+    #endregion
+
+    #region Test Helpers
 
     private static void TestBlockHeader(MoneroBlockHeader? header, bool isFull)
     {
@@ -1293,9 +1454,9 @@ public class TestMoneroDaemonRpc
         // test required fields
         Assert.That(block != null);
         TestMinerTx(block.GetMinerTx());  // TODO: miner tx doesn't have as much stuff, can't call TestTx?
-        TestBlockHeader(block, ctx.headerIsFull);
+        TestBlockHeader(block, ctx.headerIsFull == true);
 
-        if (ctx.hasHex)
+        if (ctx.hasHex == true)
         {
             Assert.That(block.GetHex() != null);
             Assert.That(block.GetHex().Length > 1);
@@ -1305,7 +1466,7 @@ public class TestMoneroDaemonRpc
             Assert.That(block.GetHex() != null);
         }
 
-        if (ctx.hasTxs)
+        if (ctx.hasTxs == true)
         {
             Assert.That(ctx.txContext != null);
             foreach (MoneroTx tx in block.GetTxs())
@@ -1368,7 +1529,7 @@ public class TestMoneroDaemonRpc
         // test presence of output indices
         // TODO: change this over to outputs only
         if (tx.IsMinerTx() == true) Assert.That(tx.GetOutputIndices() == null); // TODO: how to get output indices for miner transactions?
-        if (tx.InTxPool() == true || ctx.fromGetTxPool || ctx.hasOutputIndices == false) Assert.That(null == tx.GetOutputIndices());
+        if (tx.InTxPool() == true || ctx.fromGetTxPool == true || ctx.hasOutputIndices == false) Assert.That(null == tx.GetOutputIndices());
         else Assert.That(tx.GetOutputIndices() != null);
         if (tx.GetOutputIndices() != null) Assert.That(tx.GetOutputIndices().Count > 0);
 
@@ -1407,7 +1568,7 @@ public class TestMoneroDaemonRpc
             Assert.That(tx.GetLastFailedHeight() == null);
             Assert.That(tx.GetLastFailedHash() == null);
             Assert.That(tx.GetReceivedTimestamp() > 0);
-            if (ctx.fromGetTxPool)
+            if (ctx.fromGetTxPool == true)
             {
                 Assert.That(tx.GetSize() > 0);
                 Assert.That(tx.GetWeight() > 0);
@@ -1447,7 +1608,7 @@ public class TestMoneroDaemonRpc
             else
             {
                 Assert.That(false == tx.IsRelayed());
-                if (ctx.fromGetTxPool)
+                if (ctx.fromGetTxPool == true)
                 {
                     Assert.That(false == tx.GetRelay());
                     Assert.That(tx.IsDoubleSpendSeen() != null);
@@ -1478,9 +1639,9 @@ public class TestMoneroDaemonRpc
         }
 
         // test pruned vs not pruned
-        if (ctx.fromGetTxPool || ctx.fromBinaryBlock == true) Assert.That(tx.GetPrunableHash() == null);   // TODO monerod: tx pool txs do not have prunable hash, TODO: GetBlocksByHeight() has inconsistent client-side pruning
+        if (ctx.fromGetTxPool == true || ctx.fromBinaryBlock == true) Assert.That(tx.GetPrunableHash() == null);   // TODO monerod: tx pool txs do not have prunable hash, TODO: GetBlocksByHeight() has inconsistent client-side pruning
         else Assert.That(tx.GetPrunableHash() != null);
-        if (ctx.isPruned)
+        if (ctx.isPruned == true)
         {
             Assert.That(tx.GetRctSigPrunable() == null);
             Assert.That(tx.GetSize() == null);
@@ -1567,7 +1728,7 @@ public class TestMoneroDaemonRpc
             Assert.That(copy.GetInputs() != tx.GetInputs());
             for (int i = 0; i < copy.GetInputs().Count; i++)
             {
-                Assert.That(0 == tx.GetInputs()[i].GetAmount().CompareTo(copy.GetInputs()[i].GetAmount()));
+                Assert.That(tx.GetInputs()[i].GetAmount().Equals(copy.GetInputs()[i].GetAmount()));
             }
         }
 
@@ -1578,7 +1739,7 @@ public class TestMoneroDaemonRpc
             Assert.That(copy.GetOutputs() != tx.GetOutputs());
             for (int i = 0; i < copy.GetOutputs().Count; i++)
             {
-                Assert.That(0 == tx.GetOutputs()[i].GetAmount().CompareTo(copy.GetOutputs()[i].GetAmount()));
+                Assert.That(tx.GetOutputs()[i].GetAmount().Equals(copy.GetOutputs()[i].GetAmount()));
             }
         }
 
@@ -1931,23 +2092,91 @@ public class TestMoneroDaemonRpc
         Assert.That(entry.GetNumUnlockedInstances() >= 0);
         Assert.That(entry.GetNumRecentInstances() >= 0);
     }
+
+    private static void TestSubmitThenRelay(List<MoneroTx> txs)
+    {
+        // submit txs hex but don't relay
+        List<string> txHashes = [];
+        foreach (MoneroTx tx in txs)
+        {
+            txHashes.Add(tx.GetHash());
+            MoneroSubmitTxResult result = daemon.SubmitTxHex(tx.GetFullHex(), true);
+            TestSubmitTxResultGood(result);
+            Assert.That(false == result.IsRelayed());
+
+            // ensure tx is in pool
+            List<MoneroTx> _poolTxs = daemon.GetTxPool();
+            bool found = false;
+            foreach (MoneroTx aTx in _poolTxs)
+            {
+                if (aTx.GetHash().Equals(tx.GetHash()))
+                {
+                    Assert.That(false == aTx.IsRelayed());
+                    found = true;
+                    break;
+                }
+            }
+            Assert.That(found, "Tx was not found after being submitted to the daemon's tx pool");
+
+            // fetch tx by hash and ensure not relayed
+            MoneroTx fetchedTx = daemon.GetTx(tx.GetHash());
+            Assert.That(false == fetchedTx.IsRelayed());
+        }
+
+        // relay the txs
+        try
+        {
+            if (txHashes.Count == 1) daemon.RelayTxByHash(txHashes[0]);
+            else daemon.RelayTxsByHash(txHashes);
+        }
+        catch (Exception e)
+        {
+            daemon.FlushTxPool(txHashes); // flush txs when relay fails to prevent double spends in other tests
+            throw e;
+        }
+
+        // wait for txs to be relayed // TODO (monero-project): all txs should be relayed: https://github.com/monero-project/monero/issues/8523
+        try { Thread.Sleep(1000); } catch (Exception e) { throw new Exception(e.Message); }
+
+        // ensure txs are relayed
+        List<MoneroTx> poolTxs = daemon.GetTxPool();
+        foreach (MoneroTx tx in txs)
+        {
+            bool found = false;
+            foreach (MoneroTx aTx in poolTxs)
+            {
+                if (aTx.GetHash().Equals(tx.GetHash()))
+                {
+                    Assert.That(true == aTx.IsRelayed());
+                    found = true;
+                    break;
+                }
+            }
+            Assert.That(found, "Tx was not found after being submitted to the daemon's tx pool");
+        }
+
+        // wallets will need to wait for tx to confirm in order to properly sync
+        TestUtils.WALLET_TX_TRACKER.Reset();
+    }
+
+    #endregion
 }
 
 internal class TestContext
 {
-    public bool hasJson;
-    public bool isPruned;
-    public bool isFull;
-    public bool isConfirmed;
-    public bool isMinerTx;
-    public bool fromGetTxPool;
-    public bool fromBinaryBlock;
-    public bool hasOutputIndices;
-    public bool doNotTestCopy;
-    public bool hasTxs;
-    public bool hasHex;
-    public bool headerIsFull;
-    public TestContext txContext;
+    public bool? hasJson;
+    public bool? isPruned;
+    public bool? isFull;
+    public bool? isConfirmed;
+    public bool? isMinerTx;
+    public bool? fromGetTxPool;
+    public bool? fromBinaryBlock;
+    public bool? hasOutputIndices;
+    public bool? doNotTestCopy;
+    public bool? hasTxs;
+    public bool? hasHex;
+    public bool? headerIsFull;
+    public TestContext? txContext;
 
     public TestContext() { }
     

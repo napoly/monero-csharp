@@ -49,7 +49,7 @@ namespace Monero.Test.Utils
 
         public static readonly WalletTxTracker WALLET_TX_TRACKER = new();
 
-        public static MoneroWalletRpc StartWalletRpcProcess()
+        public static MoneroWalletRpc StartWalletRpcProcess(bool offline = false)
         {
             throw new NotImplementedException();
         }
@@ -60,6 +60,11 @@ namespace Monero.Test.Utils
         }
 
         public static MoneroDaemonRpc GetDaemonRpc()
+        {
+            throw new NotImplementedException();
+        }
+
+        public static MoneroWalletRpc GetWalletRpc()
         {
             throw new NotImplementedException();
         }
