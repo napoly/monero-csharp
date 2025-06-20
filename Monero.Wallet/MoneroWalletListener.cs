@@ -3,12 +3,12 @@ using Monero.Wallet.Common;
 
 namespace Monero.Wallet
 {
-    public abstract class MoneroWalletListener
+    public class MoneroWalletListener
     {
-        public abstract void OnSyncProgress(long height, long startHeight, long endHeight, double percentDone, string message);
-        public abstract void OnNewBlock(long height);
-        public abstract void OnBalancesChanged(long newBalance, long newUnlockedBalance);
-        public abstract void OnOutputReceived(MoneroOutputWallet output);
-        public abstract void OnOutputSpent(MoneroOutputWallet output);
+        public virtual void OnSyncProgress(ulong height, ulong startHeight, ulong endHeight, double percentDone, string message) { }
+        public virtual void OnNewBlock(ulong height) { }
+        public virtual void OnBalancesChanged(ulong newBalance, ulong newUnlockedBalance) { }
+        public virtual void OnOutputReceived(MoneroOutputWallet output) { }
+        public virtual void OnOutputSpent(MoneroOutputWallet output) { }
     }
 }

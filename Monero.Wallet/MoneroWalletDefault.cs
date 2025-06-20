@@ -1,745 +1,478 @@
 ﻿
 using Monero.Common;
 using Monero.Wallet.Common;
-using System.Collections.ObjectModel;
+
 
 namespace Monero.Wallet
 {
     public abstract class MoneroWalletDefault : MoneroWallet
     {
-        public int AddAddressBookEntry(string address, string description)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void AddListener(MoneroWalletListener listener)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ChangePassword(string oldPassword, string newPassword)
-        {
-            throw new NotImplementedException();
-        }
-
-        public MoneroCheckReserve CheckReserveProof(string address, string message, string signature)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool CheckSpendProof(string txHash, string message, string signature)
-        {
-            throw new NotImplementedException();
-        }
+        protected MoneroConnectionManager? connectionManager;
+        protected MoneroConnectionManagerListener? connectionManagerListener;
+        protected List<MoneroWalletListener> listeners = [];
+        protected bool isClosed = false;
 
-        public MoneroCheckTx CheckTxKey(string txHash, string txKey, string address)
-        {
-            throw new NotImplementedException();
-        }
-
-        public MoneroCheckTx CheckTxProof(string txHash, string address, string message, string signature)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Close()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Close(bool save)
-        {
-            throw new NotImplementedException();
-        }
-
-        public MoneroAccount CreateAccount()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract MoneroWalletType GetWalletType();
 
-        public MoneroAccount CreateAccount(string label)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract int AddAddressBookEntry(string address, string description);
 
-        public MoneroSubaddress CreateSubaddress(int accountIdx)
+        public virtual void AddListener(MoneroWalletListener listener)
         {
-            throw new NotImplementedException();
+            lock (listeners)
+            {
+                if (listener == null) throw new MoneroError("Cannot add null listener");
+                listeners.Add(listener);
+            }
         }
 
-        public MoneroSubaddress CreateSubaddress(int accountIdx, string label)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void ChangePassword(string oldPassword, string newPassword);
 
-        public MoneroTxWallet CreateTx(MoneroTxConfig config)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract MoneroCheckReserve CheckReserveProof(string address, string message, string signature);
 
-        public List<MoneroTxWallet> CreateTxs(MoneroTxConfig config)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract bool CheckSpendProof(string txHash, string message, string signature);
 
-        public MoneroIntegratedAddress decodeIntegratedAddress(string integratedAddress)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract MoneroCheckTx CheckTxKey(string txHash, string txKey, string address);
 
-        public void DeleteAddressBookEntry(int entryIdx)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract MoneroCheckTx CheckTxProof(string txHash, string address, string message, string signature);
 
-        public MoneroTxSet DescribeMultisigTxSet(string multisigTxHex)
+        public virtual void Close(bool save = false)
         {
-            throw new NotImplementedException();
+            if (connectionManager != null && connectionManagerListener != null) connectionManager.RemoveListener(connectionManagerListener);
+            connectionManager = null;
+            connectionManagerListener = null;
+            listeners.Clear();
+            isClosed = true;
         }
 
-        public MoneroTxSet DescribeTxSet(MoneroTxSet txSet)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract MoneroAccount CreateAccount(string? label = null);
 
-        public MoneroTxSet DescribeUnsignedTxSet(string unsignedTxHex)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract MoneroSubaddress CreateSubaddress(uint accountIdx, string? label = null);
 
-        public void EditAddressBookEntry(int index, bool setAddress, string address, bool setDescription, string description)
+        public virtual MoneroTxWallet CreateTx(MoneroTxConfig config)
         {
-            throw new NotImplementedException();
+            if (config == null) throw new MoneroError("Send request cannot be null");
+            if (config.GetCanSplit() == true) throw new MoneroError("Cannot request split transactions with createTx() which prevents splitting; use createTxs() instead");
+            config = config.Clone();
+            config.SetCanSplit(false);
+            return CreateTxs(config)[0];
         }
 
-        public MoneroMultisigInitResult ExchangeMultisigKeys(List<string> multisigHexes, string password)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract List<MoneroTxWallet> CreateTxs(MoneroTxConfig config);
 
-        public List<MoneroKeyImage> ExportKeyImages()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract MoneroIntegratedAddress DecodeIntegratedAddress(string integratedAddress);
 
-        public List<MoneroKeyImage> ExportKeyImages(bool all)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void DeleteAddressBookEntry(uint entryIdx);
 
-        public string ExportMultisigHex()
+        public virtual MoneroTxSet DescribeMultisigTxSet(string multisigTxHex)
         {
-            throw new NotImplementedException();
+            return DescribeTxSet(new MoneroTxSet().SetMultisigTxHex(multisigTxHex));
         }
 
-        public string ExportOutputs()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract MoneroTxSet DescribeTxSet(MoneroTxSet txSet);
 
-        public string ExportOutputs(bool all)
+        public virtual MoneroTxSet DescribeUnsignedTxSet(string unsignedTxHex)
         {
-            throw new NotImplementedException();
+            return DescribeTxSet(new MoneroTxSet().SetUnsignedTxHex(unsignedTxHex));
         }
 
-        public void FreezeOutput(string keyImage)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void EditAddressBookEntry(uint index, bool setAddress, string address, bool setDescription, string description);
 
-        public MoneroAccount GetAccount(int accountIdx)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract MoneroMultisigInitResult ExchangeMultisigKeys(List<string> multisigHexes, string password);
 
-        public MoneroAccount GetAccount(int accountIdx, bool includeSubaddresses)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract List<MoneroKeyImage> ExportKeyImages(bool all = false);
 
-        public List<MoneroAccount> GetAccounts()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract string ExportMultisigHex();
 
-        public List<MoneroAccount> GetAccounts(bool includeSubaddresses)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract string ExportOutputs(bool all = false);
 
-        public List<MoneroAccount> GetAccounts(string tag)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void FreezeOutput(string keyImage);
 
-        public List<MoneroAccount> GetAccounts(bool includeSubaddresses, string tag)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract MoneroAccount GetAccount(uint accountIdx, bool includeSubaddresses = false);
 
-        public List<MoneroAccountTag> GetAccountTags()
+        public virtual List<MoneroAccount> GetAccounts(string tag)
         {
-            throw new NotImplementedException();
+            return GetAccounts(false, tag);
         }
 
-        public string GetAddress(int accountIdx, int subaddressIdx)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract List<MoneroAccount> GetAccounts(bool includeSubaddresses = false, string? tag = null);
 
-        public List<MoneroAddressBookEntry> GetAddressBookEntries()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract List<MoneroAccountTag> GetAccountTags();
 
-        public List<MoneroAddressBookEntry> GetAddressBookEntries(List<uint> entryIndices)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract string GetAddress(uint accountIdx, uint subaddressIdx);
 
-        public MoneroSubaddress GetAddressIndex(string address)
+        public virtual List<MoneroAddressBookEntry> GetAddressBookEntries()
         {
-            throw new NotImplementedException();
+            return GetAddressBookEntries(null);
         }
 
-        public string GetAttribute(string key)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract List<MoneroAddressBookEntry> GetAddressBookEntries(List<uint>? entryIndices);
 
-        public ulong GetBalance()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract MoneroSubaddress GetAddressIndex(string address);
 
-        public ulong GetBalance(uint accountIdx)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract string? GetAttribute(string key);
 
-        public ulong GetBalance(uint accountIdx, uint subaddressIdx)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract ulong GetBalance(uint? accountIdx = null, uint? subaddressIdx = null);
 
-        public MoneroConnectionManager GetConnectionManager()
+        public virtual MoneroConnectionManager? GetConnectionManager()
         {
-            throw new NotImplementedException();
+            return connectionManager;
         }
 
-        public MoneroRpcConnection GetDaemonConnection()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract MoneroRpcConnection? GetDaemonConnection();
 
-        public long GetDaemonHeight()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract ulong GetDaemonHeight();
 
-        public MoneroTxPriority GetDefaultFeePriority()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract MoneroTxPriority GetDefaultFeePriority();
 
-        public long GetHeight()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract ulong GetHeight();
 
-        public long GetHeightByDate(int year, int month, int day)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract ulong GetHeightByDate(int year, int month, int day);
 
-        public List<MoneroIncomingTransfer> GetIncomingTransfers()
+        public virtual List<MoneroIncomingTransfer> GetIncomingTransfers()
         {
-            throw new NotImplementedException();
+            return GetIncomingTransfers(new MoneroTransferQuery());
         }
 
-        public List<MoneroIncomingTransfer> GetIncomingTransfers(MoneroTransferQuery query)
+        public virtual List<MoneroIncomingTransfer> GetIncomingTransfers(MoneroTransferQuery query)
         {
-            throw new NotImplementedException();
-        }
+            // copy query and set direction
+            query = NormalizeTransferQuery(query);
+            if (query.IsIncoming() == false) throw new MoneroError("Transfer query contradicts getting incoming transfers");
+            query.SetIsIncoming(true);
 
-        public MoneroIntegratedAddress GetIntegratedAddress()
-        {
-            throw new NotImplementedException();
+            // fetch and cast transfers
+            List<MoneroIncomingTransfer> inTransfers = [];
+            foreach (MoneroTransfer transfer in GetTransfers(query))
+            {
+                inTransfers.Add((MoneroIncomingTransfer)transfer);
+            }
+            return inTransfers;
         }
 
-        public MoneroIntegratedAddress GetIntegratedAddress(string standardAddress, string paymentId)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract MoneroIntegratedAddress GetIntegratedAddress(string? standardAddress = null, string? paymentId = null);
 
-        public List<MoneroWalletListener> GetListeners()
+        public virtual List<MoneroWalletListener> GetListeners()
         {
-            throw new NotImplementedException();
+            return [.. listeners];
         }
 
-        public MoneroMultisigInfo GetMultisigInfo()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract MoneroMultisigInfo GetMultisigInfo();
 
-        public List<MoneroKeyImage> GetNewKeyImagesFromLastImport()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract List<MoneroKeyImage> GetNewKeyImagesFromLastImport();
 
-        public List<MoneroOutgoingTransfer> GetOutgoingTransfers()
+        public virtual List<MoneroOutgoingTransfer> GetOutgoingTransfers()
         {
-            throw new NotImplementedException();
+            return GetOutgoingTransfers(new MoneroTransferQuery());
         }
 
-        public List<MoneroOutgoingTransfer> GetOutgoingTransfers(MoneroTransferQuery query)
+        public virtual List<MoneroOutgoingTransfer> GetOutgoingTransfers(MoneroTransferQuery query)
         {
-            throw new NotImplementedException();
-        }
+            // copy query and set direction
+            query = NormalizeTransferQuery(query);
+            if (query.IsOutgoing() == false) throw new MoneroError("Transfer query contradicts getting outgoing transfers");
+            query.SetIsOutgoing(true);
 
-        public List<MoneroOutputWallet> GetOutputs()
-        {
-            throw new NotImplementedException();
+            // fetch and cast transfers
+            List<MoneroOutgoingTransfer> outTransfers = [];
+            foreach (MoneroTransfer transfer in GetTransfers(query))
+            {
+                outTransfers.Add((MoneroOutgoingTransfer)transfer);
+            }
+            return outTransfers;
         }
 
-        public List<MoneroOutputWallet> GetOutputs(MoneroOutputQuery query)
+        public virtual List<MoneroOutputWallet> GetOutputs()
         {
-            throw new NotImplementedException();
+            return GetOutputs(new MoneroOutputQuery());
         }
 
-        public string GetPath()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract List<MoneroOutputWallet> GetOutputs(MoneroOutputQuery query);
 
-        public string GetPaymentUri(MoneroTxConfig config)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract string? GetPath();
 
-        public string GetPrimaryAddress()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract string GetPaymentUri(MoneroTxConfig config);
 
-        public string GetPrivateSpendKey()
+        public virtual string GetPrimaryAddress()
         {
-            throw new NotImplementedException();
+            return GetAddress(0, 0);
         }
 
-        public string GetPrivateViewKey()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract string GetPrivateSpendKey();
 
-        public string GetPublicSpendKey()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract string GetPrivateViewKey();
 
-        public string GetPublicViewKey()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract string GetPublicSpendKey();
 
-        public string GetReserveProofAccount(int accountIdx, ulong amount, string message)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract string GetPublicViewKey();
 
-        public string GetReserveProofWallet(string message)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract string GetReserveProofAccount(uint accountIdx, ulong amount, string message);
 
-        public string GetSeed()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract string GetReserveProofWallet(string message);
 
-        public string GetSeedLanguage()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract string GetSeed();
 
-        public string GetSpendProof(string txHash)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract string GetSeedLanguage();
 
-        public string GetSpendProof(string txHash, string message)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract string GetSpendProof(string txHash, string? message = null);
 
-        public MoneroSubaddress GetSubaddress(int accountIdx, int subaddressIdx)
+        public virtual MoneroSubaddress GetSubaddress(uint accountIdx, uint subaddressIdx)
         {
-            throw new NotImplementedException();
+            List<MoneroSubaddress> subaddresses = GetSubaddresses(accountIdx, [subaddressIdx]);
+            if (subaddresses.Count == 0) throw new MoneroError("Subaddress at index " + subaddressIdx + " is not initialized");
+            if (1 != subaddresses.Count) throw new MoneroError("Only 1 subaddress should be returned");
+            return subaddresses[0];
         }
 
-        public List<MoneroSubaddress> GetSubaddresses(int accountIdx)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract List<MoneroSubaddress> GetSubaddresses(uint accountIdx, List<uint>? subaddressIndices = null);
 
-        public List<MoneroSubaddress> GetSubaddresses(int accountIdx, List<uint> subaddressIndices)
+        public virtual List<MoneroTransfer> GetTransfers()
         {
-            throw new NotImplementedException();
+            return GetTransfers(new MoneroTransferQuery());
         }
 
-        public List<MoneroTransfer> GetTransfers()
+        public virtual List<MoneroTransfer> GetTransfers(uint accountIdx)
         {
-            throw new NotImplementedException();
+            var query = new MoneroTransferQuery();
+            query.SetAccountIndex(accountIdx);
+            return GetTransfers(query);
         }
 
-        public List<MoneroTransfer> GetTransfers(int accountIdx)
+        public virtual List<MoneroTransfer> GetTransfers(uint accountIdx, uint subaddressIdx)
         {
-            throw new NotImplementedException();
+            var query = new MoneroTransferQuery();
+            query.SetAccountIndex(accountIdx).SetSubaddressIndex(subaddressIdx);
+            return GetTransfers(query);
         }
 
-        public List<MoneroTransfer> GetTransfers(int accountIdx, int subaddressIdx)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract List<MoneroTransfer> GetTransfers(MoneroTransferQuery query);
 
-        public List<MoneroTransfer> GetTransfers(MoneroTransferQuery query)
+        public MoneroTxWallet? GetTx(string txHash)
         {
-            throw new NotImplementedException();
-        }
+            var txs = GetTxs([txHash]);
 
-        public MoneroTxWallet GetTx(string txHash)
-        {
-            throw new NotImplementedException();
-        }
+            if (txs.Count == 0) return null;
 
-        public string GetTxKey(string txHash)
-        {
-            throw new NotImplementedException();
+            return txs[0];
         }
 
-        public string GetTxNote(string txHash)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract string GetTxKey(string txHash);
 
-        public List<string> GetTxNotes(List<string> txHashes)
+        public virtual string? GetTxNote(string txHash)
         {
-            throw new NotImplementedException();
+            var notes = GetTxNotes([txHash]);
+            return notes.Count > 0 ? notes[0] : null;
         }
 
-        public string GetTxProof(string txHash, string address)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract List<string> GetTxNotes(List<string> txHashes);
 
-        public string GetTxProof(string txHash, string address, string message)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract string GetTxProof(string txHash, string address, string? message = null);
 
-        public List<MoneroTxWallet> GetTxs()
+        public virtual List<MoneroTxWallet> GetTxs()
         {
-            throw new NotImplementedException();
+            return GetTxs(new MoneroTxQuery());
         }
 
-        public List<MoneroTxWallet> GetTxs(List<string> txHashes)
+        public virtual List<MoneroTxWallet> GetTxs(List<string> txHashes)
         {
-            throw new NotImplementedException();
+            return GetTxs(new MoneroTxQuery().SetHashes(txHashes));
         }
 
-        public List<MoneroTxWallet> GetTxs(MoneroTxQuery query)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract List<MoneroTxWallet> GetTxs(MoneroTxQuery query);
 
-        public ulong GetUnlockedBalance()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract ulong GetUnlockedBalance(uint? accountIdx = null, uint? subaddressIdx = null);
 
-        public ulong GetUnlockedBalance(uint accountIdx)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract MoneroVersion GetVersion();
 
-        public ulong GetUnlockedBalance(uint accountIdx, uint subaddressIdx)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract MoneroKeyImageImportResult ImportKeyImages(List<MoneroKeyImage> keyImages);
 
-        public MoneroVersion GetVersion()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract int ImportMultisigHex(List<string> multisigHexes);
 
-        public MoneroKeyImageImportResult ImportKeyImages(List<MoneroKeyImage> keyImages)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract int ImportOutputs(string outputsHex);
 
-        public int ImportMultisigHex(List<string> multisigHexes)
+        public virtual bool IsClosed()
         {
-            throw new NotImplementedException();
+            return isClosed;
         }
 
-        public int ImportOutputs(string outputsHex)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract bool IsConnectedToDaemon();
 
-        public bool IsClosed()
+        public virtual bool IsMultisig()
         {
-            throw new NotImplementedException();
+            return GetMultisigInfo().IsMultisig() == true;
         }
 
-        public bool IsConnectedToDaemon()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract bool IsMultisigImportNeeded();
 
-        public bool IsMultisig()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract bool IsOutputFrozen(string keyImage);
 
-        public bool IsMultisigImportNeeded()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract bool IsViewOnly();
 
-        public bool IsOutputFrozen(string keyImage)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract string MakeMultisig(List<string> multisigHexes, int threshold, string password);
 
-        public bool IsViewOnly()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract MoneroTxConfig ParsePaymentUri(string uri);
 
-        public string MakeMultisig(List<string> multisigHexes, int threshold, string password)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract string PrepareMultisig();
 
-        public MoneroTxConfig ParsePaymentUri(string uri)
+        public virtual string RelayTx(string txMetadata)
         {
-            throw new NotImplementedException();
+            var hashes = RelayTxs([txMetadata]);
+            if (hashes.Count == 0) return "";
+            return hashes[0];
         }
 
-        public string PrepareMultisig()
+        public virtual string RelayTx(MoneroTxWallet tx)
         {
-            throw new NotImplementedException();
+            return RelayTx(tx.GetMetadata());
         }
 
-        public string RelayTx(string txMetadata)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract List<string> RelayTxs(List<string> txMetadatas);
 
-        public string RelayTx(MoneroTxWallet tx)
+        public virtual List<string> RelayTxs(List<MoneroTxWallet> txs)
         {
-            throw new NotImplementedException();
-        }
+            List<string> txMetadatas = [];
 
-        public List<string> RelayTxs(Collection<string> txMetadatas)
-        {
-            throw new NotImplementedException();
-        }
+            foreach (MoneroTxWallet tx in txs)
+            {
+                txMetadatas.Add(tx.GetMetadata());
+            }
 
-        public List<string> RelayTxs(List<MoneroTxWallet> txs)
-        {
-            throw new NotImplementedException();
+            return RelayTxs(txMetadatas);
         }
 
-        public void RemoveListener(MoneroWalletListener listener)
+        public virtual void RemoveListener(MoneroWalletListener listener)
         {
-            throw new NotImplementedException();
+            lock (listeners)
+            {
+                listeners.Remove(listener);
+            }
         }
 
-        public void RescanBlockchain()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void RescanBlockchain();
 
-        public void RescanSpent()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void RescanSpent();
 
-        public bool Save()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void Save();
 
-        public bool ScanTxs(Collection<string> txHashes)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void ScanTxs(List<string> txHashes);
 
-        public bool SetAccountLabel(int accountIdx, string label)
+        public virtual void SetAccountLabel(uint accountIdx, string label)
         {
-            throw new NotImplementedException();
+            SetSubaddressLabel(accountIdx, 0, label);
         }
 
-        public bool SetAccountTagLabel(string tag, string label)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void SetAccountTagLabel(string tag, string label);
 
-        public bool SetAttribute(string key, string val)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void SetAttribute(string key, string val);
 
-        public bool SetConnectionManager(MoneroConnectionManager connectionManager)
+        public virtual void SetConnectionManager(MoneroConnectionManager? connectionManager)
         {
-            throw new NotImplementedException();
-        }
+            if (this.connectionManager != null && connectionManagerListener != null) this.connectionManager.RemoveListener(connectionManagerListener);
+            this.connectionManager = connectionManager;
+            if (connectionManager == null) return;
 
-        public bool SetDaemonConnection(string uri)
-        {
-            throw new NotImplementedException();
-        }
+            if (connectionManagerListener == null)
+            {
+                connectionManagerListener = new MoneroWalletConnectionManagerListener(this);
+            }
 
-        public bool SetDaemonConnection(string uri, string username, string password)
-        {
-            throw new NotImplementedException();
+            connectionManager.AddListener(connectionManagerListener);
+            SetDaemonConnection(connectionManager.GetConnection());
         }
 
-        public bool SetDaemonConnection(MoneroRpcConnection daemonConnection)
+        public virtual void SetDaemonConnection(string? uri, string? username = null, string? password = null)
         {
-            throw new NotImplementedException();
+            if (uri == null) SetDaemonConnection((MoneroRpcConnection?)null);
+            else SetDaemonConnection(new MoneroRpcConnection(uri, username, password));
         }
 
-        public bool SetProxyUri(string uri)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void SetDaemonConnection(MoneroRpcConnection? daemonConnection);
 
-        public bool SetSubaddressLabel(int accountIdx, int subaddressIdx, string label)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void SetProxyUri(string? uri);
 
-        public bool SetTxNote(string txHash, string note)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void SetSubaddressLabel(uint accountIdx, uint subaddressIdx, string label);
 
-        public bool SetTxNotes(List<string> txHashes, List<string> notes)
+        public virtual void SetTxNote(string txHash, string note)
         {
-            throw new NotImplementedException();
+            SetTxNotes([txHash], [note]);
         }
 
-        public string SignMessage(string message)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void SetTxNotes(List<string> txHashes, List<string> notes);
 
-        public string SignMessage(string message, MoneroMessageSignatureType signatureType, int accountIdx, int subaddressIdx)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract string SignMessage(string message, MoneroMessageSignatureType signatureType = MoneroMessageSignatureType.SIGN_WITH_SPEND_KEY, uint accountIdx = 0, uint subaddressIdx = 0);
 
-        public MoneroMultisigSignResult SignMultisigTxHex(string multisigTxHex)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract MoneroMultisigSignResult SignMultisigTxHex(string multisigTxHex);
 
-        public MoneroTxSet SignTxs(string unsignedTxHex)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract MoneroTxSet SignTxs(string unsignedTxHex);
 
-        public bool StartMining(ulong numThreads, bool backgroundMining, bool ignoreBattery)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void StartMining(ulong numThreads, bool backgroundMining, bool ignoreBattery);
 
-        public bool StartSyncing()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void StartSyncing(ulong? SyncPeriodInMs = null);
 
-        public bool StartSyncing(ulong SyncPeriodInMs)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void StopMining();
 
-        public bool StopMining()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void StopSyncing();
 
-        public bool StopSyncing()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract List<string> SubmitMultisigTxHex(string signedMultisigTxHex);
 
-        public List<string> SubmitMultisigTxHex(string signedMultisigTxHex)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract List<string> SubmitTxs(string signedTxHex);
 
-        public List<string> SubmitTxs(string signedTxHex)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract List<MoneroTxWallet> SweepDust(bool relay);
 
-        public List<MoneroTxWallet> SweepDust(bool relay)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract MoneroTxWallet SweepOutput(MoneroTxConfig config);
 
-        public MoneroTxWallet SweepOutput(MoneroTxConfig config)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract List<MoneroTxWallet> SweepUnlocked(MoneroTxConfig config);
 
-        public List<MoneroTxWallet> SweepUnlocked(MoneroTxConfig config)
+        public virtual MoneroSyncResult Sync(MoneroWalletListener listener)
         {
-            throw new NotImplementedException();
+            return Sync(null, listener);
         }
 
-        public MoneroSyncResult Sync()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract MoneroSyncResult Sync(ulong? startHeight = null, MoneroWalletListener? listener = null);
 
-        public MoneroSyncResult Sync(MoneroWalletListener listener)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void TagAccounts(string tag, List<uint> accountIndices);
 
-        public MoneroSyncResult Sync(ulong startHeight)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void ThawOutput(string keyImage);
 
-        public MoneroSyncResult Sync(ulong startHeight, MoneroWalletListener listener)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void UntagAccounts(List<uint> accountIndices);
 
-        public void TagAccounts(string tag, Collection<uint> accountIndices)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract MoneroMessageSignatureResult VerifyMessage(string message, string address, string signature);
 
-        public void ThawOutput(string keyImage)
+        protected static MoneroTransferQuery NormalizeTransferQuery(MoneroTransferQuery query)
         {
-            throw new NotImplementedException();
+            if (query == null) query = new MoneroTransferQuery();
+            else
+            {
+                if (query.GetTxQuery() == null) query = query.Clone();
+                else
+                {
+                    MoneroTxQuery txQuery = query.GetTxQuery().Clone();
+                    if (query.GetTxQuery().GetTransferQuery() == query) query = txQuery.GetTransferQuery();
+                    else
+                    {
+                        if (null != query.GetTxQuery().GetTransferQuery()) throw new MoneroError("Transfer query's tx query must be circular reference or null");
+                        query = query.Clone();
+                        query.SetTxQuery(txQuery);
+                    }
+                }
+            }
+            if (query.GetTxQuery() == null) query.SetTxQuery(new MoneroTxQuery());
+            query.GetTxQuery().SetTransferQuery(query);
+            if (query.GetTxQuery().GetBlock() == null) query.GetTxQuery().SetBlock(new MoneroBlock().SetTxs(query.GetTxQuery()));
+            return query;
         }
+    }
 
-        public void UntagAccounts(Collection<uint> accountIndices)
+    internal class MoneroWalletConnectionManagerListener : MoneroConnectionManagerListener
+    {
+        private readonly MoneroWalletDefault wallet;
+        public MoneroWalletConnectionManagerListener(MoneroWalletDefault wallet)
         {
-            throw new NotImplementedException();
+            this.wallet = wallet;
         }
 
-        public MoneroMessageSignatureResult VerifyMessage(string message, string address, string signature)
+        public void OnConnectionChanged(MoneroRpcConnection? connection)
         {
-            throw new NotImplementedException();
+            wallet.SetDaemonConnection(connection);
         }
     }
 }
