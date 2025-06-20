@@ -3,10 +3,10 @@ namespace Monero.Wallet.Common
 {
     public class MoneroDestination
     {
-        private string _address;
-        private ulong _amount;
+        private string? _address;
+        private ulong? _amount;
 
-        public MoneroDestination(string address, ulong amount)
+        public MoneroDestination(string? address = null, ulong? amount = null)
         {
             _address = address;
             _amount = amount;
@@ -25,18 +25,18 @@ namespace Monero.Wallet.Common
             return _address;
         }
 
-        public MoneroDestination SetAddress(string address)
+        public MoneroDestination SetAddress(string? address)
         {
             _address = address;
             return this;
         }
 
-        public ulong GetAmount()
+        public ulong? GetAmount()
         {
             return _amount;
         }
 
-        public MoneroDestination SetAmount(ulong amount)
+        public MoneroDestination SetAmount(ulong? amount)
         {
             _amount = amount;
             return this;

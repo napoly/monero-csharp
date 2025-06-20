@@ -3,12 +3,12 @@ namespace Monero.Wallet.Common
 {
     public class MoneroAddressBookEntry
     {
-        private int index;
-        private string address;
-        private string paymentId;
-        private string description;
+        private uint? index;
+        private string? address;
+        private string? paymentId;
+        private string? description;
 
-        public MoneroAddressBookEntry(int index, string address, string description, string paymentId)
+        public MoneroAddressBookEntry(uint? index = null, string? address = null, string? description = null, string? paymentId = null)
         {
             this.index = index;
             this.address = address;
@@ -17,45 +17,45 @@ namespace Monero.Wallet.Common
         }
 
 
-        public int GetIndex()
+        public uint? GetIndex()
         {
             return index;
         }
 
-        public MoneroAddressBookEntry SetIndex(int index)
+        public MoneroAddressBookEntry SetIndex(uint? index)
         {
             this.index = index;
             return this;
         }
 
-        public string GetAddress()
+        public string? GetAddress()
         {
             return address;
         }
 
-        public MoneroAddressBookEntry SetAddress(string address)
+        public MoneroAddressBookEntry SetAddress(string? address)
         {
             this.address = address;
             return this;
         }
 
-        public string GetPaymentId()
+        public string? GetPaymentId()
         {
             return paymentId;
         }
 
-        public MoneroAddressBookEntry SetPaymentId(string paymentId)
+        public MoneroAddressBookEntry SetPaymentId(string? paymentId)
         {
             this.paymentId = paymentId;
             return this;
         }
 
-        public string GetDescription()
+        public string? GetDescription()
         {
             return description;
         }
 
-        public MoneroAddressBookEntry SetDescription(string description)
+        public MoneroAddressBookEntry SetDescription(string? description)
         {
             this.description = description;
             return this;

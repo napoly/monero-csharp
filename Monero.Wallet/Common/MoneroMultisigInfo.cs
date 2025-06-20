@@ -8,7 +8,7 @@ namespace Monero.Wallet.Common
         private int _threshold;
         private int _numParticipants;
 
-        public MoneroMultisigInfo(bool isMultisig, bool isReady, int threshold, int numParticipants)
+        public MoneroMultisigInfo(bool isMultisig = false, bool isReady = false, int threshold = 0, int numParticipants = 0)
         {
             _isMultisig = isMultisig;
             _isReady = isReady;

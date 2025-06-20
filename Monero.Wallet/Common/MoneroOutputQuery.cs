@@ -3,14 +3,12 @@ namespace Monero.Wallet.Common
 {
     public class MoneroOutputQuery : MoneroOutputWallet
     {
-        protected MoneroTxQuery txQuery;
-        private List<uint> subaddressIndices;
-        private ulong minAmount;
-        private ulong maxAmount;
+        protected MoneroTxQuery? txQuery;
+        private List<uint> subaddressIndices = [];
+        private ulong? minAmount;
+        private ulong? maxAmount;
 
-        public MoneroOutputQuery()
-        {
-        }
+        public MoneroOutputQuery() { }
 
         public MoneroOutputQuery(MoneroOutputQuery query) : base(query)
         {
@@ -25,7 +23,7 @@ namespace Monero.Wallet.Common
             return new MoneroOutputQuery(this);
         }
 
-        public ulong GetMinAmount()
+        public ulong? GetMinAmount()
         {
             return minAmount;
         }
@@ -36,7 +34,7 @@ namespace Monero.Wallet.Common
             return this;
         }
 
-        public ulong GetMaxAmount()
+        public ulong? GetMaxAmount()
         {
             return maxAmount;
         }
@@ -47,12 +45,12 @@ namespace Monero.Wallet.Common
             return this;
         }
 
-        public MoneroTxQuery GetTxQuery()
+        public MoneroTxQuery? GetTxQuery()
         {
             return txQuery;
         }
 
-        public MoneroOutputQuery SetTxQuery(MoneroTxQuery txQuery)
+        public MoneroOutputQuery SetTxQuery(MoneroTxQuery? txQuery)
         {
             this.txQuery = txQuery;
             if (txQuery != null) txQuery.SetOutputQuery(this);
@@ -64,7 +62,7 @@ namespace Monero.Wallet.Common
             return subaddressIndices;
         }
 
-        public MoneroOutputQuery SetSubaddressIndices(List<uint> subaddressIndices)
+        public MoneroOutputQuery? SetSubaddressIndices(List<uint> subaddressIndices)
         {
             this.subaddressIndices = subaddressIndices;
             return this;

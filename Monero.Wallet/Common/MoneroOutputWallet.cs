@@ -4,8 +4,8 @@ namespace Monero.Wallet.Common
 {
     public class MoneroOutputWallet : MoneroOutput
     {
-        private uint accountIndex;
-        private uint subaddressIndex;
+        private uint? accountIndex;
+        private uint? subaddressIndex;
         private bool isSpent;
         private bool isFrozen;
 
@@ -32,7 +32,7 @@ namespace Monero.Wallet.Common
         }
 
 
-        public MoneroOutputWallet SetTx(MoneroTx tx)
+        public override MoneroOutputWallet SetTx(MoneroTx tx)
         {
             //if (tx != null && !(tx instanceof MoneroTxWallet)) throw new MoneroError("Wallet output's transaction must be of type MoneroTxWallet");
             base.SetTx(tx);
@@ -45,25 +45,31 @@ namespace Monero.Wallet.Common
             return this;
         }
 
-        public uint GetAccountIndex()
+        public uint? GetAccountIndex()
         {
             return accountIndex;
         }
 
-        public MoneroOutputWallet SetAccountIndex(uint accountIndex)
+        public MoneroOutputWallet SetAccountIndex(uint? accountIndex)
         {
             this.accountIndex = accountIndex;
             return this;
         }
 
-        public uint GetSubaddressIndex()
+        public uint? GetSubaddressIndex()
         {
             return subaddressIndex;
         }
 
-        public MoneroOutputWallet SetSubaddressIndex(uint subaddressIndex)
+        public MoneroOutputWallet SetSubaddressIndex(uint? subaddressIndex)
         {
             this.subaddressIndex = subaddressIndex;
+            return this;
+        }
+
+        public override MoneroOutputWallet SetAmount(ulong? amount)
+        {
+            base.SetAmount(amount);
             return this;
         }
 

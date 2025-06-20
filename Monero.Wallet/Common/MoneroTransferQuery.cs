@@ -4,14 +4,14 @@ namespace Monero.Wallet.Common
 {
     public class MoneroTransferQuery : MoneroTransfer
     {
-        protected MoneroTxQuery txQuery;
+        protected MoneroTxQuery? txQuery;
         private bool? isIncoming;
-        private string address;
-        private List<string> addresses;
-        private uint subaddressIndex;
-        private List<uint> subaddressIndices;
-        private List<MoneroDestination> destinations;
-        private bool hasDestinations;
+        private string? address;
+        private List<string> addresses = [];
+        private uint? subaddressIndex;
+        private List<uint> subaddressIndices = [];
+        private List<MoneroDestination> destinations = [];
+        private bool? hasDestinations;
 
         public MoneroTransferQuery()
         {
@@ -45,7 +45,7 @@ namespace Monero.Wallet.Common
             return new MoneroTransferQuery(this);
         }
 
-        public MoneroTxQuery GetTxQuery()
+        public MoneroTxQuery? GetTxQuery()
         {
             return txQuery;
         }
@@ -79,7 +79,7 @@ namespace Monero.Wallet.Common
             return this;
         }
 
-        public string GetAddress()
+        public string? GetAddress()
         {
             return address;
         }
@@ -101,7 +101,13 @@ namespace Monero.Wallet.Common
             return this;
         }
 
-        public uint GetSubaddressIndex()
+        public override MoneroTransferQuery SetAccountIndex(uint subaddressIdx)
+        {
+            base.SetAccountIndex(subaddressIdx);
+            return this;
+        }
+
+        public uint? GetSubaddressIndex()
         {
             return subaddressIndex;
         }
@@ -136,7 +142,7 @@ namespace Monero.Wallet.Common
             return this;
         }
 
-        public bool HasDestinations()
+        public bool? HasDestinations()
         {
             return hasDestinations;
         }

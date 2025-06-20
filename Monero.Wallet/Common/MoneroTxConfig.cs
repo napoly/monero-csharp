@@ -211,6 +211,12 @@ namespace Monero.Wallet.Common
             return this;
         }
 
+        public MoneroTxConfig SetSubaddressIndices(uint subaddressIndex)
+        {
+            this.subaddressIndices = [subaddressIndex];
+            return this;
+        }
+
         public bool GetCanSplit()
         {
             return canSplit;

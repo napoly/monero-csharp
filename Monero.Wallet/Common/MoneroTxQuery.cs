@@ -1,20 +1,22 @@
 ﻿
+using Monero.Common;
+
 namespace Monero.Wallet.Common
 {
     public class MoneroTxQuery : MoneroTxWallet
     {
-        private bool isOutgoing;
-        private bool isIncoming;
-        private List<string> hashes;
-        private bool hasPaymentId;
-        private List<string> paymentIds;
-        private ulong height;
-        private ulong minHeight;
-        private ulong maxHeight;
-        private bool includeOutputs;
-        protected MoneroTransferQuery transferQuery;
-        protected MoneroOutputQuery inputQuery;
-        protected MoneroOutputQuery outputQuery;
+        private bool? isOutgoing;
+        private bool? isIncoming;
+        private List<string> hashes = [];
+        private bool? hasPaymentId;
+        private List<string> paymentIds = [];
+        private ulong? height;
+        private ulong? minHeight;
+        private ulong? maxHeight;
+        private bool? includeOutputs;
+        protected MoneroTransferQuery? transferQuery;
+        protected MoneroOutputQuery? inputQuery;
+        protected MoneroOutputQuery? outputQuery;
 
         public MoneroTxQuery()
         {
@@ -37,28 +39,34 @@ namespace Monero.Wallet.Common
             if (query.outputQuery != null) this.SetOutputQuery(new MoneroOutputQuery(query.outputQuery));
         }
 
-        public MoneroTxQuery copy()
+        public override MoneroTxQuery Clone()
         {
             return new MoneroTxQuery(this);
         }
 
-        public override bool IsOutgoing()
+        public override MoneroTxQuery SetIsLocked(bool? isLocked)
+        {
+            base.SetIsLocked(isLocked);
+            return this;
+        }
+
+        public override bool? IsOutgoing()
         {
             return isOutgoing;
         }
 
-        public MoneroTxQuery SetIsOutgoing(bool isOutgoing)
+        public override MoneroTxQuery SetIsOutgoing(bool? isOutgoing)
         {
             this.isOutgoing = isOutgoing;
             return this;
         }
 
-        public bool IsIncoming()
+        public override bool? IsIncoming()
         {
             return isIncoming;
         }
 
-        public MoneroTxQuery SetIsIncoming(bool isIncoming)
+        public override MoneroTxQuery SetIsIncoming(bool? isIncoming)
         {
             this.isIncoming = isIncoming;
             return this;
@@ -81,7 +89,7 @@ namespace Monero.Wallet.Common
             return this;
         }
 
-        public bool HasPaymentId()
+        public bool? HasPaymentId()
         {
             return hasPaymentId;
         }
@@ -108,7 +116,7 @@ namespace Monero.Wallet.Common
             return SetPaymentIds([paymentId]);
         }
 
-        public ulong GetHeight()
+        public ulong? GetHeight()
         {
             return height;
         }
@@ -119,7 +127,7 @@ namespace Monero.Wallet.Common
             return this;
         }
 
-        public ulong GetMinHeight()
+        public ulong? GetMinHeight()
         {
             return minHeight;
         }
@@ -130,7 +138,7 @@ namespace Monero.Wallet.Common
             return this;
         }
 
-        public ulong GetMaxHeight()
+        public ulong? GetMaxHeight()
         {
             return maxHeight;
         }
@@ -147,7 +155,7 @@ namespace Monero.Wallet.Common
             return this;
         }
 
-        public bool GetIncludeOutputs()
+        public bool? GetIncludeOutputs()
         {
             return includeOutputs;
         }
@@ -158,7 +166,7 @@ namespace Monero.Wallet.Common
             return this;
         }
 
-        public MoneroTransferQuery GetTransferQuery()
+        public MoneroTransferQuery? GetTransferQuery()
         {
             return transferQuery;
         }
@@ -170,7 +178,7 @@ namespace Monero.Wallet.Common
             return this;
         }
 
-        public MoneroOutputQuery GetInputQuery()
+        public MoneroOutputQuery? GetInputQuery()
         {
             return inputQuery;
         }
@@ -182,7 +190,7 @@ namespace Monero.Wallet.Common
             return this;
         }
 
-        public MoneroOutputQuery GetOutputQuery()
+        public MoneroOutputQuery? GetOutputQuery()
         {
             return outputQuery;
         }
@@ -192,6 +200,16 @@ namespace Monero.Wallet.Common
             this.outputQuery = outputQuery;
             if (outputQuery != null) outputQuery.SetTxQuery(this);
             return this;
+        }
+
+        public bool MeetsCriteria(MoneroTx tx)
+        {
+            throw new NotImplementedException("MoneroTxQuery.MeetsCriteria(MoneroTx tx) is not implemented yet. Please implement this method to filter transactions based on the query criteria.");
+        }
+
+        public bool MeetsCriteria(MoneroTxWallet tx)
+        {
+            throw new NotImplementedException("MoneroTxQuery.MeetsCriteria(MoneroTxWallet tx) is not implemented yet. Please implement this method to filter transactions based on the query criteria.");
         }
     }
 }

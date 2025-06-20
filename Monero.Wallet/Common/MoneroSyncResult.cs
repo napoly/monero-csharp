@@ -3,10 +3,10 @@ namespace Monero.Wallet.Common
 {
     public class MoneroSyncResult
     {
-        private long _numBlocksFetched;
+        private ulong _numBlocksFetched;
         private bool _receivedMoney;
 
-        public MoneroSyncResult(long numBlocksFetched, bool receivedMoney)
+        public MoneroSyncResult(ulong numBlocksFetched, bool receivedMoney)
         {
             _numBlocksFetched = numBlocksFetched;
             _receivedMoney = receivedMoney;
@@ -18,12 +18,12 @@ namespace Monero.Wallet.Common
             _receivedMoney = syncResult._receivedMoney;
         }
 
-        public long GetNumBlocksFetched()
+        public ulong GetNumBlocksFetched()
         {
             return _numBlocksFetched;
         }
 
-        public MoneroSyncResult SetNumBlocksFetched(long numBlocksFetched)
+        public MoneroSyncResult SetNumBlocksFetched(ulong numBlocksFetched)
         {
             _numBlocksFetched = numBlocksFetched;
             return this;

@@ -17,7 +17,7 @@ namespace Monero.Wallet.Common
         private string primaryAddress;
         private string privateViewKey;
         private string privateSpendKey;
-        private long restoreHeight;
+        private ulong restoreHeight;
         private string language;
         private bool saveCurrent;
         private int accountLookahead;     // number of accounts to scan
@@ -25,6 +25,8 @@ namespace Monero.Wallet.Common
         private byte[] keysData;
         private byte[] cacheData;
         private bool _isMultisig;
+
+        public MoneroWalletConfig() { }
 
         public MoneroWalletConfig(MoneroWalletConfig config)
         {
@@ -212,12 +214,12 @@ namespace Monero.Wallet.Common
             return this;
         }
 
-        public long GetRestoreHeight()
+        public ulong GetRestoreHeight()
         {
             return restoreHeight;
         }
 
-        public MoneroWalletConfig SetRestoreHeight(long restoreHeight)
+        public MoneroWalletConfig SetRestoreHeight(ulong restoreHeight)
         {
             this.restoreHeight = restoreHeight;
             return this;

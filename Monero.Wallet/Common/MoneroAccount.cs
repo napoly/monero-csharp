@@ -3,14 +3,14 @@ namespace Monero.Wallet.Common
 {
     public class MoneroAccount
     {
-        private uint index;
-        private string primaryAddress;
+        private uint? index;
+        private string? primaryAddress;
         private ulong balance;
         private ulong unlockedBalance;
         private string? tag;
         private List<MoneroSubaddress> subaddresses;
 
-        public MoneroAccount(uint index, string primaryAddress) {
+        public MoneroAccount(uint? index = null, string? primaryAddress = null) {
             this.index = index;
             this.primaryAddress = primaryAddress;
             subaddresses = [];
@@ -27,23 +27,23 @@ namespace Monero.Wallet.Common
             this.subaddresses = subaddresses;
         }
 
-        public uint GetIndex()
+        public uint? GetIndex()
         {
             return index;
         }
 
-        public MoneroAccount SetIndex(uint index)
+        public MoneroAccount SetIndex(uint? index)
         {
             this.index = index;
             return this;
         }
 
-        public string GetPrimaryAddress()
+        public string? GetPrimaryAddress()
         {
             return primaryAddress;
         }
 
-        public MoneroAccount SetPrimaryAddress(string primaryAddress)
+        public MoneroAccount SetPrimaryAddress(string? primaryAddress)
         {
             this.primaryAddress = primaryAddress;
             return this;
@@ -65,7 +65,7 @@ namespace Monero.Wallet.Common
             return unlockedBalance;
         }
 
-        public MoneroAccount SetUnlockedBalance(uint unlockedBalance)
+        public MoneroAccount SetUnlockedBalance(ulong unlockedBalance)
         {
             this.unlockedBalance = unlockedBalance;
             return this;

@@ -3,11 +3,11 @@ namespace Monero.Wallet.Common
 {
     public class MoneroKeyImageImportResult
     {
-        private long _height;
-        private long _spentAmount;
-        private long _unspentAmount;
+        private ulong? _height;
+        private ulong? _spentAmount;
+        private ulong? _unspentAmount;
 
-        public MoneroKeyImageImportResult(long height, long spentAmount, long unspentAmount)
+        public MoneroKeyImageImportResult(ulong? height = null, ulong? spentAmount = null, ulong? unspentAmount = null)
         {
             _height = height;
             _spentAmount = spentAmount;
@@ -21,34 +21,34 @@ namespace Monero.Wallet.Common
             _unspentAmount = importResult._unspentAmount;
         }
 
-        public long GetHeight()
+        public ulong? GetHeight()
         {
             return _height;
         }
 
-        public MoneroKeyImageImportResult SetHeight(long height)
+        public MoneroKeyImageImportResult SetHeight(ulong? height)
         {
             _height = height;
             return this;
         }
 
-        public long GetSpentAmount()
+        public ulong? GetSpentAmount()
         {
             return _spentAmount;
         }
 
-        public MoneroKeyImageImportResult SetSpentAmount(long spentAmount)
+        public MoneroKeyImageImportResult SetSpentAmount(ulong? spentAmount)
         {
             _spentAmount = spentAmount;
             return this;
         }
 
-        public long GetUnspentAmount()
+        public ulong? GetUnspentAmount()
         {
             return _unspentAmount;
         }
 
-        public MoneroKeyImageImportResult SetUnspentAmount(long unspentAmount)
+        public MoneroKeyImageImportResult SetUnspentAmount(ulong? unspentAmount)
         {
             _unspentAmount = unspentAmount;
             return this;
