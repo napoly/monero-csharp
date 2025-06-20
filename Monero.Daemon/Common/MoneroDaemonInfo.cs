@@ -4,367 +4,367 @@ namespace Monero.Daemon.Common
 {
     public class MoneroDaemonInfo
     {
-        private string version;
-        private ulong numAltBlocks;
-        private ulong blockSizeLimit;
-        private ulong blockSizeMedian;
-        private ulong blockWeightLimit;
-        private ulong blockWeightMedian;
-        private string bootstrapDaemonAddress;
-        private ulong difficulty;
-        private ulong cumulativeDifficulty;
-        private ulong freeSpace;
-        private uint numOfflinePeers;
-        private uint numOnlinePeers;
-        private ulong height;
-        private ulong heightWithoutBootstrap;
-        private MoneroNetworkType networkType;
-        private bool isOffline;
-        private uint numIncomingConnections;
-        private uint numOutgoingConnections;
-        private uint numRpcConnections;
-        private ulong startTimestamp;
-        private ulong adjustedTimestamp;
-        private ulong target;
-        private ulong targetHeight;
-        private string topBlockHash;
-        private uint numTxs;
-        private uint numTxsPool;
-        private bool wasBootstrapEverUsed;
-        private ulong databaseSize;
-        private bool updateAvailable;
-        private ulong credits;
-        private bool isBusySyncing;
-        private bool isSynchronized;
-        private bool isRestricted;
+        private string? version;
+        private ulong? numAltBlocks;
+        private ulong? blockSizeLimit;
+        private ulong? blockSizeMedian;
+        private ulong? blockWeightLimit;
+        private ulong? blockWeightMedian;
+        private string? bootstrapDaemonAddress;
+        private ulong? difficulty;
+        private ulong? cumulativeDifficulty;
+        private ulong? freeSpace;
+        private uint? numOfflinePeers;
+        private uint? numOnlinePeers;
+        private ulong? height;
+        private ulong? heightWithoutBootstrap;
+        private MoneroNetworkType? networkType;
+        private bool? isOffline;
+        private uint? numIncomingConnections;
+        private uint? numOutgoingConnections;
+        private uint? numRpcConnections;
+        private ulong? startTimestamp;
+        private ulong? adjustedTimestamp;
+        private ulong? target;
+        private ulong? targetHeight;
+        private string? topBlockHash;
+        private uint? numTxs;
+        private uint? numTxsPool;
+        private bool? wasBootstrapEverUsed;
+        private ulong? databaseSize;
+        private bool? updateAvailable;
+        private ulong? credits;
+        private bool? isBusySyncing;
+        private bool? isSynchronized;
+        private bool? isRestricted;
 
-        public string GetVersion()
+        public string? GetVersion()
         {
             return version;
         }
 
-        public void SetVersion(string version)
+        public void SetVersion(string? version)
         {
             this.version = version;
         }
 
-        public ulong GetNumAltBlocks()
+        public ulong? GetNumAltBlocks()
         {
             return numAltBlocks;
         }
 
-        public void SetNumAltBlocks(ulong numAltBlocks)
+        public void SetNumAltBlocks(ulong? numAltBlocks)
         {
             this.numAltBlocks = numAltBlocks;
         }
 
-        public ulong GetBlockSizeLimit()
+        public ulong? GetBlockSizeLimit()
         {
             return blockSizeLimit;
         }
 
-        public void SetBlockSizeLimit(ulong blockSizeLimit)
+        public void SetBlockSizeLimit(ulong? blockSizeLimit)
         {
             this.blockSizeLimit = blockSizeLimit;
         }
 
-        public ulong GetBlockSizeMedian()
+        public ulong? GetBlockSizeMedian()
         {
             return blockSizeMedian;
         }
 
-        public void SetBlockSizeMedian(ulong blockSizeMedian)
+        public void SetBlockSizeMedian(ulong? blockSizeMedian)
         {
             this.blockSizeMedian = blockSizeMedian;
         }
 
-        public ulong GetBlockWeightLimit()
+        public ulong? GetBlockWeightLimit()
         {
             return blockWeightLimit;
         }
 
-        public MoneroDaemonInfo SetBlockWeightLimit(ulong blockWeightLimit)
+        public MoneroDaemonInfo SetBlockWeightLimit(ulong? blockWeightLimit)
         {
             this.blockWeightLimit = blockWeightLimit;
             return this;
         }
 
-        public ulong GetBlockWeightMedian()
+        public ulong? GetBlockWeightMedian()
         {
             return blockWeightMedian;
         }
 
-        public void SetBlockWeightMedian(ulong blockWeightMedian)
+        public void SetBlockWeightMedian(ulong? blockWeightMedian)
         {
             this.blockWeightMedian = blockWeightMedian;
         }
 
-        public string GetBootstrapDaemonAddress()
+        public string? GetBootstrapDaemonAddress()
         {
             return bootstrapDaemonAddress;
         }
 
-        public void SetBootstrapDaemonAddress(string bootstrapDaemonAddress)
+        public void SetBootstrapDaemonAddress(string? bootstrapDaemonAddress)
         {
             this.bootstrapDaemonAddress = bootstrapDaemonAddress;
         }
 
-        public ulong GetDifficulty()
+        public ulong? GetDifficulty()
         {
             return difficulty;
         }
 
-        public void SetDifficulty(ulong difficulty)
+        public void SetDifficulty(ulong? difficulty)
         {
             this.difficulty = difficulty;
         }
 
-        public ulong GetCumulativeDifficulty()
+        public ulong? GetCumulativeDifficulty()
         {
             return cumulativeDifficulty;
         }
 
-        public void SetCumulativeDifficulty(ulong cumulativeDifficulty)
+        public void SetCumulativeDifficulty(ulong? cumulativeDifficulty)
         {
             this.cumulativeDifficulty = cumulativeDifficulty;
         }
 
-        public ulong GetFreeSpace()
+        public ulong? GetFreeSpace()
         {
             return freeSpace;
         }
 
-        public void SetFreeSpace(ulong freeSpace)
+        public void SetFreeSpace(ulong? freeSpace)
         {
             this.freeSpace = freeSpace;
         }
 
-        public uint GetNumOfflinePeers()
+        public uint? GetNumOfflinePeers()
         {
             return numOfflinePeers;
         }
 
-        public void SetNumOfflinePeers(uint numOfflinePeers)
+        public void SetNumOfflinePeers(uint? numOfflinePeers)
         {
             this.numOfflinePeers = numOfflinePeers;
         }
 
-        public uint GetNumOnlinePeers()
+        public uint? GetNumOnlinePeers()
         {
             return numOnlinePeers;
         }
 
-        public void SetNumOnlinePeers(uint numOnlinePeers)
+        public void SetNumOnlinePeers(uint? numOnlinePeers)
         {
             this.numOnlinePeers = numOnlinePeers;
         }
 
-        public ulong GetHeight()
+        public ulong? GetHeight()
         {
             return height;
         }
 
-        public void SetHeight(ulong height)
+        public void SetHeight(ulong? height)
         {
             this.height = height;
         }
 
-        public ulong GetHeightWithoutBootstrap()
+        public ulong? GetHeightWithoutBootstrap()
         {
             return heightWithoutBootstrap;
         }
 
-        public void SetHeightWithoutBootstrap(ulong heightWithoutBootstrap)
+        public void SetHeightWithoutBootstrap(ulong? heightWithoutBootstrap)
         {
             this.heightWithoutBootstrap = heightWithoutBootstrap;
         }
 
-        public MoneroNetworkType GetNetworkType()
+        public MoneroNetworkType? GetNetworkType()
         {
             return networkType;
         }
 
-        public void SetNetworkType(MoneroNetworkType networkType)
+        public void SetNetworkType(MoneroNetworkType? networkType)
         {
             this.networkType = networkType;
         }
 
-        public bool IsOffline()
+        public bool? IsOffline()
         {
             return isOffline;
         }
 
-        public void SetIsOffline(bool isOffline)
+        public void SetIsOffline(bool? isOffline)
         {
             this.isOffline = isOffline;
         }
 
-        public uint GetNumIncomingConnections()
+        public uint? GetNumIncomingConnections()
         {
             return numIncomingConnections;
         }
 
-        public void SetNumIncomingConnections(uint numIncomingConnections)
+        public void SetNumIncomingConnections(uint? numIncomingConnections)
         {
             this.numIncomingConnections = numIncomingConnections;
         }
 
-        public uint GetNumOutgoingConnections()
+        public uint? GetNumOutgoingConnections()
         {
             return numOutgoingConnections;
         }
 
-        public void SetNumOutgoingConnections(uint numOutgoingConnections)
+        public void SetNumOutgoingConnections(uint? numOutgoingConnections)
         {
             this.numOutgoingConnections = numOutgoingConnections;
         }
 
-        public uint GetNumRpcConnections()
+        public uint? GetNumRpcConnections()
         {
             return numRpcConnections;
         }
 
-        public void SetNumRpcConnections(uint numRpcConnections)
+        public void SetNumRpcConnections(uint? numRpcConnections)
         {
             this.numRpcConnections = numRpcConnections;
         }
 
-        public ulong GetStartTimestamp()
+        public ulong? GetStartTimestamp()
         {
             return startTimestamp;
         }
 
-        public void SetStartTimestamp(ulong startTimestamp)
+        public void SetStartTimestamp(ulong? startTimestamp)
         {
             this.startTimestamp = startTimestamp;
         }
 
-        public ulong GetAdjustedTimestamp()
+        public ulong? GetAdjustedTimestamp()
         {
             return adjustedTimestamp;
         }
 
-        public void SetAdjustedTimestamp(ulong adjustedTimestamp)
+        public void SetAdjustedTimestamp(ulong? adjustedTimestamp)
         {
             this.adjustedTimestamp = adjustedTimestamp;
         }
 
-        public ulong GetTarget()
+        public ulong? GetTarget()
         {
             return target;
         }
 
-        public void SetTarget(ulong target)
+        public void SetTarget(ulong? target)
         {
             this.target = target;
         }
 
-        public ulong GetTargetHeight()
+        public ulong? GetTargetHeight()
         {
             return targetHeight;
         }
 
-        public void SetTargetHeight(ulong targetHeight)
+        public void SetTargetHeight(ulong? targetHeight)
         {
             this.targetHeight = targetHeight;
         }
 
-        public string GetTopBlockHash()
+        public string? GetTopBlockHash()
         {
             return topBlockHash;
         }
 
-        public void SetTopBlockHash(string topBlockHash)
+        public void SetTopBlockHash(string? topBlockHash)
         {
             this.topBlockHash = topBlockHash;
         }
 
-        public uint GetNumTxs()
+        public uint? GetNumTxs()
         {
             return numTxs;
         }
 
-        public void SetNumTxs(uint numTxs)
+        public void SetNumTxs(uint? numTxs)
         {
             this.numTxs = numTxs;
         }
 
-        public uint GetNumTxsPool()
+        public uint? GetNumTxsPool()
         {
             return numTxsPool;
         }
 
-        public void SetNumTxsPool(uint numTxsPool)
+        public void SetNumTxsPool(uint? numTxsPool)
         {
             this.numTxsPool = numTxsPool;
         }
 
-        public bool GetWasBootstrapEverUsed()
+        public bool? GetWasBootstrapEverUsed()
         {
             return wasBootstrapEverUsed;
         }
 
-        public void SetWasBootstrapEverUsed(bool wasBootstrapEverUsed)
+        public void SetWasBootstrapEverUsed(bool? wasBootstrapEverUsed)
         {
             this.wasBootstrapEverUsed = wasBootstrapEverUsed;
         }
 
-        public ulong GetDatabaseSize()
+        public ulong? GetDatabaseSize()
         {
             return databaseSize;
         }
 
-        public void SetDatabaseSize(ulong databaseSize)
+        public void SetDatabaseSize(ulong? databaseSize)
         {
             this.databaseSize = databaseSize;
         }
 
-        public bool GetUpdateAvailable()
+        public bool? GetUpdateAvailable()
         {
             return updateAvailable;
         }
 
-        public void SetUpdateAvailable(bool updateAvailable)
+        public void SetUpdateAvailable(bool? updateAvailable)
         {
             this.updateAvailable = updateAvailable;
         }
 
-        public ulong GetCredits()
+        public ulong? GetCredits()
         {
             return credits;
         }
 
-        public void SetCredits(ulong credits)
+        public void SetCredits(ulong? credits)
         {
             this.credits = credits;
         }
 
-        public bool IsBusySyncing()
+        public bool? IsBusySyncing()
         {
             return isBusySyncing;
         }
 
-        public void SetIsBusySyncing(bool isBusySyncing)
+        public void SetIsBusySyncing(bool? isBusySyncing)
         {
             this.isBusySyncing = isBusySyncing;
         }
 
-        public bool IsSynchronized()
+        public bool? IsSynchronized()
         {
             return isSynchronized;
         }
 
-        public void SetIsSynchronized(bool isSynchronized)
+        public void SetIsSynchronized(bool? isSynchronized)
         {
             this.isSynchronized = isSynchronized;
         }
 
-        public bool IsRestricted()
+        public bool? IsRestricted()
         {
             return isRestricted;
         }
 
-        public void SetIsRestricted(bool isRestricted)
+        public void SetIsRestricted(bool? isRestricted)
         {
             this.isRestricted = isRestricted;
         }

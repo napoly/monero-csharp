@@ -3,47 +3,47 @@ namespace Monero.Daemon.Common
 {
     public class MoneroOutputHistogramEntry
     {
-        private ulong amount;
-        private ulong numInstances;
-        private ulong numUnlockedInstances;
-        private ulong numRecentInstances;
+        private ulong? amount;
+        private ulong? numInstances;
+        private ulong? numUnlockedInstances;
+        private ulong? numRecentInstances;
 
-        public ulong GetAmount()
+        public ulong? GetAmount()
         {
             return amount;
         }
 
-        public void SetAmount(ulong amount)
+        public void SetAmount(ulong? amount)
         {
             this.amount = amount;
         }
 
-        public ulong GetNumInstances()
+        public ulong? GetNumInstances()
         {
             return numInstances;
         }
 
-        public void SetNumInstances(ulong numInstances)
+        public void SetNumInstances(ulong? numInstances)
         {
             this.numInstances = numInstances;
         }
 
-        public ulong GetNumUnlockedInstances()
+        public ulong? GetNumUnlockedInstances()
         {
             return numUnlockedInstances;
         }
 
-        public void SetNumUnlockedInstances(ulong numUnlockedInstances)
+        public void SetNumUnlockedInstances(ulong? numUnlockedInstances)
         {
             this.numUnlockedInstances = numUnlockedInstances;
         }
 
-        public ulong GetNumRecentInstances()
+        public ulong? GetNumRecentInstances()
         {
             return numRecentInstances;
         }
 
-        public void SetNumRecentInstances(ulong numRecentInstances)
+        public void SetNumRecentInstances(ulong? numRecentInstances)
         {
             this.numRecentInstances = numRecentInstances;
         }

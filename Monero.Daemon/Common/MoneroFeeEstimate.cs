@@ -3,16 +3,16 @@ namespace Monero.Daemon.Common
 {
     public class MoneroFeeEstimate
     {
-        private ulong fee;
+        private ulong? fee;
         private List<ulong> fees;
-        private ulong quantizationMask;
+        private ulong? quantizationMask;
 
         public MoneroFeeEstimate()
         {
             // nothing to construct
         }
 
-        public MoneroFeeEstimate(ulong fee, List<ulong> fees, ulong quantizationMask)
+        public MoneroFeeEstimate(ulong? fee, List<ulong> fees, ulong? quantizationMask)
         {
             this.fee = fee;
             this.fees = fees;
@@ -26,12 +26,12 @@ namespace Monero.Daemon.Common
             quantizationMask = feeEstimate.quantizationMask;
         }
 
-        public ulong GetFee()
+        public ulong? GetFee()
         {
             return fee;
         }
 
-        public MoneroFeeEstimate SetFee(ulong fee)
+        public MoneroFeeEstimate SetFee(ulong? fee)
         {
             this.fee = fee;
             return this;
@@ -48,12 +48,12 @@ namespace Monero.Daemon.Common
             return this;
         }
 
-        public ulong GetQuantizationMask()
+        public ulong? GetQuantizationMask()
         {
             return quantizationMask;
         }
 
-        public MoneroFeeEstimate SetQuantizationMask(ulong quantizationMask)
+        public MoneroFeeEstimate SetQuantizationMask(ulong? quantizationMask)
         {
             this.quantizationMask = quantizationMask;
             return this;
