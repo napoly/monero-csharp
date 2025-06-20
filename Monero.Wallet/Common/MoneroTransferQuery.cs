@@ -101,7 +101,7 @@ namespace Monero.Wallet.Common
             return this;
         }
 
-        public override MoneroTransferQuery SetAccountIndex(uint subaddressIdx)
+        public override MoneroTransferQuery SetAccountIndex(uint? subaddressIdx)
         {
             base.SetAccountIndex(subaddressIdx);
             return this;
@@ -112,7 +112,7 @@ namespace Monero.Wallet.Common
             return subaddressIndex;
         }
 
-        public MoneroTransferQuery SetSubaddressIndex(uint subaddressIndex)
+        public MoneroTransferQuery SetSubaddressIndex(uint? subaddressIndex)
         {
             this.subaddressIndex = subaddressIndex;
             Validate();

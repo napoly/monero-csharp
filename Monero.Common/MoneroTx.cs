@@ -523,7 +523,7 @@ namespace Monero.Common
                 if (this.GetBlock() == null)
                 {
                     this.SetBlock(tx.GetBlock());
-                    this.GetBlock().GetTxs().Set(this.GetBlock().GetTxs().IndexOf(tx), this); // update block to point to this tx
+                    //this.GetBlock().GetTxs().Set(this.GetBlock().GetTxs().IndexOf(tx), this); // update block to point to this tx
                 }
                 else if (tx.GetBlock() != null)
                 {

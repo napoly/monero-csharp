@@ -442,7 +442,7 @@ namespace Monero.Test
             Assert.That(false == wallet.IsConnectedToDaemon());
 
             // start polling connections
-            connectionManager.StartPolling(TestUtils.SYNC_PERIOD_IN_MS);
+            connectionManager.StartPolling((ulong)TestUtils.SYNC_PERIOD_IN_MS);
 
             // test that wallet auto connects
             Thread.Sleep(TestUtils.AUTO_CONNECT_TIMEOUT_MS);

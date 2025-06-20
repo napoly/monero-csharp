@@ -68,7 +68,7 @@ namespace Monero.Test.Utils
                     isFirst = false;
                     MoneroUtils.Log(0, "Waiting for wallet txs to clear from the pool in order to fully sync and avoid double spend attempts (known issue)");
                     MoneroMiningStatus miningStatus = daemon.GetMiningStatus();
-                    if (!miningStatus.IsActive())
+                    if (!miningStatus.IsActive() == true)
                     {
                         try
                         {

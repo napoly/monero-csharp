@@ -3,16 +3,16 @@ namespace Monero.Common
 {
     public abstract class MoneroConnection
     {
-        public static readonly long DEFAULT_TIMEOUT = 2000;
+        public static readonly ulong DEFAULT_TIMEOUT = 2000;
         protected string? _uri;
         protected string? _proxyUri;
         protected int _priority;
-        protected long _timeoutMs;
-        protected long? _responseTime;
+        protected ulong _timeoutMs;
+        protected ulong? _responseTime;
         protected Dictionary<string, string?> _attributes = [];
         protected bool? _isOnline;
 
-        public MoneroConnection(string? uri = null, string? proxyUri = null, int priority = 0, long timeoutMs = 2000)
+        public MoneroConnection(string? uri = null, string? proxyUri = null, int priority = 0, ulong timeoutMs = 2000)
         {
             _uri = uri;
             _proxyUri = proxyUri;
@@ -81,22 +81,22 @@ namespace Monero.Common
             return this;
         }
 
-        public long GetTimeout() { return _timeoutMs; }
+        public ulong GetTimeout() { return _timeoutMs; }
 
-        public MoneroConnection SetTimeout(long timeoutMs)
+        public MoneroConnection SetTimeout(ulong timeoutMs)
         {
             _timeoutMs = timeoutMs;
             return this;
         }
 
-        public long? GetResponseTime()
+        public ulong? GetResponseTime()
         {
             return _responseTime;
         }
 
         public abstract bool? IsConnected();
 
-        public abstract bool CheckConnection(long timeoutMs);
+        public abstract bool CheckConnection(ulong timeoutMs);
 
         public abstract MoneroConnection Clone();
 

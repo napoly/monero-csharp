@@ -5,6 +5,10 @@ namespace Monero.Daemon.Common
     {
         private string? downloadPath;
 
+        public MoneroDaemonUpdateDownloadResult(MoneroDaemonUpdateCheckResult checkResult) : base(checkResult)
+        {
+        }
+
         public MoneroDaemonUpdateDownloadResult(MoneroDaemonUpdateDownloadResult checkResult): base(checkResult)
         {
             downloadPath = checkResult.downloadPath;

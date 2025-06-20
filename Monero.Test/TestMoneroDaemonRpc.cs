@@ -1145,7 +1145,7 @@ public class TestMoneroDaemonRpc
     {
         Assert.That(TEST_NON_RELAYS);
         MoneroPruneResult result = daemon.PruneBlockchain(true);
-        if (result.IsPruned())
+        if (result.IsPruned() == true)
         {
             Assert.That(result.GetPruningSeed() > 0);
         }
@@ -1181,7 +1181,7 @@ public class TestMoneroDaemonRpc
         TestUpdateDownloadResult(result, path);
 
         // test invalid path
-        if (result.IsUpdateAvailable())
+        if (result.IsUpdateAvailable() == true)
         {
             try
             {

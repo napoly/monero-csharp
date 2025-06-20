@@ -246,7 +246,7 @@ namespace Monero.Common
             return ((ulong)new BigInteger(precise));
         }
 
-        public static double AtomicUnitsToXmr(BigInteger amountAtomicUnits)
+        public static double AtomicUnitsToXmr(ulong amountAtomicUnits)
         {
             // Converti BigInteger in decimal per la divisione
             decimal atomicDecimal = (decimal)amountAtomicUnits;
@@ -281,7 +281,7 @@ namespace Monero.Common
             if (!IsValidAddressHash(addressHex)) throw new MoneroError("Address has invalid hash");
 
             // get address code
-            int addressCode = int.Parse(addressHex.Substring(0, 2), 16);
+            int addressCode = Convert.ToByte(addressHex.Substring(0, 2), 16);
 
             // determine network and address types
             MoneroAddressType? addressType = null;
@@ -372,11 +372,11 @@ namespace Monero.Common
             int[] data = new int[dataSize];
             for (int i = 0; i < fullBlockCount; i++)
             {
-                data = DecodeBlock(GenUtils.subarray(bin, i * FULL_ENCODED_BLOCK_SIZE, i * FULL_ENCODED_BLOCK_SIZE + FULL_ENCODED_BLOCK_SIZE), data, i * FULL_BLOCK_SIZE);
+                data = DecodeBlock(GenUtils.Subarray(bin, i * FULL_ENCODED_BLOCK_SIZE, i * FULL_ENCODED_BLOCK_SIZE + FULL_ENCODED_BLOCK_SIZE), data, i * FULL_BLOCK_SIZE);
             }
             if (lastBlockSize > 0)
             {
-                int[] subarray = GenUtils.subarray(bin, fullBlockCount * FULL_ENCODED_BLOCK_SIZE, fullBlockCount * FULL_ENCODED_BLOCK_SIZE + FULL_BLOCK_SIZE);
+                int[] subarray = GenUtils.Subarray(bin, fullBlockCount * FULL_ENCODED_BLOCK_SIZE, fullBlockCount * FULL_ENCODED_BLOCK_SIZE + FULL_BLOCK_SIZE);
                 data = DecodeBlock(subarray, data, fullBlockCount * FULL_BLOCK_SIZE);
             }
 
@@ -400,7 +400,7 @@ namespace Monero.Common
             int order = 1;
             for (int i = data.Length - 1; i >= 0; i--)
             {
-                int digit = ALPHABET.IndexOf(data[i]);
+                int digit = ALPHABET.IndexOf((char)data[i]);
                 if (digit < 0)
                 {
                     throw new MoneroError("Invalid symbol");
@@ -444,20 +444,22 @@ namespace Monero.Common
             return res;
         }
 
-        private static byte[]? HexToBin(string hexStr)
+        private static byte[]? HexToBin(string? hexStr)
         {
-            if (hexStr == null || hexStr.Length % 2 != 0)
+            if (string.IsNullOrEmpty(hexStr) || hexStr.Length % 2 != 0)
             {
                 return null;
             }
+
             byte[] res = new byte[hexStr.Length / 2];
-            for (int i = 0; i < hexStr.Length / 2; ++i)
+            for (int i = 0; i < res.Length; ++i)
             {
-                var substr = hexStr.Substring(i * 2, i * 2 + 2);
-                res[i] = (byte)int.Parse(substr, 16);
+                res[i] = Convert.ToByte(hexStr.Substring(i * 2, 2), 16);
             }
+
             return res;
         }
+
 
         private static string BinToHex(int[] data)
         {

@@ -53,13 +53,13 @@ namespace Monero.Common
             return _isAuthenticated;
         }
 
-        public override bool CheckConnection(long timeoutMs)
+        public override bool CheckConnection(ulong timeoutMs)
         {
             lock (this)
             {
                 bool? isOnlineBefore = _isOnline;
                 bool? isAuthenticatedBefore = _isAuthenticated;
-                long startTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                ulong startTime = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                 try
                 {
                     var request = new MoneroJsonRpcRequest("get_version");
@@ -88,7 +88,8 @@ namespace Monero.Common
                         }
                     }
                 }
-                if (_isOnline == true) _responseTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - startTime;
+                var now = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                if (_isOnline == true) _responseTime = now - (ulong)startTime;
                 return isOnlineBefore != _isOnline || isAuthenticatedBefore != _isAuthenticated;
             }
         }
@@ -145,27 +146,27 @@ namespace Monero.Common
             return this;
         }
 
-        public object SendJsonRequest(MoneroJsonRpcRequest request, long timeoutMs = 2000)
+        public object SendJsonRequest(MoneroJsonRpcRequest request, ulong timeoutMs = 2000)
         {
             throw new NotImplementedException("SendJsonRequest(): not implemented");
         }
 
-        public MoneroJsonRpcResponse SendJsonRequest(string method, List<string> parameters, long timeoutMs = 2000)
+        public MoneroJsonRpcResponse SendJsonRequest(string method, List<string> parameters, ulong timeoutMs = 2000)
         {
             throw new NotImplementedException("SendJsonRequest(): not implemented");
         }
 
-        public MoneroJsonRpcResponse SendJsonRequest(string method, Dictionary<string, object>? parameters = null, long timeoutMs = 2000)
+        public MoneroJsonRpcResponse SendJsonRequest(string method, Dictionary<string, object>? parameters = null, ulong timeoutMs = 2000)
         {
             throw new NotImplementedException();
         }
 
-        public Dictionary<string, object> SendPathRequest(string method, Dictionary<string, object>? parameters = null, long timeoutMs = 2000)
+        public Dictionary<string, object> SendPathRequest(string method, Dictionary<string, object>? parameters = null, ulong timeoutMs = 2000)
         {
             throw new NotImplementedException("SendPathRequest(): not implemented");
         }
 
-        public byte[] SendBinaryRequest(string method, Dictionary<string, object>? parameters = null, long timeoutMs = 2000)
+        public byte[] SendBinaryRequest(string method, Dictionary<string, object>? parameters = null, ulong timeoutMs = 2000)
         {
             throw new NotImplementedException("SendBinaryRequest(): not implemented");
         }

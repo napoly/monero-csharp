@@ -58,7 +58,7 @@ namespace Monero.Wallet.Common
             var paramSb = new StringBuilder();
 
             if (config.GetAmount() != null)
-                paramSb.Append("&tx_amount=").Append(MoneroUtils.AtomicUnitsToXmr(config.GetAmount()));
+                paramSb.Append("&tx_amount=").Append(MoneroUtils.AtomicUnitsToXmr((ulong)config.GetAmount()));
 
             if (!string.IsNullOrEmpty(config.GetRecipientName()))
                 paramSb.Append("&recipient_name=").Append(HttpUtility.UrlEncode(config.GetRecipientName()));
@@ -110,7 +110,7 @@ namespace Monero.Wallet.Common
         }
 
 
-        public ulong GetAmount()
+        public ulong? GetAmount()
         {
             if (destinations == null || destinations.Count != 1) throw new MoneroError("Cannot Get amount because MoneroTxConfig does not have exactly one destination");
             return destinations[0].GetAmount();

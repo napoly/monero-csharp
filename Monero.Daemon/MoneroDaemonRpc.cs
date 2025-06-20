@@ -1526,7 +1526,7 @@ namespace Monero.Daemon
             status.SetIsActive((bool)rpcStatus["active"]);
             status.SetSpeed(((ulong)rpcStatus["speed"]));
             status.SetNumThreads(((uint)rpcStatus["threads_count"]));
-            if (status.IsActive())
+            if (status.IsActive() == true)
             {
                 status.SetAddress((string)rpcStatus["address"]);
                 status.SetIsBackground((bool)rpcStatus["is_background_mining_enabled"]);

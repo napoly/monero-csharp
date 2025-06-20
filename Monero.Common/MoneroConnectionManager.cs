@@ -4,8 +4,8 @@ namespace Monero.Common
 {
     public class MoneroConnectionManager
     {
-        private static readonly long DEFAULT_TIMEOUT = 5000;
-        private static readonly long DEFAULT_POLL_PERIOD = 20000;
+        private static readonly ulong DEFAULT_TIMEOUT = 5000;
+        private static readonly ulong DEFAULT_POLL_PERIOD = 20000;
         private static readonly bool DEFAULT_AUTO_SWITCH = true;
         private static readonly int MIN_BETTER_RESPONSES = 3;
 
@@ -66,9 +66,9 @@ namespace Monero.Common
         private List<MoneroConnectionManagerListener> _listeners = [];
         //private ConnectionComparator _connectionComparator = new ConnectionComparator();
         private bool _autoSwitch = DEFAULT_AUTO_SWITCH;
-        private long _timeoutMs = DEFAULT_TIMEOUT;
+        private ulong _timeoutMs = DEFAULT_TIMEOUT;
         //private TaskLooper poller;
-        private Dictionary<MoneroRpcConnection, List<long?>> _responseTimes = [];
+        private Dictionary<MoneroRpcConnection, List<ulong?>> _responseTimes = [];
 
         private void OnConnectionChanged(MoneroRpcConnection? connection)
         {
@@ -152,7 +152,7 @@ namespace Monero.Common
             }
             
             // insert response times or null
-            foreach (KeyValuePair<MoneroRpcConnection, List<long?>> responseTime in _responseTimes.ToList())
+            foreach (KeyValuePair<MoneroRpcConnection, List<ulong?>> responseTime in _responseTimes.ToList())
             {
                 responseTime.Value.Add(0);
                 responseTime.Value.Add(responses.Contains(responseTime.Key) ? responseTime.Key.GetResponseTime() : null);
@@ -201,7 +201,7 @@ namespace Monero.Common
             }
         }
 
-        private void StartPollingConnection(long periodMs)
+        private void StartPollingConnection(ulong periodMs)
         {
             poller = new TaskLooper(() => {
                 try { CheckConnection(); }
@@ -210,7 +210,7 @@ namespace Monero.Common
             poller.Start(periodMs);
         }
 
-        private void StartPollingConnections(long periodMs)
+        private void StartPollingConnections(ulong periodMs)
         {
             poller = new TaskLooper(() => {
                 try { CheckConnections(); }
@@ -219,7 +219,7 @@ namespace Monero.Common
             poller.Start(periodMs);
         }
 
-        private void StartPollingPrioritizedConnections(long periodMs, List<MoneroRpcConnection>? excludedConnections = null)
+        private void StartPollingPrioritizedConnections(ulong periodMs, List<MoneroRpcConnection>? excludedConnections = null)
         {
             poller = new TaskLooper(() => {
                 try { CheckPrioritizedConnections(excludedConnections); }
@@ -228,7 +228,7 @@ namespace Monero.Common
             poller.Start(periodMs);
         }
 
-        public MoneroConnectionManager StartPolling(long? periodMs = null, bool? autoSwitch = null, long? timeoutMs = null, PollType? pollType = null, List<MoneroRpcConnection>? excludedConnections = null)
+        public MoneroConnectionManager StartPolling(ulong? periodMs = null, bool? autoSwitch = null, ulong? timeoutMs = null, PollType? pollType = null, List<MoneroRpcConnection>? excludedConnections = null)
         {
 
             // apply defaults
@@ -244,14 +244,14 @@ namespace Monero.Common
             switch (pollType)
             {
                 case PollType.CURRENT:
-                    StartPollingConnection((long)periodMs);
+                    StartPollingConnection((ulong)periodMs);
                     break;
                 case PollType.ALL:
-                    StartPollingConnections((long)periodMs);
+                    StartPollingConnections((ulong)periodMs);
                     break;
                 case PollType.PRIORITIZED:
                 default:
-                    StartPollingPrioritizedConnections((long)periodMs, excludedConnections);
+                    StartPollingPrioritizedConnections((ulong)periodMs, excludedConnections);
                     break;
             }
             return this;
@@ -264,19 +264,19 @@ namespace Monero.Common
             return this;
         }
 
-        public long GetTimeout()
+        public ulong GetTimeout()
         {
             return _timeoutMs;
         }
 
-        public MoneroConnectionManager SetTimeout(long? timeoutMs)
+        public MoneroConnectionManager SetTimeout(ulong? timeoutMs)
         {
             if (timeoutMs == null)
             {
                 _timeoutMs = DEFAULT_TIMEOUT;
                 return this;
             }
-            _timeoutMs = (long)timeoutMs;
+            _timeoutMs = (ulong)timeoutMs;
             return this;
         }
 

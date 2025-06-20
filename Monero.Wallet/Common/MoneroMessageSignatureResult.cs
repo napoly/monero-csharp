@@ -8,7 +8,7 @@ namespace Monero.Wallet.Common
         private MoneroMessageSignatureType? _signatureType;
         private int? _version;
 
-        public MoneroMessageSignatureResult(bool isGood, bool? isOld, MoneroMessageSignatureType? signatureType, int? version)
+        public MoneroMessageSignatureResult(bool isGood = false, bool? isOld = null, MoneroMessageSignatureType? signatureType = null, int? version = null)
         {
             _isGood = isGood;
             _isOld = isOld;
@@ -35,34 +35,34 @@ namespace Monero.Wallet.Common
             return this;
         }
 
-        public bool IsOld()
+        public bool? IsOld()
         {
             return _isOld;
         }
 
-        public MoneroMessageSignatureResult SetIsOld(bool isOld)
+        public MoneroMessageSignatureResult SetIsOld(bool? isOld)
         {
             _isOld = isOld;
             return this;
         }
 
-        public MoneroMessageSignatureType GetSignatureType()
+        public MoneroMessageSignatureType? GetSignatureType()
         {
             return _signatureType;
         }
 
-        public MoneroMessageSignatureResult SetSignatureType(MoneroMessageSignatureType signatureType)
+        public MoneroMessageSignatureResult SetSignatureType(MoneroMessageSignatureType? signatureType)
         {
             _signatureType = signatureType;
             return this;
         }
 
-        public int GetVersion()
+        public int? GetVersion()
         {
             return _version;
         }
 
-        public MoneroMessageSignatureResult SetVersion(int version)
+        public MoneroMessageSignatureResult SetVersion(int? version)
         {
             _version = version;
             return this;

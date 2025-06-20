@@ -87,5 +87,19 @@ namespace Monero.Common
             for (int i = 0; i < list.Count; i++) bytes[i] = list[i];
             return bytes;
         }
+
+        public static int[] Subarray(int[] array, int startIndexInclusive, int endIndexExclusive)
+        {
+            if (array == null) return null;
+            if (startIndexInclusive < 0) startIndexInclusive = 0;
+            if (endIndexExclusive > array.Length) endIndexExclusive = array.Length;
+
+            int newSize = endIndexExclusive - startIndexInclusive;
+            if (newSize <= 0) return [];
+
+            int[] subarray = new int[newSize];
+            Array.Copy(array, startIndexInclusive, subarray, 0, newSize);
+            return subarray;
+        }
     }
 }
