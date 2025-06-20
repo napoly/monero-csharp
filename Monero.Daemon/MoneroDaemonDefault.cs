@@ -58,7 +58,7 @@ namespace Monero.Daemon
 
         public abstract List<MoneroBlock> GetBlocksByRange(ulong startHeight, ulong endHeight);
 
-        public abstract List<MoneroBlock> GetBlocksByRangeChunked(ulong startHeight, ulong endHeight);
+        public abstract List<MoneroBlock> GetBlocksByRangeChunked(ulong startHeight, ulong endHeight, ulong? maxChunkSize = null);
 
         public abstract MoneroBlockTemplate GetBlockTemplate(string walletAddress, int? reserveSize = null);
 
@@ -66,7 +66,7 @@ namespace Monero.Daemon
 
         public abstract MoneroFeeEstimate GetFeeEstimate(int? graceBlocks = null);
 
-        public abstract MoneroMinerTxSum GetMinerTxSum(ulong height, ulong numBlocks);
+        public abstract MoneroMinerTxSum GetMinerTxSum(ulong height, ulong? numBlocks = null);
 
         public abstract MoneroHardForkInfo GetHardForkInfo();
 
@@ -92,7 +92,7 @@ namespace Monero.Daemon
 
         public abstract MoneroMiningStatus GetMiningStatus();
 
-        public abstract List<MoneroOutputDistributionEntry> GetOutputDistribution(List<ulong> amounts, bool isCumulative, ulong startHeight, ulong endHeight);
+        public abstract List<MoneroOutputDistributionEntry> GetOutputDistribution(List<ulong> amounts, bool? isCumulative = null, ulong? startHeight = null, ulong? endHeight = null);
 
         public abstract List<MoneroOutputHistogramEntry> GetOutputHistogram(List<ulong>? amounts = null, int? minCount = null, int? maxCount = null, bool? isUnlocked = null, int? recentCutoff = null);
 
@@ -145,7 +145,7 @@ namespace Monero.Daemon
 
         public abstract int ResetUploadLimit();
 
-        public abstract void SetDownloadLimit(int limit);
+        public abstract int SetDownloadLimit(int limit);
 
         public abstract void SetIncomingPeerLimit(int limit);
 
@@ -158,7 +158,7 @@ namespace Monero.Daemon
 
         public abstract void SetPeerBans(List<MoneroBan> bans);
 
-        public abstract void SetUploadLimit(int limit);
+        public abstract int SetUploadLimit(int limit);
 
         public abstract void StartMining(string address, ulong numThreads, bool isBackground, bool ignoreBattery);
 

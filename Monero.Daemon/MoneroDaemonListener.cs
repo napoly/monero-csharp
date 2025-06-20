@@ -1,9 +1,4 @@
 ﻿using Monero.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Monero.Daemon
 {
@@ -11,11 +6,11 @@ namespace Monero.Daemon
     {
         private MoneroBlockHeader? _lastHeader;
 
-        public void OnBlockHeader(MoneroBlockHeader header)
+        public virtual void OnBlockHeader(MoneroBlockHeader header)
         {
             _lastHeader = header;
         }
 
-        public MoneroBlockHeader? GetLastHeader() { return _lastHeader; }
+        public MoneroBlockHeader? GetLastBlockHeader() { return _lastHeader; }
     }
 }
