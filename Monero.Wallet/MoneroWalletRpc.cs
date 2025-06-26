@@ -2697,6 +2697,11 @@ namespace Monero.Wallet
             }
         }
 
+        public override MoneroNetworkType GetNetworkType()
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }

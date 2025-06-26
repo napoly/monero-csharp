@@ -44,6 +44,14 @@ namespace Monero.Common
             };
         }
 
+        public static MoneroNetworkType Parse(int? netttype)
+        {
+            if (netttype == null) throw new MoneroError("Cannot parse null network type");
+            if (netttype == 0) return MoneroNetworkType.MAINNET;
+            else if (netttype == 1) return MoneroNetworkType.TESTNET;
+            else return MoneroNetworkType.STAGENET;
+        }
+
         public static readonly MoneroNetwork[] Types = [new MoneroNetworkMainnet(), new MoneroNetworkTestnet(), new MoneroNetworkStagenet()];
     }
 

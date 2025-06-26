@@ -14,6 +14,8 @@ namespace Monero.Wallet
 
         public abstract MoneroWalletType GetWalletType();
 
+        public abstract MoneroNetworkType GetNetworkType();
+
         public abstract int AddAddressBookEntry(string address, string description);
 
         public virtual void AddListener(MoneroWalletListener listener)
@@ -188,7 +190,7 @@ namespace Monero.Wallet
 
         public abstract List<MoneroOutputWallet> GetOutputs(MoneroOutputQuery query);
 
-        public abstract string? GetPath();
+        public abstract string GetPath();
 
         public abstract string GetPaymentUri(MoneroTxConfig config);
 

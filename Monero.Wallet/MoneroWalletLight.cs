@@ -3,7 +3,7 @@ using Monero.Wallet.Common;
 
 namespace Monero.Wallet
 {
-    public class MoneroWalletLight : MoneroWalletDefault
+    public class MoneroWalletLight : MoneroWalletKeys
     {
         #region Override Base Methods
 

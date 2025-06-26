@@ -97,12 +97,14 @@ namespace Monero.Wallet
          */
         public MoneroVersion GetVersion();
 
+        public MoneroNetworkType GetNetworkType();
+
         /**
          * Get the wallet's path.
          * 
          * @return the path the wallet can be opened with
          */
-        public string? GetPath();
+        public string GetPath();
 
         /**
          * Get the wallet's mnemonic phrase or seed.

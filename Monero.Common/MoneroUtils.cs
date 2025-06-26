@@ -68,6 +68,11 @@ namespace Monero.Common
             return str != null && str.Length == 64 && IsHex(str);
         }
 
+        public static void ValidateLanguage(string? language)
+        {
+            throw new NotImplementedException();
+        }
+
         public static void ValidateMnemonic(string? mnemonic)
         {
             if (mnemonic == null)
@@ -86,6 +91,19 @@ namespace Monero.Common
         {
             if (viewKey == null) throw new MoneroError("View key is null");
             if (viewKey.Length != VIEW_KEY_LENGTH) throw new MoneroError("View key is " + viewKey.Length + " characters but must be " + VIEW_KEY_LENGTH);
+        }
+
+        public static bool IsValidLanguage(string? language)
+        {
+            try
+            {
+                ValidateLanguage(language);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public static bool IsValidViewKey(string viewKey)
