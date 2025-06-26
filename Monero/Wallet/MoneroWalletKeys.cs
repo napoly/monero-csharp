@@ -11,7 +11,7 @@ namespace Monero.Wallet
         protected Dictionary<uint, Dictionary<uint, string?>?> addressCache = [];
         protected string seedOffset;
 
-        private MoneroWalletKeys(IntPtr walletHandle, string seedOffset = "")
+        protected MoneroWalletKeys(IntPtr walletHandle, string seedOffset = "")
         {
             this.walletHandle = walletHandle;
             this.seedOffset = seedOffset;

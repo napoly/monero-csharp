@@ -5,12 +5,6 @@ VisualStudioVersion = 17.14.36202.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monero", "Monero\Monero.csproj", "{DA177BA4-AA4F-48DB-8F0A-F15D04B84A5F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monero.Common", "Monero.Common\Monero.Common.csproj", "{1334D351-09C8-44DA-BB30-BC1874F81C77}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monero.Daemon", "Monero.Daemon\Monero.Daemon.csproj", "{75CC96D9-DE45-4DF8-8D48-D9B2B014250E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monero.Wallet", "Monero.Wallet\Monero.Wallet.csproj", "{28E917FF-785A-44D4-BF4E-A7CC19BFE6AD}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monero.Test", "Monero.Test\Monero.Test.csproj", "{52865523-9C79-4815-B9FB-82A051C576F3}"
 EndProject
 Global
@@ -23,18 +17,6 @@ Global
 		{DA177BA4-AA4F-48DB-8F0A-F15D04B84A5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA177BA4-AA4F-48DB-8F0A-F15D04B84A5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA177BA4-AA4F-48DB-8F0A-F15D04B84A5F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1334D351-09C8-44DA-BB30-BC1874F81C77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1334D351-09C8-44DA-BB30-BC1874F81C77}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1334D351-09C8-44DA-BB30-BC1874F81C77}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1334D351-09C8-44DA-BB30-BC1874F81C77}.Release|Any CPU.Build.0 = Release|Any CPU
-		{75CC96D9-DE45-4DF8-8D48-D9B2B014250E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{75CC96D9-DE45-4DF8-8D48-D9B2B014250E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{75CC96D9-DE45-4DF8-8D48-D9B2B014250E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{75CC96D9-DE45-4DF8-8D48-D9B2B014250E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{28E917FF-785A-44D4-BF4E-A7CC19BFE6AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{28E917FF-785A-44D4-BF4E-A7CC19BFE6AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{28E917FF-785A-44D4-BF4E-A7CC19BFE6AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{28E917FF-785A-44D4-BF4E-A7CC19BFE6AD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{52865523-9C79-4815-B9FB-82A051C576F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{52865523-9C79-4815-B9FB-82A051C576F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52865523-9C79-4815-B9FB-82A051C576F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
