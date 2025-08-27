@@ -24,7 +24,7 @@ namespace Monero.Daemon
 
         public virtual void FlushTxPool()
         {
-            FlushTxPool([]);
+            FlushTxPool(new List<string>());
         }
 
         public virtual void FlushTxPool(string txHash)
