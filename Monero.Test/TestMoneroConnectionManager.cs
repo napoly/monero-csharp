@@ -6,14 +6,11 @@ namespace Monero.Test;
 
 public class TestMoneroConnectionManager
 {
-    
 
-    [SetUp]
-    public void Setup()
-    {
-    }
 
-    [Test]
+    public TestMoneroConnectionManager() { }
+
+    [Fact]
     public void TestConnectionManager()
     {
         List<MoneroWalletRpc> walletRpcs = [];
@@ -40,37 +37,37 @@ public class TestMoneroConnectionManager
 
             // test connections and order
             List<MoneroRpcConnection> orderedConnections = connectionManager.GetRpcConnections();
-            Assert.That(orderedConnections[0] == walletRpcs[4].GetRpcConnection());
-            Assert.That(orderedConnections[1] == walletRpcs[2].GetRpcConnection());
-            Assert.That(orderedConnections[2] == walletRpcs[3].GetRpcConnection());
-            Assert.That(orderedConnections[3] == walletRpcs[0].GetRpcConnection());
-            Assert.That(orderedConnections[4].GetUri() == walletRpcs[1].GetRpcConnection().GetUri());
-            foreach (MoneroRpcConnection c in orderedConnections) Assert.That(c.IsOnline() != null);
+            Assert.True(orderedConnections[0] == walletRpcs[4].GetRpcConnection());
+            Assert.True(orderedConnections[1] == walletRpcs[2].GetRpcConnection());
+            Assert.True(orderedConnections[2] == walletRpcs[3].GetRpcConnection());
+            Assert.True(orderedConnections[3] == walletRpcs[0].GetRpcConnection());
+            Assert.True(orderedConnections[4].GetUri() == walletRpcs[1].GetRpcConnection().GetUri());
+            foreach (MoneroRpcConnection c in orderedConnections) Assert.NotNull(c.IsOnline());
 
             // test getting connection by uri
-            Assert.That(connectionManager.HasConnection(walletRpcs[0].GetRpcConnection().GetUri()));
-            Assert.That(connectionManager.GetConnection(walletRpcs[0].GetRpcConnection().GetUri()) == walletRpcs[0].GetRpcConnection());
+            Assert.True(connectionManager.HasConnection(walletRpcs[0].GetRpcConnection().GetUri()));
+            Assert.True(connectionManager.GetConnection(walletRpcs[0].GetRpcConnection().GetUri()) == walletRpcs[0].GetRpcConnection());
 
             // test unknown connection
             int numExpectedChanges = 0;
             connectionManager.SetConnection(orderedConnections[0]);
-            Assert.That(null == connectionManager.IsConnected());
-            Assert.That(++numExpectedChanges == listener.ChangedConnections.Count);
+            Assert.Null( connectionManager.IsConnected());
+            Assert.True(++numExpectedChanges == listener.ChangedConnections.Count);
 
             // auto connect to best available connection
             connectionManager.StartPolling((ulong)TestUtils.SYNC_PERIOD_IN_MS);
             Thread.Sleep(TestUtils.AUTO_CONNECT_TIMEOUT_MS);
-            Assert.That(connectionManager.IsConnected() == true);
+            Assert.True(connectionManager.IsConnected());
             MoneroRpcConnection? connection = connectionManager.GetConnection();
-            Assert.That(connection.IsOnline() == true);
-            Assert.That(connection == walletRpcs[4].GetRpcConnection());
-            Assert.That(++numExpectedChanges == listener.ChangedConnections.Count);
-            Assert.That(listener.ChangedConnections[listener.ChangedConnections.Count - 1] == connection);
+            Assert.True(connection.IsOnline() == true);
+            Assert.True(connection == walletRpcs[4].GetRpcConnection());
+            Assert.True(++numExpectedChanges == listener.ChangedConnections.Count);
+            Assert.True(listener.ChangedConnections[listener.ChangedConnections.Count - 1] == connection);
             connectionManager.SetAutoSwitch(false);
             connectionManager.StopPolling();
             connectionManager.Disconnect();
-            Assert.That(++numExpectedChanges == listener.ChangedConnections.Count);
-            Assert.That(listener.ChangedConnections[listener.ChangedConnections.Count - 1] == null);
+            Assert.True(++numExpectedChanges == listener.ChangedConnections.Count);
+            Assert.True(listener.ChangedConnections[listener.ChangedConnections.Count - 1] == null);
 
             // start periodically checking connection without auto switch
             connectionManager.StartPolling((ulong)TestUtils.SYNC_PERIOD_IN_MS, false, null, null, null);
@@ -78,182 +75,182 @@ public class TestMoneroConnectionManager
             // connect to best available connection in order of priority and response time
             connection = connectionManager.GetBestAvailableConnection();
             connectionManager.SetConnection(connection);
-            Assert.That(connection == walletRpcs[4].GetRpcConnection());
-            Assert.That(connection.IsOnline() == true);
-            Assert.That(connection.IsAuthenticated() == true);
-            Assert.That(++numExpectedChanges == listener.ChangedConnections.Count);
-            Assert.That(listener.ChangedConnections[listener.ChangedConnections.Count - 1] == connection);
+            Assert.True(connection == walletRpcs[4].GetRpcConnection());
+            Assert.True(connection.IsOnline());
+            Assert.True(connection.IsAuthenticated());
+            Assert.True(++numExpectedChanges == listener.ChangedConnections.Count);
+            Assert.True(listener.ChangedConnections[listener.ChangedConnections.Count - 1] == connection);
 
             // test connections and order
             orderedConnections = connectionManager.GetRpcConnections();
-            Assert.That(orderedConnections[0] == walletRpcs[4].GetRpcConnection());
-            Assert.That(orderedConnections[1] == walletRpcs[2].GetRpcConnection());
-            Assert.That(orderedConnections[2] == walletRpcs[3].GetRpcConnection());
-            Assert.That(orderedConnections[3] == walletRpcs[0].GetRpcConnection());
-            Assert.That(orderedConnections[4].GetUri() == walletRpcs[1].GetRpcConnection().GetUri());
-            for (int i = 1; i < orderedConnections.Count; i++) Assert.That(orderedConnections[i].IsOnline() == null);
+            Assert.True(orderedConnections[0] == walletRpcs[4].GetRpcConnection());
+            Assert.True(orderedConnections[1] == walletRpcs[2].GetRpcConnection());
+            Assert.True(orderedConnections[2] == walletRpcs[3].GetRpcConnection());
+            Assert.True(orderedConnections[3] == walletRpcs[0].GetRpcConnection());
+            Assert.True(orderedConnections[4].GetUri() == walletRpcs[1].GetRpcConnection().GetUri());
+            for (int i = 1; i < orderedConnections.Count; i++) Assert.Null(orderedConnections[i].IsOnline());
 
             // shut down prioritized servers
             TestUtils.StopWalletRpcProcess(walletRpcs[2]);
             TestUtils.StopWalletRpcProcess(walletRpcs[3]);
             TestUtils.StopWalletRpcProcess(walletRpcs[4]);
             Thread.Sleep(TestUtils.SYNC_PERIOD_IN_MS + 100); // allow time to poll
-            Assert.That(connectionManager.IsConnected() == false);
-            Assert.That(connectionManager.GetConnection().IsOnline() == false);
-            Assert.That(connectionManager.GetConnection().IsAuthenticated() == null);
-            Assert.That(++numExpectedChanges == listener.ChangedConnections.Count);
-            Assert.That(listener.ChangedConnections[listener.ChangedConnections.Count - 1] == connectionManager.GetConnection());
+            Assert.False(connectionManager.IsConnected());
+            Assert.False(connectionManager.GetConnection().IsOnline());
+            Assert.Null(connectionManager.GetConnection().IsAuthenticated());
+            Assert.True(++numExpectedChanges == listener.ChangedConnections.Count);
+            Assert.True(listener.ChangedConnections[listener.ChangedConnections.Count - 1] == connectionManager.GetConnection());
 
             // test connection order
             orderedConnections = connectionManager.GetRpcConnections();
-            Assert.That(orderedConnections[0] == walletRpcs[4].GetRpcConnection());
-            Assert.That(orderedConnections[1] == walletRpcs[0].GetRpcConnection());
-            Assert.That(orderedConnections[2].GetUri() == walletRpcs[1].GetRpcConnection().GetUri());
-            Assert.That(orderedConnections[3] == walletRpcs[2].GetRpcConnection());
-            Assert.That(orderedConnections[4] == walletRpcs[3].GetRpcConnection());
+            Assert.True(orderedConnections[0] == walletRpcs[4].GetRpcConnection());
+            Assert.True(orderedConnections[1] == walletRpcs[0].GetRpcConnection());
+            Assert.True(orderedConnections[2].GetUri() == walletRpcs[1].GetRpcConnection().GetUri());
+            Assert.True(orderedConnections[3] == walletRpcs[2].GetRpcConnection());
+            Assert.True(orderedConnections[4] == walletRpcs[3].GetRpcConnection());
 
             // check all connections
             connectionManager.CheckConnections();
 
             // test connection order
             orderedConnections = connectionManager.GetRpcConnections();
-            Assert.That(orderedConnections[0] == walletRpcs[4].GetRpcConnection());
-            Assert.That(orderedConnections[1] == walletRpcs[0].GetRpcConnection());
-            Assert.That(orderedConnections[2].GetUri() == walletRpcs[1].GetRpcConnection().GetUri());
-            Assert.That(orderedConnections[3] == walletRpcs[2].GetRpcConnection());
-            Assert.That(orderedConnections[4] == walletRpcs[3].GetRpcConnection());
+            Assert.True(orderedConnections[0] == walletRpcs[4].GetRpcConnection());
+            Assert.True(orderedConnections[1] == walletRpcs[0].GetRpcConnection());
+            Assert.True(orderedConnections[2].GetUri() == walletRpcs[1].GetRpcConnection().GetUri());
+            Assert.True(orderedConnections[3] == walletRpcs[2].GetRpcConnection());
+            Assert.True(orderedConnections[4] == walletRpcs[3].GetRpcConnection());
 
             // test online and authentication status
             for (int i = 0; i < orderedConnections.Count; i++)
             {
                 bool? IsOnline = orderedConnections[i].IsOnline();
                 bool? IsAuthenticated = orderedConnections[i].IsAuthenticated();
-                if (i == 1 || i == 2) Assert.That(IsOnline == true);
-                else Assert.That(IsOnline == false);
-                if (i == 1) Assert.That(IsAuthenticated == true);
-                else if (i == 2) Assert.That(IsAuthenticated == false);
-                else Assert.That(IsAuthenticated == null);
+                if (i == 1 || i == 2) Assert.True(IsOnline);
+                else Assert.False(IsOnline);
+                if (i == 1) Assert.True(IsAuthenticated);
+                else if (i == 2) Assert.False(IsAuthenticated);
+                else Assert.Null(IsAuthenticated);
             }
 
             // test auto switch when disconnected
             connectionManager.SetAutoSwitch(true);
             Thread.Sleep(TestUtils.SYNC_PERIOD_IN_MS + 100);
-            Assert.That(connectionManager.IsConnected() == true);
+            Assert.True(connectionManager.IsConnected());
             connection = connectionManager.GetConnection();
-            Assert.That(connection.IsOnline() == true);
-            Assert.That(connection == walletRpcs[0].GetRpcConnection());
-            Assert.That(++numExpectedChanges == listener.ChangedConnections.Count);
-            Assert.That(listener.ChangedConnections[listener.ChangedConnections.Count - 1] == connection);
+            Assert.True(connection.IsOnline());
+            Assert.True(connection == walletRpcs[0].GetRpcConnection());
+            Assert.True(++numExpectedChanges == listener.ChangedConnections.Count);
+            Assert.True(listener.ChangedConnections[listener.ChangedConnections.Count - 1] == connection);
 
             // test connection order
             orderedConnections = connectionManager.GetRpcConnections();
-            Assert.That(orderedConnections[0] == connection);
-            Assert.That(orderedConnections[0] == walletRpcs[0].GetRpcConnection());
-            Assert.That(orderedConnections[1].GetUri() == walletRpcs[1].GetRpcConnection().GetUri());
-            Assert.That(orderedConnections[2] == walletRpcs[4].GetRpcConnection());
-            Assert.That(orderedConnections[3] == walletRpcs[2].GetRpcConnection());
-            Assert.That(orderedConnections[4] == walletRpcs[3].GetRpcConnection());
+            Assert.True(orderedConnections[0] == connection);
+            Assert.True(orderedConnections[0] == walletRpcs[0].GetRpcConnection());
+            Assert.True(orderedConnections[1].GetUri() == walletRpcs[1].GetRpcConnection().GetUri());
+            Assert.True(orderedConnections[2] == walletRpcs[4].GetRpcConnection());
+            Assert.True(orderedConnections[3] == walletRpcs[2].GetRpcConnection());
+            Assert.True(orderedConnections[4] == walletRpcs[3].GetRpcConnection());
 
             // connect to specific endpoint without authentication
             connection = orderedConnections[1];
-            Assert.That(connection.IsAuthenticated() == false);
+            Assert.False(connection.IsAuthenticated());
             connectionManager.SetConnection(connection);
-            Assert.That(connectionManager.IsConnected() == false);
-            Assert.That(++numExpectedChanges == listener.ChangedConnections.Count);
+            Assert.False(connectionManager.IsConnected());
+            Assert.True(++numExpectedChanges == listener.ChangedConnections.Count);
 
             // connect to specific endpoint with authentication
             orderedConnections[1].SetCredentials("rpc_user", "abc123");
             connectionManager.CheckConnections();
-            Assert.That(connectionManager.GetConnection().GetUri() == walletRpcs[1].GetRpcConnection().GetUri());
-            Assert.That(connection.IsOnline() == true);
-            Assert.That(connection.IsAuthenticated() == true);
-            Assert.That(++numExpectedChanges == listener.ChangedConnections.Count);
-            Assert.That(listener.ChangedConnections[listener.ChangedConnections.Count - 1] == connection);
+            Assert.True(connectionManager.GetConnection().GetUri() == walletRpcs[1].GetRpcConnection().GetUri());
+            Assert.True(connection.IsOnline());
+            Assert.True(connection.IsAuthenticated());
+            Assert.True(++numExpectedChanges == listener.ChangedConnections.Count);
+            Assert.True(listener.ChangedConnections[listener.ChangedConnections.Count - 1] == connection);
 
             // test connection order
             orderedConnections = connectionManager.GetRpcConnections();
-            Assert.That(orderedConnections[0] == connectionManager.GetConnection());
-            Assert.That(orderedConnections[0].GetUri() == walletRpcs[1].GetRpcConnection().GetUri());
-            Assert.That(orderedConnections[1] == walletRpcs[0].GetRpcConnection());
-            Assert.That(orderedConnections[2] == walletRpcs[4].GetRpcConnection());
-            Assert.That(orderedConnections[3] == walletRpcs[2].GetRpcConnection());
-            Assert.That(orderedConnections[4] == walletRpcs[3].GetRpcConnection());
-            for (int i = 0; i < orderedConnections.Count - 1; i++) Assert.That(i <= 1 ? orderedConnections[i].IsOnline() == true : orderedConnections[i].IsOnline() != true);
-            Assert.That(orderedConnections[4].IsOnline() == false);
+            Assert.True(orderedConnections[0] == connectionManager.GetConnection());
+            Assert.True(orderedConnections[0].GetUri() == walletRpcs[1].GetRpcConnection().GetUri());
+            Assert.True(orderedConnections[1] == walletRpcs[0].GetRpcConnection());
+            Assert.True(orderedConnections[2] == walletRpcs[4].GetRpcConnection());
+            Assert.True(orderedConnections[3] == walletRpcs[2].GetRpcConnection());
+            Assert.True(orderedConnections[4] == walletRpcs[3].GetRpcConnection());
+            for (int i = 0; i < orderedConnections.Count - 1; i++) Assert.True(i <= 1 ? orderedConnections[i].IsOnline() == true : orderedConnections[i].IsOnline() != true);
+            Assert.False(orderedConnections[4].IsOnline());
 
             // set connection to existing uri
             connectionManager.SetConnection(walletRpcs[0].GetRpcConnection().GetUri());
-            Assert.That(connectionManager.IsConnected() == true);
-            Assert.That(walletRpcs[0].GetRpcConnection() == connectionManager.GetConnection());
-            
+            Assert.True(connectionManager.IsConnected());
+            Assert.True(walletRpcs[0].GetRpcConnection() == connectionManager.GetConnection());
+
             MoneroRpcConnection currentConnection = (MoneroRpcConnection)connectionManager.GetConnection();
             MoneroRpcConnection rpcConnection = new();
 
             if (rpcConnection.GetType().IsInstanceOfType(currentConnection))
             {
                 rpcConnection = (MoneroRpcConnection)currentConnection;
-                Assert.That(TestUtils.WALLET_RPC_USERNAME == rpcConnection.GetUsername());
-                Assert.That(TestUtils.WALLET_RPC_PASSWORD == rpcConnection.GetPassword());
+                Assert.True(TestUtils.WALLET_RPC_USERNAME == rpcConnection.GetUsername());
+                Assert.True(TestUtils.WALLET_RPC_PASSWORD == rpcConnection.GetPassword());
             }
 
-            Assert.That(++numExpectedChanges == listener.ChangedConnections.Count);
-            Assert.That(listener.ChangedConnections[listener.ChangedConnections.Count - 1] == walletRpcs[0].GetRpcConnection());
+            Assert.True(++numExpectedChanges == listener.ChangedConnections.Count);
+            Assert.True(listener.ChangedConnections[listener.ChangedConnections.Count - 1] == walletRpcs[0].GetRpcConnection());
 
             // set connection to new uri
             connectionManager.StopPolling();
             string uri = "http://localhost:49999";
             connectionManager.SetConnection(uri);
-            Assert.That(uri == connectionManager.GetConnection().GetUri());
-            Assert.That(++numExpectedChanges == listener.ChangedConnections.Count);
-            Assert.That(uri == listener.ChangedConnections[listener.ChangedConnections.Count - 1].GetUri());
+            Assert.True(uri == connectionManager.GetConnection().GetUri());
+            Assert.True(++numExpectedChanges == listener.ChangedConnections.Count);
+            Assert.True(uri == listener.ChangedConnections[listener.ChangedConnections.Count - 1].GetUri());
 
             // set connection to empty string
             connectionManager.SetConnection("");
-            Assert.That(null == connectionManager.GetConnection());
-            Assert.That(++numExpectedChanges == listener.ChangedConnections.Count);
+            Assert.Null( connectionManager.GetConnection());
+            Assert.True(++numExpectedChanges == listener.ChangedConnections.Count);
 
             // check all connections and test auto switch
             connectionManager.CheckConnections();
-            Assert.That(++numExpectedChanges == listener.ChangedConnections.Count);
-            Assert.That(connectionManager.IsConnected() == true);
+            Assert.True(++numExpectedChanges == listener.ChangedConnections.Count);
+            Assert.True(connectionManager.IsConnected());
 
             // remove current connection and test auto switch
             connectionManager.RemoveConnection(connectionManager.GetConnection().GetUri());
-            Assert.That(++numExpectedChanges == listener.ChangedConnections.Count);
-            Assert.That(connectionManager.IsConnected() == false);
+            Assert.True(++numExpectedChanges == listener.ChangedConnections.Count);
+            Assert.False(connectionManager.IsConnected());
             connectionManager.CheckConnections();
-            Assert.That(++numExpectedChanges == listener.ChangedConnections.Count);
-            Assert.That(connectionManager.IsConnected() == true);
+            Assert.True(++numExpectedChanges == listener.ChangedConnections.Count);
+            Assert.True(connectionManager.IsConnected());
 
             // test polling current connection
             connectionManager.SetConnection(null);
-            Assert.That(connectionManager.IsConnected() == false);
-            Assert.That(++numExpectedChanges == listener.ChangedConnections.Count);
+            Assert.False(connectionManager.IsConnected());
+            Assert.True(++numExpectedChanges == listener.ChangedConnections.Count);
             connectionManager.StartPolling((ulong)TestUtils.SYNC_PERIOD_IN_MS, null, null, MoneroConnectionManager.PollType.CURRENT, null);
             Thread.Sleep(TestUtils.AUTO_CONNECT_TIMEOUT_MS);
-            Assert.That(connectionManager.IsConnected() == true);
-            Assert.That(++numExpectedChanges == listener.ChangedConnections.Count);
+            Assert.True(connectionManager.IsConnected());
+            Assert.True(++numExpectedChanges == listener.ChangedConnections.Count);
 
             // test polling all connections
             connectionManager.SetConnection(null);
-            Assert.That(++numExpectedChanges == listener.ChangedConnections.Count);
+            Assert.True(++numExpectedChanges == listener.ChangedConnections.Count);
             connectionManager.StartPolling((ulong)TestUtils.SYNC_PERIOD_IN_MS, null, null, MoneroConnectionManager.PollType.ALL, null);
             Thread.Sleep(TestUtils.AUTO_CONNECT_TIMEOUT_MS);
-            Assert.That(connectionManager.IsConnected() == true);
-            Assert.That(++numExpectedChanges == listener.ChangedConnections.Count);
+            Assert.True(connectionManager.IsConnected());
+            Assert.True(++numExpectedChanges == listener.ChangedConnections.Count);
 
             // shut down all connections
             connection = connectionManager.GetConnection();
             foreach (MoneroWalletRpc walletRpc in walletRpcs) TestUtils.StopWalletRpcProcess(walletRpc);
             Thread.Sleep(TestUtils.SYNC_PERIOD_IN_MS + 100);
-            Assert.That(connection.IsOnline() == false);
-            Assert.That(++numExpectedChanges == listener.ChangedConnections.Count);
-            Assert.That(listener.ChangedConnections[listener.ChangedConnections.Count - 1] == connection);
+            Assert.False(connection.IsOnline());
+            Assert.True(++numExpectedChanges == listener.ChangedConnections.Count);
+            Assert.True(listener.ChangedConnections[listener.ChangedConnections.Count - 1] == connection);
 
             // reset
             connectionManager.Reset();
-            Assert.That(0 == connectionManager.GetConnections().Count);
-            Assert.That(null == connectionManager.GetConnection());
+            Assert.True(0 == connectionManager.GetConnections().Count);
+            Assert.Null( connectionManager.GetConnection());
         }
         catch (Exception ex)
         {
@@ -275,7 +272,6 @@ public class TestMoneroConnectionManager
                 catch { }
             }
         }
-        Assert.Pass();
     }
 }
 
@@ -287,4 +283,4 @@ internal class ConnectionChangeCollector : MoneroConnectionManagerListener
     {
         ChangedConnections.Add(connection);
     }
-  }
+}

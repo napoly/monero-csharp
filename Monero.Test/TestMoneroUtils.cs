@@ -5,13 +5,12 @@ namespace Monero.Test;
 
 public class TestMoneroUtils
 {
-    [SetUp]
-    public void Setup()
-    {
+    public TestMoneroUtils() {
+        
     }
 
     // Can get integrated addresses
-    [Test]
+    [Fact]
     public void TestGetIntegratedAddresses()
     {
         string primaryAddress = "58qRVVjZ4KxMX57TH6yWqGcH5AswvZZS494hWHcHPt6cDkP7V8AqxFhi3RKXZueVRgUnk8niQGHSpY5Bm9DjuWn16GDKXpF";
@@ -21,21 +20,21 @@ public class TestMoneroUtils
 
         // get integrated address with randomly generated payment id
         MoneroIntegratedAddress integratedAddress = MoneroUtils.GetIntegratedAddress(networkType, primaryAddress, null);
-        Assert.That(primaryAddress == integratedAddress.GetStandardAddress());
-        Assert.That(16 == integratedAddress.GetPaymentId().Length);
-        Assert.That(106 == integratedAddress.GetIntegratedAddress().Length);
+        Assert.True(primaryAddress == integratedAddress.GetStandardAddress());
+        Assert.True(16 == integratedAddress.GetPaymentId().Length);
+        Assert.True(106 == integratedAddress.GetIntegratedAddress().Length);
 
         // get integrated address with specific payment id
         integratedAddress = MoneroUtils.GetIntegratedAddress(networkType, primaryAddress, paymentId);
-        Assert.That(primaryAddress == integratedAddress.GetStandardAddress());
-        Assert.That(paymentId == integratedAddress.GetPaymentId());
-        Assert.That(106 == integratedAddress.GetIntegratedAddress().Length);
+        Assert.True(primaryAddress == integratedAddress.GetStandardAddress());
+        Assert.True(paymentId == integratedAddress.GetPaymentId());
+        Assert.True(106 == integratedAddress.GetIntegratedAddress().Length);
 
         // get integrated address with subaddress
         integratedAddress = MoneroUtils.GetIntegratedAddress(networkType, subaddress, paymentId);
-        Assert.That(subaddress == integratedAddress.GetStandardAddress());
-        Assert.That(paymentId == integratedAddress.GetPaymentId());
-        Assert.That(106 == integratedAddress.GetIntegratedAddress().Length);
+        Assert.True(subaddress == integratedAddress.GetStandardAddress());
+        Assert.True(paymentId == integratedAddress.GetPaymentId());
+        Assert.True(106 == integratedAddress.GetIntegratedAddress().Length);
 
         // get integrated address with invalid payment id
         try
@@ -45,19 +44,19 @@ public class TestMoneroUtils
         }
         catch (MoneroError err)
         {
-            Assert.That("Invalid payment id" == err.Message);
+            Assert.True("Invalid payment id" == err.Message);
         }
     }
 
     // Can validate addresses
-    [Test]
+    [Fact]
     public void TestAddressValidation()
     {
 
         // test mainnet primary address validation
-        Assert.That(MoneroUtils.IsValidAddress("42U9v3qs5CjZEePHBZHwuSckQXebuZu299NSmVEmQ41YJZQhKcPyujyMSzpDH4VMMVSBo3U3b54JaNvQLwAjqDhKS3rvM3L", MoneroNetworkType.MAINNET));
-        Assert.That(MoneroUtils.IsValidAddress("48ZxX3Y2y5s4nJ8fdz2w65TrTEp9PRsv5J8iHSShkHQcE2V31FhnWptioNst1K9oeDY4KpWZ7v8V2BZNVa4Wdky89iqmPz2", MoneroNetworkType.MAINNET));
-        Assert.That(MoneroUtils.IsValidAddress("48W972Fx1SQMCHVKENnPpM7tRcL5oWMgpMCqQDbhH8UrjDFg2H9i5AQWXuU1qacJgUUCVLTsgDmZKXGz1vPLXY8QB5ypYqG", MoneroNetworkType.MAINNET));
+        Assert.True(MoneroUtils.IsValidAddress("42U9v3qs5CjZEePHBZHwuSckQXebuZu299NSmVEmQ41YJZQhKcPyujyMSzpDH4VMMVSBo3U3b54JaNvQLwAjqDhKS3rvM3L", MoneroNetworkType.MAINNET));
+        Assert.True(MoneroUtils.IsValidAddress("48ZxX3Y2y5s4nJ8fdz2w65TrTEp9PRsv5J8iHSShkHQcE2V31FhnWptioNst1K9oeDY4KpWZ7v8V2BZNVa4Wdky89iqmPz2", MoneroNetworkType.MAINNET));
+        Assert.True(MoneroUtils.IsValidAddress("48W972Fx1SQMCHVKENnPpM7tRcL5oWMgpMCqQDbhH8UrjDFg2H9i5AQWXuU1qacJgUUCVLTsgDmZKXGz1vPLXY8QB5ypYqG", MoneroNetworkType.MAINNET));
 
         // test mainnet integrated address validation
         MoneroUtils.ValidateAddress("4CApvrfMgUFZEePHBZHwuSckQXebuZu299NSmVEmQ41YJZQhKcPyujyMSzpDH4VMMVSBo3U3b54JaNvQLwAjqDhKeGLQ9vfRBRKFKnBtVH", MoneroNetworkType.MAINNET);
@@ -122,59 +121,58 @@ public class TestMoneroUtils
     }
 
     // Can validate keys
-    [Test]
+    [Fact]
     public void TestKeyValidation()
     {
 
         // test private view key validation
-        Assert.That(MoneroUtils.IsValidPrivateViewKey("86cf351d10894769feba29b9e201e12fb100b85bb52fc5825c864eef55c5840d"));
+        Assert.True(MoneroUtils.IsValidPrivateViewKey("86cf351d10894769feba29b9e201e12fb100b85bb52fc5825c864eef55c5840d"));
         TestInvalidPrivateViewKey("");
         TestInvalidPrivateViewKey(null);
         TestInvalidPrivateViewKey("5B8s3obCY2ETeQB3GNAGPK2zRGen5UeW1WzegSizVsmf6z5NvM2GLoN6zzk1vHyzGAAfA8pGhuYAeCFZjHAp59jRVQkunGS");
 
         // test public view key validation
-        Assert.That(MoneroUtils.IsValidPublicViewKey("99873d76ca874ff1aad676b835dd303abcb21c9911ca8a3d9130abc4544d8a0a"));
+        Assert.True(MoneroUtils.IsValidPublicViewKey("99873d76ca874ff1aad676b835dd303abcb21c9911ca8a3d9130abc4544d8a0a"));
         TestInvalidPublicViewKey("");
         TestInvalidPublicViewKey(null);
         TestInvalidPublicViewKey("z86cf351d10894769feba29b9e201e12fb100b85bb52fc5825c864eef55c5840d");
 
         // test private spend key validation
-        Assert.That(MoneroUtils.IsValidPrivateSpendKey("e9ba887e93620ef9fafdfe0c6d3022949f1c5713cbd9ef631f18a0fb00421dee"));
+        Assert.True(MoneroUtils.IsValidPrivateSpendKey("e9ba887e93620ef9fafdfe0c6d3022949f1c5713cbd9ef631f18a0fb00421dee"));
         TestInvalidPrivateSpendKey("");
         TestInvalidPrivateSpendKey(null);
         TestInvalidPrivateSpendKey("z86cf351d10894769feba29b9e201e12fb100b85bb52fc5825c864eef55c5840d");
 
         // test public spend key validation
-        Assert.That(MoneroUtils.IsValidPublicSpendKey("3e48df9e9d8038dbf6f5382fac2becd8686273cda5bd87187e45dca7ec5af37b"));
+        Assert.True(MoneroUtils.IsValidPublicSpendKey("3e48df9e9d8038dbf6f5382fac2becd8686273cda5bd87187e45dca7ec5af37b"));
         TestInvalidPublicSpendKey("");
         TestInvalidPublicSpendKey(null);
         TestInvalidPublicSpendKey("z86cf351d10894769feba29b9e201e12fb100b85bb52fc5825c864eef55c5840d");
     }
 
     // Can convert between XMR and atomic units
-    [Test]
+    [Fact]
     public void TestAtomicUnitConversion()
     {
-        Assert.That(1000000000000 == MoneroUtils.XmrToAtomicUnits(1));
-        Assert.That(1000000000000 == MoneroUtils.AtomicUnitsToXmr(1000000000000));
-        Assert.That(1000000000 == MoneroUtils.XmrToAtomicUnits(0.001));
-        Assert.That(.001 == MoneroUtils.AtomicUnitsToXmr(1000000000));
-        Assert.That(250000000000 == MoneroUtils.XmrToAtomicUnits(.25));
-        Assert.That(.25 == MoneroUtils.AtomicUnitsToXmr(250000000000));
-        Assert.That(1250000000000 == MoneroUtils.XmrToAtomicUnits(1.25));
-        Assert.That(1.25 == MoneroUtils.AtomicUnitsToXmr(1250000000000));
-        Assert.That(2796726190000 == MoneroUtils.XmrToAtomicUnits(2.79672619));
-        Assert.That(2.79672619 == MoneroUtils.AtomicUnitsToXmr(2796726190000));
-        Assert.That(2796726190001 == MoneroUtils.XmrToAtomicUnits(2.796726190001));
-        Assert.That(2.796726190001 == MoneroUtils.AtomicUnitsToXmr(2796726190001));
-        Assert.That(2796726189999 == MoneroUtils.XmrToAtomicUnits(2.796726189999));
-        Assert.That(2.796726189999 == MoneroUtils.AtomicUnitsToXmr(2796726189999));
-        Assert.That(2796726180000 == MoneroUtils.XmrToAtomicUnits(2.79672618));
-        Assert.That(2.79672618 == MoneroUtils.AtomicUnitsToXmr(2796726180000));
+        Assert.True(1000000000000 == MoneroUtils.XmrToAtomicUnits(1));
+        Assert.True(1000000000000 == MoneroUtils.AtomicUnitsToXmr(1000000000000));
+        Assert.True(1000000000 == MoneroUtils.XmrToAtomicUnits(0.001));
+        Assert.True(.001 == MoneroUtils.AtomicUnitsToXmr(1000000000));
+        Assert.True(250000000000 == MoneroUtils.XmrToAtomicUnits(.25));
+        Assert.True(.25 == MoneroUtils.AtomicUnitsToXmr(250000000000));
+        Assert.True(1250000000000 == MoneroUtils.XmrToAtomicUnits(1.25));
+        Assert.True(1.25 == MoneroUtils.AtomicUnitsToXmr(1250000000000));
+        Assert.True(2796726190000 == MoneroUtils.XmrToAtomicUnits(2.79672619));
+        Assert.True(2.79672619 == MoneroUtils.AtomicUnitsToXmr(2796726190000));
+        Assert.True(2796726190001 == MoneroUtils.XmrToAtomicUnits(2.796726190001));
+        Assert.True(2.796726190001 == MoneroUtils.AtomicUnitsToXmr(2796726190001));
+        Assert.True(2796726189999 == MoneroUtils.XmrToAtomicUnits(2.796726189999));
+        Assert.True(2.796726189999 == MoneroUtils.AtomicUnitsToXmr(2796726189999));
+        Assert.True(2796726180000 == MoneroUtils.XmrToAtomicUnits(2.79672618));
+        Assert.True(2.79672618 == MoneroUtils.AtomicUnitsToXmr(2796726180000));
     }
 
-    [Test]
-    [Ignore("GetPaymentUri is not implemented yet")]
+    [Fact(Skip = "GetPaymentUri is not implemented yet")]
     public void TestGetPaymentUri()
     {
         MoneroTxConfig config = new MoneroTxConfig()
@@ -183,14 +181,14 @@ public class TestMoneroUtils
             .SetRecipientName("John Doe")
             .SetNote("My transfer to wallet");
         string paymentUri = ""; //MoneroUtils.GetPaymentUri(config);
-        Assert.That("monero:42U9v3qs5CjZEePHBZHwuSckQXebuZu299NSmVEmQ41YJZQhKcPyujyMSzpDH4VMMVSBo3U3b54JaNvQLwAjqDhKS3rvM3L?tx_amount=0.25&recipient_name=John%20Doe&tx_description=My%20transfer%20to%20wallet" == paymentUri);
+        Assert.True("monero:42U9v3qs5CjZEePHBZHwuSckQXebuZu299NSmVEmQ41YJZQhKcPyujyMSzpDH4VMMVSBo3U3b54JaNvQLwAjqDhKS3rvM3L?tx_amount=0.25&recipient_name=John%20Doe&tx_description=My%20transfer%20to%20wallet" == paymentUri);
     }
 
     #region Private Helpers
 
     private static void TestInvalidAddress(string address, MoneroNetworkType networkType)
     {
-        Assert.That(false == MoneroUtils.IsValidAddress(address, networkType));
+        Assert.False(MoneroUtils.IsValidAddress(address, networkType));
         try
         {
             MoneroUtils.ValidateAddress(address, networkType);
@@ -198,13 +196,13 @@ public class TestMoneroUtils
         }
         catch (MoneroError e)
         {
-            Assert.That(e.Message.Length > 0);
+            Assert.True(e.Message.Length > 0);
         }
     }
 
     private static void TestInvalidPrivateViewKey(string privateViewKey)
     {
-        Assert.That(false == MoneroUtils.IsValidPrivateViewKey(privateViewKey));
+        Assert.False(MoneroUtils.IsValidPrivateViewKey(privateViewKey));
         try
         {
             MoneroUtils.ValidatePrivateViewKey(privateViewKey);
@@ -212,13 +210,13 @@ public class TestMoneroUtils
         }
         catch (MoneroError e)
         {
-            Assert.That(e.Message.Length > 0);
+            Assert.True(e.Message.Length > 0);
         }
     }
 
     private static void TestInvalidPublicViewKey(string publicViewKey)
     {
-        Assert.That(false == MoneroUtils.IsValidPublicViewKey(publicViewKey));
+        Assert.False(MoneroUtils.IsValidPublicViewKey(publicViewKey));
         try
         {
             MoneroUtils.ValidatePublicViewKey(publicViewKey);
@@ -226,7 +224,7 @@ public class TestMoneroUtils
         }
         catch (MoneroError e)
         {
-            Assert.That(e.Message.Length > 0);
+            Assert.True(e.Message.Length > 0);
         }
     }
 
@@ -234,19 +232,19 @@ public class TestMoneroUtils
     {
         try
         {
-            Assert.That(false == MoneroUtils.IsValidPrivateSpendKey(privateSpendKey));
+            Assert.False(MoneroUtils.IsValidPrivateSpendKey(privateSpendKey));
             MoneroUtils.ValidatePrivateSpendKey(privateSpendKey);
             throw new Exception("Should have thrown exception");
         }
         catch (MoneroError e)
         {
-            Assert.That(e.Message.Length > 0);
+            Assert.True(e.Message.Length > 0);
         }
     }
 
     private static void TestInvalidPublicSpendKey(string publicSpendKey)
     {
-        Assert.That(false == MoneroUtils.IsValidPublicSpendKey(publicSpendKey));
+        Assert.False(MoneroUtils.IsValidPublicSpendKey(publicSpendKey));
         try
         {
             MoneroUtils.ValidatePublicSpendKey(publicSpendKey);
@@ -254,7 +252,7 @@ public class TestMoneroUtils
         }
         catch (MoneroError e)
         {
-            Assert.That(e.Message.Length > 0);
+            Assert.True(e.Message.Length > 0);
         }
     }
 

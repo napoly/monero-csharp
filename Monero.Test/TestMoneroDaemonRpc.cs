@@ -20,8 +20,7 @@ public class TestMoneroDaemonRpc
 
     private static readonly TestContext BINARY_BLOCK_CTX = new();
 
-    [SetUp]
-    public void Setup()
+    public TestMoneroDaemonRpc()
     {
         BINARY_BLOCK_CTX.hasHex = false;
         BINARY_BLOCK_CTX.headerIsFull = false;
@@ -39,105 +38,105 @@ public class TestMoneroDaemonRpc
 
     #region Non Relays Tests
 
-    [Test]
+    [Fact]
     public void TestGetVersion()
     {
-        Assert.That(TEST_NON_RELAYS == true);
+        Assert.True(TEST_NON_RELAYS);
         MoneroVersion version = daemon.GetVersion();
-        Assert.That(version.GetNumber() != null);
-        Assert.That(version.GetNumber() > 0);
-        Assert.That(version.IsRelease() != null);
+        Assert.NotNull(version.GetNumber());
+        Assert.True(version.GetNumber() > 0);
+        Assert.NotNull(version.IsRelease());
     }
 
-    [Test]
+    [Fact]
     public void TestIsTrusted()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         daemon.IsTrusted();
     }
 
     // Can get the blockchain height
-    [Test]
+    [Fact]
     public void TestGetHeight()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         ulong height = daemon.GetHeight();
-        Assert.That(height > 0, "Height must be greater than 0");
+        Assert.True(height > 0, "Height must be greater than 0");
     }
 
     // Can get a block hash by height
-    [Test]
+    [Fact]
     public void TestGetBlockIdByHeight()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         MoneroBlockHeader lastHeader = daemon.GetLastBlockHeader();
         string hash = daemon.GetBlockHash((ulong)lastHeader.GetHeight());
-        Assert.That(hash != null);
-        Assert.That(64 == hash.Length);
+        Assert.NotNull(hash);
+        Assert.True(64 == hash.Length);
     }
 
     // Can get a block template
-    [Test]
+    [Fact]
     public void TestGetBlockTemplate()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         MoneroBlockTemplate template = daemon.GetBlockTemplate(TestUtils.ADDRESS, 2);
         TestBlockTemplate(template);
     }
 
     // Can get the last block's header
-    [Test]
+    [Fact]
     public void TestGetLastBlockHeader()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         MoneroBlockHeader lastHeader = daemon.GetLastBlockHeader();
         TestBlockHeader(lastHeader, true);
     }
 
     // Can get a block header by hash
-    [Test]
+    [Fact]
     public void TestGetBlockHeaderByHash()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
 
         // retrieve by hash of last block
         MoneroBlockHeader lastHeader = daemon.GetLastBlockHeader();
         string hash = daemon.GetBlockHash((ulong)lastHeader.GetHeight());
         MoneroBlockHeader header = daemon.GetBlockHeaderByHash(hash);
         TestBlockHeader(header, true);
-        Assert.That(lastHeader == header);
+        Assert.True(lastHeader == header);
 
         // retrieve by hash of previous to last block
         hash = daemon.GetBlockHash((ulong)lastHeader.GetHeight() - 1);
         header = daemon.GetBlockHeaderByHash(hash);
         TestBlockHeader(header, true);
-        Assert.That(lastHeader.GetHeight() - 1 == (ulong)header.GetHeight());
+        Assert.True(lastHeader.GetHeight() - 1 == (ulong)header.GetHeight());
     }
 
     // Can get a block header by height
-    [Test]
+    [Fact]
     public void TestGetBlockHeaderByHeight()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
 
         // retrieve by height of last block
         MoneroBlockHeader lastHeader = daemon.GetLastBlockHeader();
         MoneroBlockHeader header = daemon.GetBlockHeaderByHeight((ulong)lastHeader.GetHeight());
         TestBlockHeader(header, true);
-        Assert.That(lastHeader == header);
+        Assert.True(lastHeader == header);
 
         // retrieve by height of previous to last block
         header = daemon.GetBlockHeaderByHeight((ulong)lastHeader.GetHeight() - 1);
         TestBlockHeader(header, true);
-        Assert.That(lastHeader.GetHeight() - 1 == (ulong)header.GetHeight());
+        Assert.True(lastHeader.GetHeight() - 1 == (ulong)header.GetHeight());
     }
 
     // Can get block headers by range
     // TODO: test start with no end, vice versa, inclusivity
-    [Test]
+    [Fact]
     public void TestGetBlockHeadersByRange()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
 
         // determine start and end height based on number of blocks and how many blocks ago
         ulong numBlocks = 100;
@@ -150,22 +149,22 @@ public class TestMoneroDaemonRpc
         List<MoneroBlockHeader> headers = daemon.GetBlockHeadersByRange(startHeight, endHeight);
 
         // test headers
-        Assert.That(numBlocks == (ulong)headers.Count);
+        Assert.True(numBlocks == (ulong)headers.Count);
         int j = 0;
         for (ulong i = 0; i < numBlocks; i++)
         {
             MoneroBlockHeader header = headers[j];
-            Assert.That(startHeight + i == (ulong)header.GetHeight());
+            Assert.True(startHeight + i == (ulong)header.GetHeight());
             TestBlockHeader(header, true);
             j++;
         }
     }
 
     // Can get a block by hash
-    [Test]
+    [Fact]
     public void TestGetBlockByHash()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
 
         // test config
         TestContext ctx = new TestContext();
@@ -178,30 +177,30 @@ public class TestMoneroDaemonRpc
         string hash = daemon.GetBlockHash((ulong)lastHeader.GetHeight());
         MoneroBlock block = daemon.GetBlockByHash(hash);
         TestBlock(block, ctx);
-        Assert.That(daemon.GetBlockByHeight((ulong)block.GetHeight()) == block);
-        Assert.That(null == block.GetTxs());
+        Assert.True(daemon.GetBlockByHeight((ulong)block.GetHeight()) == block);
+        Assert.Null(block.GetTxs());
 
         // retrieve by hash of previous to last block
         hash = daemon.GetBlockHash((ulong)lastHeader.GetHeight() - 1);
         block = daemon.GetBlockByHash(hash);
         TestBlock(block, ctx);
-        Assert.That(daemon.GetBlockByHeight((ulong)lastHeader.GetHeight() - 1) == block);
-        Assert.That(null == block.GetTxs());
+        Assert.True(daemon.GetBlockByHeight((ulong)lastHeader.GetHeight() - 1) == block);
+        Assert.Null(block.GetTxs());
     }
 
     // Can get blocks by hash which includes transactions (binary)
-    [Test]
+    [Fact]
     public void TestGetBlocksByHashBinary()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         throw new MoneroError("Not implemented");
     }
 
     // Can get a block by height
-    [Test]
+    [Fact]
     public void TestGetBlockByHeight()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
 
         // config for testing blocks
         TestContext ctx = new TestContext();
@@ -213,19 +212,19 @@ public class TestMoneroDaemonRpc
         MoneroBlockHeader lastHeader = daemon.GetLastBlockHeader();
         MoneroBlock block = daemon.GetBlockByHeight((ulong)lastHeader.GetHeight());
         TestBlock(block, ctx);
-        Assert.That(daemon.GetBlockByHeight((ulong)block.GetHeight()) == block);
+        Assert.True(daemon.GetBlockByHeight((ulong)block.GetHeight()) == block);
 
         // retrieve by height of previous to last block
         block = daemon.GetBlockByHeight((ulong)lastHeader.GetHeight() - 1);
         TestBlock(block, ctx);
-        Assert.That(lastHeader.GetHeight() - 1 == (ulong)block.GetHeight());
+        Assert.True(lastHeader.GetHeight() - 1 == (ulong)block.GetHeight());
     }
 
     // Can get blocks by height which includes transactions (binary)
-    [Test]
+    [Fact]
     public void TestGetBlocksByHeightBinary()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
 
         // set number of blocks to test
         int numBlocks = 100;
@@ -243,30 +242,30 @@ public class TestMoneroDaemonRpc
 
         // test blocks
         bool txFound = false;
-        Assert.That(numBlocks == blocks.Count);
+        Assert.True(numBlocks == blocks.Count);
         for (int i = 0; i < heights.Count; i++)
         {
             MoneroBlock block = blocks[i];
             if (block.GetTxs().Count > 0) txFound = true;
             TestBlock(block, BINARY_BLOCK_CTX);
-            Assert.That(block.GetHeight() == heights[i]);
+            Assert.True(block.GetHeight() == heights[i]);
         }
-        Assert.That(txFound, "No transactions found to test");
+        Assert.True(txFound, "No transactions found to test");
     }
 
     // Can get blocks by range in a single request
-    [Test]
+    [Fact]
     public void TestGetBlocksByRange()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
 
         // get height range
         ulong numBlocks = 100;
         ulong numBlocksAgo = 190;
-        Assert.That(numBlocks > 0);
-        Assert.That(numBlocksAgo >= numBlocks);
+        Assert.True(numBlocks > 0);
+        Assert.True(numBlocksAgo >= numBlocks);
         ulong height = daemon.GetHeight();
-        Assert.That(height - numBlocksAgo + numBlocks - 1 < height);
+        Assert.True(height - numBlocksAgo + numBlocks - 1 < height);
         ulong startHeight = height - numBlocksAgo;
         ulong endHeight = height - numBlocksAgo + numBlocks - 1;
 
@@ -281,16 +280,16 @@ public class TestMoneroDaemonRpc
     }
 
     // Can get blocks by range using chunked requests
-    [Test]
+    [Fact]
     public void TestGetBlocksByRangeChunked()
     {
-        Assert.That(TEST_NON_RELAYS && !LITE_MODE);
+        Assert.True(TEST_NON_RELAYS && !LITE_MODE);
 
         // get ulong height range
         ulong numBlocks = Math.Min(daemon.GetHeight() - 2, 1440); // test up to ~2 days of blocks
-        Assert.That(numBlocks > 0);
+        Assert.True(numBlocks > 0);
         ulong height = daemon.GetHeight();
-        Assert.That(height - numBlocks - 1 < height);
+        Assert.True(height - numBlocks - 1 < height);
         ulong startHeight = height - numBlocks;
         ulong endHeight = height - 1;
 
@@ -305,19 +304,19 @@ public class TestMoneroDaemonRpc
     }
 
     // Can get block hashes (binary)
-    [Test]
+    [Fact]
     public void TestGetBlockIdsBinary()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         //get_hashes.bin
         throw new MoneroError("Not implemented");
     }
 
     // Can get a transaction by hash with and without pruning
-    [Test]
+    [Fact]
     public void TestGetTxByHash()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
 
         // fetch transaction hashes to test
         List<string> txHashes = GetConfirmedTxHashes(daemon);
@@ -351,19 +350,19 @@ public class TestMoneroDaemonRpc
         }
         catch (MoneroError e)
         {
-            Assert.That("Invalid transaction hash" == e.Message);
+            Assert.True("Invalid transaction hash" == e.Message);
         }
     }
 
     // Can get transactions by hashes with and without pruning
-    [Test]
+    [Fact]
     public void TestGetTxsByHashes()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
 
         // fetch transaction hashes to test
         List<string> txHashes = GetConfirmedTxHashes(daemon);
-        Assert.That(txHashes.Count > 0);
+        Assert.True(txHashes.Count > 0);
 
         // context for testing txs
         TestContext ctx = new TestContext();
@@ -373,7 +372,7 @@ public class TestMoneroDaemonRpc
 
         // fetch txs by hash without pruning
         List<MoneroTx> txs = daemon.GetTxs(txHashes);
-        Assert.That(txHashes.Count == txs.Count);
+        Assert.True(txHashes.Count == txs.Count);
         foreach (MoneroTx _tx in txs)
         {
             TestTx(_tx, ctx);
@@ -382,7 +381,7 @@ public class TestMoneroDaemonRpc
         // fetch txs by hash with pruning
         txs = daemon.GetTxs(txHashes, true);
         ctx.isPruned = true;
-        Assert.That(txHashes.Count == txs.Count);
+        Assert.True(txHashes.Count == txs.Count);
         foreach (MoneroTx _tx in txs)
         {
             TestTx(_tx, ctx);
@@ -390,11 +389,11 @@ public class TestMoneroDaemonRpc
 
         // fetch missing hash
         MoneroTx tx = wallet.CreateTx(new MoneroTxConfig().SetAccountIndex(0).AddDestination(wallet.GetPrimaryAddress(), TestUtils.MAX_FEE));
-        Assert.That(daemon.GetTx(tx.GetHash()) != null);
+        Assert.True(daemon.GetTx(tx.GetHash()) != null);
         txHashes.Add(tx.GetHash());
         int numTxs = txs.Count;
         txs = daemon.GetTxs(txHashes);
-        Assert.That(numTxs == txs.Count);
+        Assert.True(numTxs == txs.Count);
 
         // fetch invalid hash
         txHashes.Add("invalid tx hash");
@@ -405,15 +404,15 @@ public class TestMoneroDaemonRpc
         }
         catch (MoneroError e)
         {
-            Assert.That("Invalid transaction hash" == e.Message);
+            Assert.True("Invalid transaction hash" == e.Message);
         }
     }
 
     // Can get transactions by hashes that are in the transaction pool
-    [Test]
+    [Fact]
     public void TestGetTxsByHashesInPool()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         TestUtils.WALLET_TX_TRACKER.WaitForWalletTxsToClearPool(wallet); // wait for wallet's txs in the pool to clear to ensure reliable sync
 
         // submit txs to the pool but don't relay
@@ -423,7 +422,7 @@ public class TestMoneroDaemonRpc
             MoneroTx tx = GetUnrelayedTx(wallet, i);
             MoneroSubmitTxResult result = daemon.SubmitTxHex(tx.GetFullHex(), true);
             TestSubmitTxResultGood(result);
-            Assert.That(result.IsRelayed() == false);
+            Assert.False(result.IsRelayed());
             txHashes.Add(tx.GetHash());
         }
 
@@ -439,7 +438,7 @@ public class TestMoneroDaemonRpc
         ctx.fromGetTxPool = false;
 
         // test fetched txs
-        Assert.That(txHashes.Count == txs.Count);
+        Assert.True(txHashes.Count == txs.Count);
         foreach (MoneroTx tx in txs)
         {
             TestTx(tx, ctx);
@@ -451,10 +450,10 @@ public class TestMoneroDaemonRpc
     }
 
     // Can get a transaction hex by hash with and without pruning
-    [Test]
+    [Fact]
     public void TestGetTxHexByHash()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
 
         // fetch transaction hashes to test
         List<string> txHashes = GetConfirmedTxHashes(daemon);
@@ -469,14 +468,14 @@ public class TestMoneroDaemonRpc
         }
 
         // test results
-        Assert.That(hexes.Count == txHashes.Count);
-        Assert.That(hexesPruned.Count == txHashes.Count);
+        Assert.True(hexes.Count == txHashes.Count);
+        Assert.True(hexesPruned.Count == txHashes.Count);
         for (int i = 0; i < hexes.Count; i++)
         {
-            Assert.That(hexes[i] != null);
-            Assert.That(hexesPruned[i] != null);
-            Assert.That(hexesPruned.Count > 0);
-            Assert.That(hexes[i].Length > hexesPruned[i].Length); // pruned hex is shorter
+            Assert.NotNull(hexes[i]);
+            Assert.NotNull(hexesPruned[i]);
+            Assert.True(hexesPruned.Count > 0);
+            Assert.True(hexes[i].Length > hexesPruned[i].Length); // pruned hex is shorter
         }
 
         // fetch invalid hash
@@ -487,15 +486,15 @@ public class TestMoneroDaemonRpc
         }
         catch (MoneroError e)
         {
-            Assert.That("Invalid transaction hash" == e.Message);
+            Assert.True("Invalid transaction hash" == e.Message);
         }
     }
 
     // Can get transaction hexes by hashes with and without pruning
-    [Test]
+    [Fact]
     public void TestGetTxHexesByHashes()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
 
         // fetch transaction hashes to test
         List<string> txHashes = GetConfirmedTxHashes(daemon);
@@ -505,14 +504,14 @@ public class TestMoneroDaemonRpc
         List<string> hexesPruned = daemon.GetTxHexes(txHashes, true);
 
         // test results
-        Assert.That(hexes.Count == txHashes.Count);
-        Assert.That(hexesPruned.Count == txHashes.Count);
+        Assert.True(hexes.Count == txHashes.Count);
+        Assert.True(hexesPruned.Count == txHashes.Count);
         for (int i = 0; i < hexes.Count; i++)
         {
-            Assert.That(hexes[i] != null);
-            Assert.That(hexesPruned[i] != null);
-            Assert.That(hexesPruned.Count > 0);
-            Assert.That(hexes[i].Length > hexesPruned[i].Length); // pruned hex is shorter
+            Assert.NotNull(hexes[i]);
+            Assert.NotNull(hexesPruned[i]);
+            Assert.True(hexesPruned.Count > 0);
+            Assert.True(hexes[i].Length > hexesPruned[i].Length); // pruned hex is shorter
         }
 
         // fetch invalid hash
@@ -524,43 +523,43 @@ public class TestMoneroDaemonRpc
         }
         catch (MoneroError e)
         {
-            Assert.That("Invalid transaction hash" == e.Message);
+            Assert.True("Invalid transaction hash" == e.Message);
         }
     }
 
     // Can get the miner transaction sum
-    [Test]
+    [Fact]
     public void TestGetMinerTxSum()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         MoneroMinerTxSum sum = daemon.GetMinerTxSum(0l, Math.Min(50000l, daemon.GetHeight()));
         TestMinerTxSum(sum);
     }
 
     // Can get a fee estimate
-    [Test]
+    [Fact]
     public void TestGetFeeEstimate()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         MoneroFeeEstimate feeEstimate = daemon.GetFeeEstimate();
         //TestUtils.testUnsignedBigInteger(feeEstimate.GetFee(), true);
-        Assert.That(feeEstimate.GetFees().Count == 4); // slow, normal, fast, fastest
+        Assert.True(feeEstimate.GetFees().Count == 4); // slow, normal, fast, fastest
         //for (int i = 0; i < 4; i++) TestUtils.testUnsignedBigInteger(feeEstimate.GetFees()[i], true);
         //TestUtils.testUnsignedBigInteger(feeEstimate.GetQuantizationMask(), true);
     }
 
     // Can get all transactions in the transaction pool
-    [Test]
+    [Fact]
     public void TestGetTxsInPool()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         TestUtils.WALLET_TX_TRACKER.WaitForWalletTxsToClearPool(wallet);
 
         // submit tx to pool but don't relay
         MoneroTx tx = GetUnrelayedTx(wallet, 1);
         MoneroSubmitTxResult result = daemon.SubmitTxHex(tx.GetFullHex(), true);
         TestSubmitTxResultGood(result);
-        Assert.That(result.IsRelayed() == false);
+        Assert.True(result.IsRelayed() == false);
 
         // fetch txs in pool
         List<MoneroTx> txs = daemon.GetTxPool();
@@ -572,7 +571,7 @@ public class TestMoneroDaemonRpc
         ctx.fromGetTxPool = true;
 
         // test txs
-        Assert.That(txs.Count > 0, "Test requires an unconfirmed tx in the tx pool");
+        Assert.True(txs.Count > 0, "Test requires an unconfirmed tx in the tx pool");
         foreach (MoneroTx aTx in txs)
         {
             TestTx(aTx, ctx);
@@ -584,28 +583,28 @@ public class TestMoneroDaemonRpc
     }
 
     // Can get hashes of transactions in the transaction pool (binary)
-    [Test]
+    [Fact]
     public void TestGetIdsOfTxsInPoolBin()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         // TODO: get_transaction_pool_hashes.bin
         throw new MoneroError("Not implemented");
     }
 
     // Can get the transaction pool backlog (binary)
-    [Test]
+    [Fact]
     public void TestGetTxPoolBacklogBin()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         // TODO: get_txpool_backlog
         throw new MoneroError("Not implemented");
     }
 
     // Can get transaction pool statistics
-    [Test]
+    [Fact]
     public void TestGetTxPoolStatistics()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         TestUtils.WALLET_TX_TRACKER.WaitForWalletTxsToClearPool(wallet);
         Exception err = null;
         Collection<string> txIds = new();
@@ -619,12 +618,12 @@ public class TestMoneroDaemonRpc
                 // submit tx hex
                 MoneroTx tx = GetUnrelayedTx(wallet, i);
                 MoneroSubmitTxResult result = daemon.SubmitTxHex(tx.GetFullHex(), true);
-                Assert.That(result.IsGood() == true);
+                Assert.True(result.IsGood());
                 txIds.Add(tx.GetHash());
 
                 // get tx pool stats
                 MoneroTxPoolStats stats = daemon.GetTxPoolStats();
-                Assert.That(stats.GetNumTxs() > i - 1);
+                Assert.True(stats.GetNumTxs() > i - 1);
                 TestTxPoolStats(stats);
             }
         }
@@ -639,10 +638,10 @@ public class TestMoneroDaemonRpc
     }
 
     // Can flush all transactions from the pool
-    [Test]
+    [Fact]
     public void TestFlushTxsFromPool()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         TestUtils.WALLET_TX_TRACKER.WaitForWalletTxsToClearPool(wallet);
 
         // preserve original transactions in the pool
@@ -655,11 +654,11 @@ public class TestMoneroDaemonRpc
             MoneroSubmitTxResult result = daemon.SubmitTxHex(tx.GetFullHex(), true);
             TestSubmitTxResultGood(result);
         }
-        Assert.That(txPoolBefore.Count + 2 == daemon.GetTxPool().Count);
+        Assert.True(txPoolBefore.Count + 2 == daemon.GetTxPool().Count);
 
         // flush tx pool
         daemon.FlushTxPool();
-        Assert.That(0 == daemon.GetTxPool().Count);
+        Assert.True(0 == daemon.GetTxPool().Count);
 
         // re-submit original transactions
         foreach (MoneroTx tx in txPoolBefore)
@@ -669,17 +668,17 @@ public class TestMoneroDaemonRpc
         }
 
         // pool is back to original state
-        Assert.That(txPoolBefore.Count == daemon.GetTxPool().Count);
+        Assert.True(txPoolBefore.Count == daemon.GetTxPool().Count);
 
         // sync wallet for next test
         wallet.Sync();
     }
 
     // Can flush a transaction from the pool by hash
-    [Test]
+    [Fact]
     public void TestFlushTxFromPoolByHash()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         TestUtils.WALLET_TX_TRACKER.WaitForWalletTxsToClearPool(wallet);
 
         // preserve original transactions in the pool
@@ -704,21 +703,21 @@ public class TestMoneroDaemonRpc
 
             // test tx pool
             List<MoneroTx> poolTxs = daemon.GetTxPool();
-            Assert.That(txs.Count - i - 1 == poolTxs.Count);
+            Assert.True(txs.Count - i - 1 == poolTxs.Count);
         }
 
         // pool is back to original state
-        Assert.That(txPoolBefore.Count == daemon.GetTxPool().Count);
+        Assert.True(txPoolBefore.Count == daemon.GetTxPool().Count);
 
         // sync wallet for next test
         wallet.Sync();
     }
 
     // Can flush transactions from the pool by hashes
-    [Test]
+    [Fact]
     public void TestFlushTxsFromPoolByHashes()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         TestUtils.WALLET_TX_TRACKER.WaitForWalletTxsToClearPool(wallet);
 
         // preserve original transactions in the pool
@@ -733,21 +732,21 @@ public class TestMoneroDaemonRpc
             TestSubmitTxResultGood(result);
             txHashes.Add(tx.GetHash());
         }
-        Assert.That(txPoolBefore.Count + txHashes.Count == daemon.GetTxPool().Count);
+        Assert.True(txPoolBefore.Count + txHashes.Count == daemon.GetTxPool().Count);
 
         // remove all txs by hashes
         daemon.FlushTxPool(txHashes);
 
         // pool is back to original state
-        Assert.That(txPoolBefore.Count == daemon.GetTxPool().Count);
+        Assert.True(txPoolBefore.Count == daemon.GetTxPool().Count);
         wallet.Sync();
     }
 
     // Can get the spent status of key images
-    [Test]
+    [Fact]
     public void TestGetSpentStatusOfKeyImages()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         TestUtils.WALLET_TX_TRACKER.WaitForWalletTxsToClearPool(wallet);
 
         // submit txs to the pool to collect key images then flush them
@@ -792,28 +791,28 @@ public class TestMoneroDaemonRpc
     }
 
     // Can get output indices given a list of transaction hashes (binary)
-    [Test]
+    [Fact]
     public void TestGetOutputIndicesFromTxIdsBinary()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         throw new Exception("Not implemented"); // get_o_indexes.bin
     }
 
     // Can get outputs given a list of output amounts and indices (binary)
-    [Test]
+    [Fact]
     public void TestGetOutputsFromAmountsAndIndicesBinary()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         throw new Exception("Not implemented"); // get_outs.bin
     }
 
     // Can get an output histogram (binary)
-    [Test]
+    [Fact]
     public void TestGetOutputHistogramBinary()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         List<MoneroOutputHistogramEntry> entries = daemon.GetOutputHistogram(null, null, null, null, null);
-        Assert.That(entries.Count > 0);
+        Assert.True(entries.Count > 0);
         foreach (MoneroOutputHistogramEntry entry in entries)
         {
             TestOutputHistogramEntry(entry);
@@ -821,10 +820,10 @@ public class TestMoneroDaemonRpc
     }
 
     // Can get an output distribution (binary)
-    [Test]
+    [Fact]
     public void TestGetOutputDistributionBinary()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         List<ulong> amounts = [];
         amounts.Add(0);
         amounts.Add(1);
@@ -842,37 +841,37 @@ public class TestMoneroDaemonRpc
     }
 
     // Can get general information
-    [Test]
+    [Fact]
     public void TestGetGeneralInformation()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         MoneroDaemonInfo info = daemon.GetInfo();
         TestInfo(info);
     }
 
     // Can get sync information
-    [Test]
+    [Fact]
     public void TestGetSyncInformation()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         MoneroDaemonSyncInfo syncInfo = daemon.GetSyncInfo();
         TestSyncInfo(syncInfo);
     }
 
     // Can get hard fork information
-    [Test]
+    [Fact]
     public void TestGetHardForkInformation()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         MoneroHardForkInfo hardForkInfo = daemon.GetHardForkInfo();
         TestHardForkInfo(hardForkInfo);
     }
 
     // Can get alternative chains
-    [Test]
+    [Fact]
     public void TestGetAlternativeChains()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         List<MoneroAltChain> altChains = daemon.GetAltChains();
         foreach (MoneroAltChain altChain in altChains)
         {
@@ -881,30 +880,30 @@ public class TestMoneroDaemonRpc
     }
 
     // Can get alternative block hashes
-    [Test]
+    [Fact]
     public void TestGetAlternativeBlockIds()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         List<string> altBlockIds = daemon.GetAltBlockHashes();
         foreach (string altBlockId in altBlockIds)
         {
-            Assert.That(altBlockId != null);
-            Assert.That(64 == altBlockId.Length);  // TODO: common validation
+            Assert.NotNull(altBlockId);
+            Assert.True(64 == altBlockId.Length);  // TODO: common validation
         }
     }
 
     // Can get, set, and reset a download bandwidth limit
-    [Test]
-  public void TestSetDownloadBandwidth()
+    [Fact]
+    public void TestSetDownloadBandwidth()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         int initVal = daemon.GetDownloadLimit();
-        Assert.That(initVal > 0);
+        Assert.True(initVal > 0);
         int setVal = initVal * 2;
         daemon.SetDownloadLimit(setVal);
-        Assert.That(setVal == daemon.GetDownloadLimit());
+        Assert.True(setVal == daemon.GetDownloadLimit());
         int resetVal = daemon.ResetDownloadLimit();
-        Assert.That(initVal == resetVal);
+        Assert.True(initVal == resetVal);
 
         // test invalid limits
         try
@@ -914,23 +913,23 @@ public class TestMoneroDaemonRpc
         }
         catch (MoneroError e)
         {
-            Assert.That("Download limit must be an integer greater than 0" == e.Message);
+            Assert.True("Download limit must be an integer greater than 0" == e.Message);
         }
-        Assert.That(daemon.GetDownloadLimit() == initVal);
+        Assert.True(daemon.GetDownloadLimit() == initVal);
     }
 
     // Can get, set, and reset an upload bandwidth limit
-    [Test]
+    [Fact]
     public void TestSetUploadBandwidth()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         int initVal = daemon.GetUploadLimit();
-        Assert.That(initVal > 0);
+        Assert.True(initVal > 0);
         int setVal = initVal * 2;
         daemon.SetUploadLimit(setVal);
-        Assert.That(setVal == daemon.GetUploadLimit());
+        Assert.True(setVal == daemon.GetUploadLimit());
         int resetVal = daemon.ResetUploadLimit();
-        Assert.That(initVal == resetVal);
+        Assert.True(initVal == resetVal);
 
         // test invalid limits
         try
@@ -940,18 +939,18 @@ public class TestMoneroDaemonRpc
         }
         catch (MoneroError e)
         {
-            Assert.That("Upload limit must be an integer greater than 0" == e.Message);
+            Assert.True("Upload limit must be an integer greater than 0" == e.Message);
         }
-        Assert.That(initVal == daemon.GetUploadLimit());
+        Assert.True(initVal == daemon.GetUploadLimit());
     }
 
     // Can get peers with active incoming or outgoing connections
-    [Test]
+    [Fact]
     public void TestGetPeers()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         List<MoneroPeer> peers = daemon.GetPeers();
-        Assert.That(peers.Count > 0, "Daemon has no incoming or outgoing peers to test");
+        Assert.True(peers.Count > 0, "Daemon has no incoming or outgoing peers to test");
         foreach (MoneroPeer peer in peers)
         {
             TestPeer(peer);
@@ -959,12 +958,12 @@ public class TestMoneroDaemonRpc
     }
 
     // Can get all known peers which may be online or offline
-    [Test]
+    [Fact]
     public void TestGetKnownPeers()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         List<MoneroPeer> peers = daemon.GetKnownPeers();
-        Assert.That(peers.Count > 0, "Daemon has no known peers to test");
+        Assert.True(peers.Count > 0, "Daemon has no known peers to test");
         foreach (MoneroPeer peer in peers)
         {
             TestKnownPeer(peer, false);
@@ -972,30 +971,30 @@ public class TestMoneroDaemonRpc
     }
 
     // Can limit the number of outgoing peers
-    [Test]
+    [Fact]
     public void TestSetOutgoingPeerLimit()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         daemon.SetOutgoingPeerLimit(0);
         daemon.SetOutgoingPeerLimit(8);
         daemon.SetOutgoingPeerLimit(10);
     }
 
     // Can limit the number of incoming peers
-    [Test]
+    [Fact]
     public void TestSetIncomingPeerLimit()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         daemon.SetIncomingPeerLimit(0);
         daemon.SetIncomingPeerLimit(8);
         daemon.SetIncomingPeerLimit(10);
     }
 
     // Can ban a peer
-    [Test]
+    [Fact]
     public void TestBanPeer()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
 
         // set ban
         MoneroBan ban = new MoneroBan();
@@ -1012,14 +1011,14 @@ public class TestMoneroDaemonRpc
             TestMoneroBan(aBan);
             if ("192.168.1.51".Equals(aBan.GetHost())) found = true;
         }
-        Assert.That(found);
+        Assert.True(found);
     }
 
     // Can ban peers
-    [Test]
+    [Fact]
     public void TestBanPeers()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
 
         // set bans
         MoneroBan ban1 = new MoneroBan();
@@ -1045,15 +1044,15 @@ public class TestMoneroDaemonRpc
             if ("192.168.1.52".Equals(aBan.GetHost())) found1 = true;
             if ("192.168.1.53".Equals(aBan.GetHost())) found2 = true;
         }
-        Assert.That(found1);
-        Assert.That(found2);
+        Assert.True(found1);
+        Assert.True(found2);
     }
 
     // Can start and stop mining
-    [Test]
+    [Fact]
     public void TestMining()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
 
         // stop mining at beginning of test
         try { daemon.StopMining(); }
@@ -1070,10 +1069,10 @@ public class TestMoneroDaemonRpc
     }
 
     // Can get mining status
-    [Test]
+    [Fact]
     public void TestGetMiningStatus()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
 
         try
         {
@@ -1084,11 +1083,11 @@ public class TestMoneroDaemonRpc
 
             // test status without mining
             MoneroMiningStatus status = daemon.GetMiningStatus();
-            Assert.That(false == status.IsActive());
-            Assert.That(status.GetAddress() == null);
-            Assert.That(0 == (long)status.GetSpeed());
-            Assert.That(0 == (int)status.GetNumThreads());
-            Assert.That(status.IsBackground() == null);
+            Assert.False(status.IsActive());
+            Assert.Null(status.GetAddress());
+            Assert.True(0 == (long)status.GetSpeed());
+            Assert.True(0 == (int)status.GetNumThreads());
+            Assert.Null(status.IsBackground());
 
             // test status with mining
             string address = wallet.GetPrimaryAddress();
@@ -1096,11 +1095,11 @@ public class TestMoneroDaemonRpc
             bool isBackground = false;
             daemon.StartMining(address, threadCount, isBackground, true);
             status = daemon.GetMiningStatus();
-            Assert.That(true == status.IsActive());
-            Assert.That(address == status.GetAddress());
-            Assert.That(status.GetSpeed() >= 0);
-            Assert.That(threadCount == status.GetNumThreads());
-            Assert.That(isBackground == status.IsBackground());
+            Assert.True(status.IsActive());
+            Assert.True(address == status.GetAddress());
+            Assert.True(status.GetSpeed() >= 0);
+            Assert.True(threadCount == status.GetNumThreads());
+            Assert.True(isBackground == status.IsBackground());
         }
         catch (MoneroError e)
         {
@@ -1116,10 +1115,10 @@ public class TestMoneroDaemonRpc
     }
 
     // Can submit a mined block to the network
-    [Test]
+    [Fact]
     public void TestSubmitMinedBlock()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
 
         // get template to mine on
         MoneroBlockTemplate template = daemon.GetBlockTemplate(TestUtils.ADDRESS);
@@ -1134,42 +1133,41 @@ public class TestMoneroDaemonRpc
         }
         catch (MoneroRpcError e)
         {
-            Assert.That(-7 == e.GetCode());
-            Assert.That("Block not accepted" == e.Message);
+            Assert.True(-7 == e.GetCode());
+            Assert.True("Block not accepted" == e.Message);
         }
     }
 
     // Can prune the blockchain
-    [Test]
+    [Fact]
     public void TestPruneBlockchain()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         MoneroPruneResult result = daemon.PruneBlockchain(true);
         if (result.IsPruned() == true)
         {
-            Assert.That(result.GetPruningSeed() > 0);
+            Assert.True(result.GetPruningSeed() > 0);
         }
         else
         {
-            Assert.That(0 == result.GetPruningSeed());
+            Assert.True(0 == result.GetPruningSeed());
         }
     }
 
     // Can check for an update
-    [Test]
+    [Fact]
     public void TestCheckForUpdate()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
         MoneroDaemonUpdateCheckResult result = daemon.CheckForUpdate();
         TestUpdateCheckResult(result);
     }
 
     // Can download an update
-    [Test]
-    [Ignore("Disabled")]
+    [Fact(Skip = "Disabled")]
     public void TestDownloadUpdate()
     {
-        Assert.That(TEST_NON_RELAYS);
+        Assert.True(TEST_NON_RELAYS);
 
         // download to default path
         MoneroDaemonUpdateDownloadResult result = daemon.DownloadUpdate();
@@ -1190,30 +1188,32 @@ public class TestMoneroDaemonRpc
             }
             catch (MoneroRpcError e)
             {
-                Assert.That(e.Message != "Should have thrown error");
-                Assert.That(500 == e.GetCode());  // TODO monerod: this causes a 500 in daemon rpc
+                Assert.True(e.Message != "Should have thrown error");
+                Assert.True(500 == e.GetCode());  // TODO monerod: this causes a 500 in daemon rpc
             }
         }
     }
 
     // Can be stopped
-    [Test]
-    [Ignore("Disabled")] // test is disabled to not interfere with other tests
+    [Fact(Skip = "Disable")]
     public void TestStop()
     {
-        Assert.That(TEST_NON_RELAYS);
-    
+        Assert.True(TEST_NON_RELAYS);
+
         // stop the daemon
         daemon.Stop();
 
         // give the daemon time to shut down
         Thread.Sleep(TestUtils.SYNC_PERIOD_IN_MS);
         // try to interact with the daemon
-        try {
-          daemon.GetHeight();
-          throw new Exception("Should have thrown error");
-        } catch (MoneroError e) {
-            Assert.That("Should have thrown error" != e.Message);
+        try
+        {
+            daemon.GetHeight();
+            throw new Exception("Should have thrown error");
+        }
+        catch (MoneroError e)
+        {
+            Assert.True("Should have thrown error" != e.Message);
         }
     }
 
@@ -1222,10 +1222,10 @@ public class TestMoneroDaemonRpc
     #region Relay Tests
 
     // Can submit a tx in hex format to the pool and relay in one call
-    [Test]
+    [Fact]
     public void TestSubmitAndRelayTxHex()
     {
-        Assert.That(TEST_RELAYS && !LITE_MODE);
+        Assert.True(TEST_RELAYS && !LITE_MODE);
 
         // wait one time for wallet txs in the pool to clear
         // TODO monero-project: update from pool does not prevent creating double spend tx
@@ -1237,7 +1237,7 @@ public class TestMoneroDaemonRpc
 
         // submit and relay tx1
         MoneroSubmitTxResult result = daemon.SubmitTxHex(tx1.GetFullHex());
-        Assert.That(true == result.IsRelayed());
+        Assert.True(result.IsRelayed());
         TestSubmitTxResultGood(result);
 
         // tx1 is in the pool
@@ -1247,12 +1247,12 @@ public class TestMoneroDaemonRpc
         {
             if (aTx.GetHash().Equals(tx1.GetHash()))
             {
-                Assert.That(true == aTx.IsRelayed());
+                Assert.True(aTx.IsRelayed());
                 found = true;
                 break;
             }
         }
-        Assert.That(found, "Tx1 was not found after being submitted to the daemon's tx pool");
+        Assert.True(found, "Tx1 was not found after being submitted to the daemon's tx pool");
 
         // tx1 is recognized by the wallet
         wallet.Sync();
@@ -1260,7 +1260,7 @@ public class TestMoneroDaemonRpc
 
         // submit and relay tx2 hex which double spends tx1
         result = daemon.SubmitTxHex(tx2.GetFullHex());
-        Assert.That(true == result.IsRelayed());
+        Assert.True(result.IsRelayed());
         TestSubmitTxResultDoubleSpend(result);
 
         // tx2 is in not the pool
@@ -1274,27 +1274,27 @@ public class TestMoneroDaemonRpc
                 break;
             }
         }
-        Assert.That(!found, "Tx2 should not be in the pool because it double spends tx1 which is in the pool");
+        Assert.True(!found, "Tx2 should not be in the pool because it double spends tx1 which is in the pool");
 
         // all wallets will need to wait for tx to confirm in order to properly sync
         TestUtils.WALLET_TX_TRACKER.Reset();
     }
 
     // Can submit a tx in hex format to the pool then relay
-    [Test]
+    [Fact]
     public void TestSubmitThenRelayTxHex()
     {
-        Assert.That(TEST_RELAYS && !LITE_MODE);
+        Assert.True(TEST_RELAYS && !LITE_MODE);
         TestUtils.WALLET_TX_TRACKER.WaitForWalletTxsToClearPool(wallet);
-        MoneroTx tx =GetUnrelayedTx(wallet, 1);
+        MoneroTx tx = GetUnrelayedTx(wallet, 1);
         TestSubmitThenRelay([tx]);
     }
 
     // Can submit txs in hex format to the pool then relay
-    [Test]
+    [Fact]
     public void TestSubmitThenRelayTxHexes()
     {
-        Assert.That(TEST_RELAYS && !LITE_MODE);
+        Assert.True(TEST_RELAYS && !LITE_MODE);
         TestUtils.WALLET_TX_TRACKER.WaitForWalletTxsToClearPool(wallet);
         List<MoneroTx> txs = [];
         txs.Add(GetUnrelayedTx(wallet, 1));
@@ -1307,10 +1307,10 @@ public class TestMoneroDaemonRpc
     #region Notification Tests
 
     // Can notify listeners when a new block is added to the chain
-    [Test]
+    [Fact]
     public void TestBlockListener()
     {
-        Assert.That(!LITE_MODE && TEST_NOTIFICATIONS);
+        Assert.True(!LITE_MODE && TEST_NOTIFICATIONS);
 
         try
         {
@@ -1329,7 +1329,7 @@ public class TestMoneroDaemonRpc
             TestBlockHeader(header, true);
 
             // test that listener was called with equivalent header
-            Assert.That(header == listener.GetLastBlockHeader());
+            Assert.True(header == listener.GetLastBlockHeader());
         }
         catch (MoneroError e)
         {
@@ -1350,43 +1350,43 @@ public class TestMoneroDaemonRpc
 
     private static void TestBlockHeader(MoneroBlockHeader? header, bool isFull)
     {
-        Assert.That(header != null);
-        Assert.That(header.GetHeight() >= 0);
-        Assert.That(header.GetMajorVersion() > 0);
-        Assert.That(header.GetMinorVersion() >= 0);
-        if (header.GetHeight() == 0) Assert.That(header.GetTimestamp() == 0);
-        else Assert.That(header.GetTimestamp() > 0);
-        Assert.That(header.GetPrevHash() != null);
-        Assert.That(header.GetNonce() != null);
+        Assert.NotNull(header);
+        Assert.True(header.GetHeight() >= 0);
+        Assert.True(header.GetMajorVersion() > 0);
+        Assert.True(header.GetMinorVersion() >= 0);
+        if (header.GetHeight() == 0) Assert.True(header.GetTimestamp() == 0);
+        else Assert.True(header.GetTimestamp() > 0);
+        Assert.NotNull(header.GetPrevHash());
+        Assert.NotNull(header.GetNonce());
         if (header.GetNonce() == 0) MoneroUtils.Log(0, "WARNING: header nonce is 0 at height " + header.GetHeight()); // TODO (monero-project): why is header nonce 0?
-        else Assert.That(header.GetNonce() > 0);
-        Assert.That(header.GetPowHash() == null);  // never seen defined
+        else Assert.True(header.GetNonce() > 0);
+        Assert.Null(header.GetPowHash());  // never seen defined
         if (isFull)
         {
-            Assert.That(header.GetSize() > 0);
-            Assert.That(header.GetDepth() >= 0);
-            Assert.That(header.GetDifficulty() > 0);
-            Assert.That(header.GetCumulativeDifficulty() > 0);
-            Assert.That(64 == header.GetHash().Length);
-            Assert.That(64 == header.GetMinerTxHash().Length);
-            Assert.That(header.GetNumTxs() >= 0);
-            Assert.That(header.GetOrphanStatus() != null);
-            Assert.That(header.GetReward() != null);
-            Assert.That(header.GetWeight() != null);
-            Assert.That(header.GetWeight() > 0);
+            Assert.True(header.GetSize() > 0);
+            Assert.True(header.GetDepth() >= 0);
+            Assert.True(header.GetDifficulty() > 0);
+            Assert.True(header.GetCumulativeDifficulty() > 0);
+            Assert.True(64 == header.GetHash().Length);
+            Assert.True(64 == header.GetMinerTxHash().Length);
+            Assert.True(header.GetNumTxs() >= 0);
+            Assert.NotNull(header.GetOrphanStatus());
+            Assert.NotNull(header.GetReward());
+            Assert.NotNull(header.GetWeight());
+            Assert.True(header.GetWeight() > 0);
         }
         else
         {
-            Assert.That(header.GetSize() == null);
-            Assert.That(header.GetDepth() == null);
-            Assert.That(header.GetDifficulty() == null);
-            Assert.That(header.GetCumulativeDifficulty() == null);
-            Assert.That(header.GetHash() == null);
-            Assert.That(header.GetMinerTxHash() == null);
-            Assert.That(header.GetNumTxs() == null);
-            Assert.That(header.GetOrphanStatus() == null);
-            Assert.That(header.GetReward() == null);
-            Assert.That(header.GetWeight() == null);
+            Assert.Null(header.GetSize());
+            Assert.Null(header.GetDepth());
+            Assert.Null(header.GetDifficulty());
+            Assert.Null(header.GetCumulativeDifficulty());
+            Assert.Null(header.GetHash());
+            Assert.Null(header.GetMinerTxHash());
+            Assert.Null(header.GetNumTxs());
+            Assert.Null(header.GetOrphanStatus());
+            Assert.Null(header.GetReward());
+            Assert.Null(header.GetWeight());
         }
     }
 
@@ -1397,12 +1397,12 @@ public class TestMoneroDaemonRpc
         ulong realStartHeight = startHeight == null ? 0 : (ulong)startHeight;
         ulong realEndHeight = endHeight == null ? chainHeight - 1 : (ulong)endHeight;
         List<MoneroBlock> blocks = chunked ? daemon.GetBlocksByRangeChunked((ulong)startHeight, (ulong)endHeight) : daemon.GetBlocksByRange((ulong)startHeight, (ulong)endHeight);
-        Assert.That(realEndHeight - realStartHeight + 1 == (ulong)blocks.Count);
+        Assert.True(realEndHeight - realStartHeight + 1 == (ulong)blocks.Count);
 
         // test each block
         for (int i = 0; i < blocks.Count; i++)
         {
-            Assert.That(realStartHeight + (ulong)i == (ulong)blocks[i].GetHeight());
+            Assert.True(realStartHeight + (ulong)i == (ulong)blocks[i].GetHeight());
             TestBlock(blocks[i], BINARY_BLOCK_CTX);
         }
     }
@@ -1422,28 +1422,28 @@ public class TestMoneroDaemonRpc
 
     private static MoneroTx GetUnrelayedTx(MoneroWallet wallet, uint accountIdx)
     {
-        Assert.That(accountIdx > 0, "Txs sent from/to same account are not properly synced from the pool");  // TODO monero-project
+        Assert.True(accountIdx > 0, "Txs sent from/to same account are not properly synced from the pool");  // TODO monero-project
         MoneroTxConfig config = new MoneroTxConfig().SetAccountIndex(accountIdx).SetAddress(wallet.GetPrimaryAddress()).SetAmount(TestUtils.MAX_FEE);
         MoneroTx tx = wallet.CreateTx(config);
-        Assert.That(tx.GetFullHex().Length > 0);
-        Assert.That(tx.GetRelay() == false);
+        Assert.True(tx.GetFullHex().Length > 0);
+        Assert.False(tx.GetRelay());
         return tx;
     }
 
     private static void TestBlockTemplate(MoneroBlockTemplate template)
     {
-        Assert.That(template != null);
-        Assert.That(template.GetBlockTemplateBlob() != null);
-        Assert.That(template.GetBlockHashingBlob() != null);
-        Assert.That(template.GetDifficulty() != null);
-        Assert.That(template.GetExpectedReward() != null);
-        Assert.That(template.GetHeight() != null);
-        Assert.That(template.GetPrevHash() != null);
-        Assert.That(template.GetReservedOffset() != null);
-        Assert.That(template.GetSeedHeight() != null);
-        Assert.That(template.GetSeedHeight() > 0);
-        Assert.That(template.GetSeedHash() != null);
-        Assert.That(template.GetSeedHash().Length > 0);
+        Assert.NotNull(template);
+        Assert.NotNull(template.GetBlockTemplateBlob());
+        Assert.NotNull(template.GetBlockHashingBlob());
+        Assert.NotNull(template.GetDifficulty());
+        Assert.NotNull(template.GetExpectedReward());
+        Assert.NotNull(template.GetHeight());
+        Assert.NotNull(template.GetPrevHash());
+        Assert.NotNull(template.GetReservedOffset());
+        Assert.NotNull(template.GetSeedHeight());
+        Assert.True(template.GetSeedHeight() > 0);
+        Assert.NotNull(template.GetSeedHash());
+        Assert.True(template.GetSeedHash().Length > 0);
         // next seed hash can be null or initialized  // TODO: test circumstances for each
     }
 
@@ -1452,44 +1452,44 @@ public class TestMoneroDaemonRpc
     {
 
         // test required fields
-        Assert.That(block != null);
+        Assert.NotNull(block);
         TestMinerTx(block.GetMinerTx());  // TODO: miner tx doesn't have as much stuff, can't call TestTx?
         TestBlockHeader(block, ctx.headerIsFull == true);
 
         if (ctx.hasHex == true)
         {
-            Assert.That(block.GetHex() != null);
-            Assert.That(block.GetHex().Length > 1);
+            Assert.NotNull(block.GetHex());
+            Assert.True(block.GetHex().Length > 1);
         }
         else
         {
-            Assert.That(block.GetHex() != null);
+            Assert.NotNull(block.GetHex());
         }
 
         if (ctx.hasTxs == true)
         {
-            Assert.That(ctx.txContext != null);
+            Assert.NotNull(ctx.txContext);
             foreach (MoneroTx tx in block.GetTxs())
             {
-                Assert.That(block == tx.GetBlock());
+                Assert.True(block == tx.GetBlock());
                 TestTx(tx, ctx.txContext);
             }
         }
         else
         {
-            Assert.That(ctx.txContext != null);
-            Assert.That(block.GetTxs() == null);
+            Assert.NotNull(ctx.txContext);
+            Assert.NotNull(block.GetTxs());
         }
     }
 
     private static void TestMinerTx(MoneroTx? minerTx)
     {
-        Assert.That(minerTx != null);
-        Assert.That(minerTx.IsMinerTx() != null);
-        Assert.That(minerTx.GetVersion() >= 0);
-        Assert.That(minerTx.GetExtra() != null);
-        Assert.That(minerTx.GetExtra().Length > 0);
-        Assert.That(minerTx.GetUnlockTime() >= 0);
+        Assert.NotNull(minerTx);
+        Assert.NotNull(minerTx.IsMinerTx());
+        Assert.True(minerTx.GetVersion() >= 0);
+        Assert.NotNull(minerTx.GetExtra());
+        Assert.True(minerTx.GetExtra().Length > 0);
+        Assert.True(minerTx.GetUnlockTime() >= 0);
 
         //    // TODO: miner tx does not have hashes in binary requests so this will fail, need to derive using prunable data
         //    TestContext ctx = new TestContext();
@@ -1505,169 +1505,169 @@ public class TestMoneroDaemonRpc
     private static void TestTx(MoneroTx? tx, TestContext? ctx)
     {
         // check inputs
-        Assert.That(tx != null);
-        Assert.That(ctx != null);
-        Assert.That(ctx.isPruned != null);
-        Assert.That(ctx.isConfirmed != null);
-        Assert.That(ctx.fromGetTxPool != null);
+        Assert.NotNull(tx);
+        Assert.NotNull(ctx);
+        Assert.NotNull(ctx.isPruned);
+        Assert.NotNull(ctx.isConfirmed);
+        Assert.NotNull(ctx.fromGetTxPool);
 
         // standard across all txs
-        Assert.That(64 == tx.GetHash().Length);
-        if (tx.IsRelayed() == null) Assert.That(tx.InTxPool() == true);  // TODO monerod: add relayed to get_transactions
-        else Assert.That(tx.IsRelayed() != null);
-        Assert.That(tx.IsConfirmed() != null);
-        Assert.That(tx.InTxPool() != null);
-        Assert.That(tx.IsMinerTx() != null);
-        Assert.That(tx.IsDoubleSpendSeen() != null);
-        Assert.That(tx.GetVersion() >= 0);
-        Assert.That(tx.GetUnlockTime() >= 0);
-        Assert.That(tx.GetInputs() != null);
-        Assert.That(tx.GetOutputs() != null);
-        Assert.That(tx.GetExtra().Length > 0);
+        Assert.True(64 == tx.GetHash().Length);
+        if (tx.IsRelayed() == null) Assert.True(tx.InTxPool());  // TODO monerod: add relayed to get_transactions
+        else Assert.NotNull(tx.IsRelayed());
+        Assert.NotNull(tx.IsConfirmed());
+        Assert.NotNull(tx.InTxPool());
+        Assert.NotNull(tx.IsMinerTx());
+        Assert.NotNull(tx.IsDoubleSpendSeen());
+        Assert.True(tx.GetVersion() >= 0);
+        Assert.True(tx.GetUnlockTime() >= 0);
+        Assert.NotNull(tx.GetInputs());
+        Assert.NotNull(tx.GetOutputs());
+        Assert.True(tx.GetExtra().Length > 0);
         //TestUtils.testUnsignedBigInteger(tx.GetFee(), true);
 
         // test presence of output indices
         // TODO: change this over to outputs only
-        if (tx.IsMinerTx() == true) Assert.That(tx.GetOutputIndices() == null); // TODO: how to get output indices for miner transactions?
-        if (tx.InTxPool() == true || ctx.fromGetTxPool == true || ctx.hasOutputIndices == false) Assert.That(null == tx.GetOutputIndices());
-        else Assert.That(tx.GetOutputIndices() != null);
-        if (tx.GetOutputIndices() != null) Assert.That(tx.GetOutputIndices().Count > 0);
+        if (tx.IsMinerTx() == true) Assert.Null(tx.GetOutputIndices()); // TODO: how to get output indices for miner transactions?
+        if (tx.InTxPool() == true || ctx.fromGetTxPool == true || ctx.hasOutputIndices == false) Assert.Null(tx.GetOutputIndices());
+        else Assert.NotNull(tx.GetOutputIndices());
+        if (tx.GetOutputIndices() != null) Assert.True(tx.GetOutputIndices().Count > 0);
 
         // test confirmed ctx
-        if (ctx.isConfirmed == true) Assert.That(true == tx.IsConfirmed());
-        if (ctx.isConfirmed == false) Assert.That(false == tx.IsConfirmed());
+        if (ctx.isConfirmed == true) Assert.True(tx.IsConfirmed());
+        if (ctx.isConfirmed == false) Assert.False(tx.IsConfirmed());
 
         // test confirmed
         if (tx.IsConfirmed() == true)
         {
-            Assert.That(tx.GetBlock() != null);
-            Assert.That(tx.GetBlock().GetTxs().Contains(tx));
-            Assert.That(tx.GetBlock().GetHeight() > 0);
-            Assert.That(tx.GetBlock().GetTxs().Contains(tx));
-            Assert.That(tx.GetBlock().GetHeight() > 0);
-            Assert.That(tx.GetBlock().GetTimestamp() > 0);
-            Assert.That(true == tx.GetRelay());
-            Assert.That(true == tx.IsRelayed());
-            Assert.That(false == tx.IsFailed());
-            Assert.That(false == tx.InTxPool());
-            Assert.That(false == tx.IsDoubleSpendSeen());
-            if (ctx.fromBinaryBlock == true) Assert.That(tx.GetNumConfirmations() == null);
-            else Assert.That(tx.GetNumConfirmations() > 0);
+            Assert.NotNull(tx.GetBlock());
+            Assert.True(tx.GetBlock().GetTxs().Contains(tx));
+            Assert.True(tx.GetBlock().GetHeight() > 0);
+            Assert.True(tx.GetBlock().GetTxs().Contains(tx));
+            Assert.True(tx.GetBlock().GetHeight() > 0);
+            Assert.True(tx.GetBlock().GetTimestamp() > 0);
+            Assert.True(tx.GetRelay());
+            Assert.True(tx.IsRelayed());
+            Assert.False(tx.IsFailed());
+            Assert.False(tx.InTxPool());
+            Assert.False(tx.IsDoubleSpendSeen());
+            if (ctx.fromBinaryBlock == true) Assert.Null(tx.GetNumConfirmations());
+            else Assert.True(tx.GetNumConfirmations() > 0);
         }
         else
         {
-            Assert.That(null == tx.GetBlock());
-            Assert.That(0 == (long)tx.GetNumConfirmations());
+            Assert.Null(tx.GetBlock());
+            Assert.True(0 == (long)tx.GetNumConfirmations());
         }
 
         // test in tx pool
         if (tx.InTxPool() == true)
         {
-            Assert.That(tx.IsConfirmed() == false);
-            Assert.That(tx.IsDoubleSpendSeen() == false);
-            Assert.That(tx.GetLastFailedHeight() == null);
-            Assert.That(tx.GetLastFailedHash() == null);
-            Assert.That(tx.GetReceivedTimestamp() > 0);
+            Assert.False(tx.IsConfirmed());
+            Assert.False(tx.IsDoubleSpendSeen());
+            Assert.Null(tx.GetLastFailedHeight());
+            Assert.Null(tx.GetLastFailedHash());
+            Assert.True(tx.GetReceivedTimestamp() > 0);
             if (ctx.fromGetTxPool == true)
             {
-                Assert.That(tx.GetSize() > 0);
-                Assert.That(tx.GetWeight() > 0);
-                Assert.That(tx.IsKeptByBlock() != null);
-                Assert.That(tx.GetMaxUsedBlockHeight() >= 0);
-                Assert.That(tx.GetMaxUsedBlockHash() != null);
+                Assert.True(tx.GetSize() > 0);
+                Assert.True(tx.GetWeight() > 0);
+                Assert.NotNull(tx.IsKeptByBlock());
+                Assert.True(tx.GetMaxUsedBlockHeight() >= 0);
+                Assert.NotNull(tx.GetMaxUsedBlockHash());
             }
-            Assert.That(null == tx.GetLastFailedHeight());
-            Assert.That(null == tx.GetLastFailedHash());
+            Assert.Null(tx.GetLastFailedHeight());
+            Assert.Null(tx.GetLastFailedHash());
         }
         else
         {
-            Assert.That(tx.GetLastRelayedTimestamp() == null);
+            Assert.Null(tx.GetLastRelayedTimestamp());
         }
 
         // test miner tx
         if (tx.IsMinerTx() == true)
         {
-            Assert.That(0 == tx.GetFee());
-            Assert.That(null == tx.GetInputs());
-            Assert.That(tx.GetSignatures() == null);
+            Assert.True(0 == tx.GetFee());
+            Assert.Null(tx.GetInputs());
+            Assert.Null(tx.GetSignatures());
         }
         else
         {
-            if (tx.GetSignatures() != null) Assert.That(tx.GetSignatures().Count > 0);
+            if (tx.GetSignatures() != null) Assert.True(tx.GetSignatures().Count > 0);
         }
 
         // test failed  // TODO: what else to test associated with failed
         if (tx.IsFailed() == true)
         {
-            Assert.That(tx.GetReceivedTimestamp() > 0);
+            Assert.True(tx.GetReceivedTimestamp() > 0);
         }
         else
         {
-            if (tx.IsRelayed() == null) Assert.That(null == tx.GetRelay()); // TODO monerod: add relayed to get_transactions
-            else if (tx.IsRelayed() == true) Assert.That(false == tx.IsDoubleSpendSeen());
+            if (tx.IsRelayed() == null) Assert.Null(tx.GetRelay()); // TODO monerod: add relayed to get_transactions
+            else if (tx.IsRelayed() == true) Assert.False(tx.IsDoubleSpendSeen());
             else
             {
-                Assert.That(false == tx.IsRelayed());
+                Assert.False(tx.IsRelayed());
                 if (ctx.fromGetTxPool == true)
                 {
-                    Assert.That(false == tx.GetRelay());
-                    Assert.That(tx.IsDoubleSpendSeen() != null);
+                    Assert.False(tx.GetRelay());
+                    Assert.NotNull(tx.IsDoubleSpendSeen());
                 }
             }
         }
-        Assert.That(tx.GetLastFailedHeight() == null);
-        Assert.That(tx.GetLastFailedHash() == null);
+        Assert.Null(tx.GetLastFailedHeight());
+        Assert.Null(tx.GetLastFailedHash());
 
         // received time only for tx pool or failed txs
         if (tx.GetReceivedTimestamp() != null)
         {
-            Assert.That(tx.InTxPool() == true || tx.IsFailed() == true);
+            Assert.True(tx.InTxPool() == true || tx.IsFailed() == true);
         }
 
         // test inputs and outputs
-        if (tx.IsMinerTx() == false) Assert.That(tx.GetInputs().Count > 0);
+        if (tx.IsMinerTx() == false) Assert.True(tx.GetInputs().Count > 0);
         foreach (MoneroOutput input in tx.GetInputs())
         {
-            Assert.That(tx == input.GetTx());
+            Assert.True(tx == input.GetTx());
             TestInput(input, ctx);
         }
-        Assert.That(tx.GetOutputs().Count > 0);
+        Assert.True(tx.GetOutputs().Count > 0);
         foreach (MoneroOutput output in tx.GetOutputs())
         {
-            Assert.That(tx == output.GetTx());
+            Assert.True(tx == output.GetTx());
             TestOutput(output, ctx);
         }
 
         // test pruned vs not pruned
-        if (ctx.fromGetTxPool == true || ctx.fromBinaryBlock == true) Assert.That(tx.GetPrunableHash() == null);   // TODO monerod: tx pool txs do not have prunable hash, TODO: GetBlocksByHeight() has inconsistent client-side pruning
-        else Assert.That(tx.GetPrunableHash() != null);
+        if (ctx.fromGetTxPool == true || ctx.fromBinaryBlock == true) Assert.Null(tx.GetPrunableHash());   // TODO monerod: tx pool txs do not have prunable hash, TODO: GetBlocksByHeight() has inconsistent client-side pruning
+        else Assert.NotNull(tx.GetPrunableHash());
         if (ctx.isPruned == true)
         {
-            Assert.That(tx.GetRctSigPrunable() == null);
-            Assert.That(tx.GetSize() == null);
-            Assert.That(tx.GetLastRelayedTimestamp() == null);
-            Assert.That(tx.GetReceivedTimestamp() == null);
-            Assert.That(tx.GetFullHex() == null);
-            Assert.That(tx.GetPrunedHex() != null);
+            Assert.Null(tx.GetRctSigPrunable());
+            Assert.Null(tx.GetSize());
+            Assert.Null(tx.GetLastRelayedTimestamp());
+            Assert.Null(tx.GetReceivedTimestamp());
+            Assert.Null(tx.GetFullHex());
+            Assert.NotNull(tx.GetPrunedHex());
         }
         else
         {
-            Assert.That(tx.GetPrunedHex() == null);
-            if (ctx.fromBinaryBlock == true) Assert.That(tx.GetFullHex() == null);         // TODO: GetBlocksByHeight() has inconsistent client-side pruning
-            else Assert.That(tx.GetFullHex().Length > 0);
-            if (ctx.fromBinaryBlock == true) Assert.That(tx.GetRctSigPrunable() == null);  // TODO: GetBlocksByHeight() has inconsistent client-side pruning
-                                                                                               //else Assert.That(null != (tx.GetRctSigPrunable()); // TODO: define and test this
-            Assert.That(tx.IsDoubleSpendSeen() == false);
+            Assert.Null(tx.GetPrunedHex());
+            if (ctx.fromBinaryBlock == true) Assert.Null(tx.GetFullHex());         // TODO: GetBlocksByHeight() has inconsistent client-side pruning
+            else Assert.True(tx.GetFullHex().Length > 0);
+            if (ctx.fromBinaryBlock == true) Assert.Null(tx.GetRctSigPrunable());  // TODO: GetBlocksByHeight() has inconsistent client-side pruning
+                                                                                           //else Assert.NotNull((tx.GetRctSigPrunable()); // TODO: define and test this
+            Assert.False(tx.IsDoubleSpendSeen());
             if (tx.IsConfirmed() == true)
             {
-                Assert.That(tx.GetLastRelayedTimestamp() == null);
-                Assert.That(tx.GetReceivedTimestamp() == null);
+                Assert.Null(tx.GetLastRelayedTimestamp());
+                Assert.Null(tx.GetReceivedTimestamp());
             }
             else
             {
-                if (tx.IsRelayed() == true) Assert.That(tx.GetLastRelayedTimestamp() > 0);
-                else Assert.That(tx.GetLastRelayedTimestamp() == null);
-                Assert.That(tx.GetReceivedTimestamp() > 0);
+                if (tx.IsRelayed() == true) Assert.True(tx.GetLastRelayedTimestamp() > 0);
+                else Assert.Null(tx.GetLastRelayedTimestamp());
+                Assert.True(tx.GetReceivedTimestamp() > 0);
             }
         }
 
@@ -1684,25 +1684,25 @@ public class TestMoneroDaemonRpc
     {
         TestOutput(input);
         TestKeyImage(input.GetKeyImage(), ctx);
-        Assert.That(input.GetRingOutputIndices().Count > 0);
+        Assert.True(input.GetRingOutputIndices().Count > 0);
     }
 
     private static void TestKeyImage(MoneroKeyImage image, TestContext ctx)
     {
-        Assert.That(image.GetHex().Length > 0);
+        Assert.True(image.GetHex().Length > 0);
         if (image.GetSignature() != null)
         {
-            Assert.That(image.GetSignature() != null);
-            Assert.That(image.GetSignature().Length > 0);
+            Assert.NotNull(image.GetSignature());
+            Assert.True(image.GetSignature().Length > 0);
         }
     }
 
     private static void TestOutput(MoneroOutput output, TestContext ctx)
     {
         TestOutput(output);
-        if (output.GetTx().InTxPool() == true || ctx.hasOutputIndices == false) Assert.That(null == output.GetIndex());
-        else Assert.That(output.GetIndex() >= 0);
-        Assert.That(64 == output.GetStealthPublicKey().Length);
+        if (output.GetTx().InTxPool() == true || ctx.hasOutputIndices == false) Assert.Null(output.GetIndex());
+        else Assert.True(output.GetIndex() >= 0);
+        Assert.True(64 == output.GetStealthPublicKey().Length);
     }
 
     private static void TestOutput(MoneroOutput output)
@@ -1716,30 +1716,30 @@ public class TestMoneroDaemonRpc
         // copy tx and assert deep equality
         MoneroTx copy = tx.Clone();
         //Assert.That(copy instanceof MoneroTx);
-        Assert.That(copy.GetBlock() == null);
+        Assert.Null(copy.GetBlock());
         if (tx.GetBlock() != null) copy.SetBlock(tx.GetBlock().Clone().SetTxs([copy]));
-        Assert.That(tx.ToString() == copy.ToString());
-        Assert.That(copy != tx);
+        Assert.True(tx.ToString() == copy.ToString());
+        Assert.True(copy != tx);
 
         // test different input references
-        if (copy.GetInputs() == null) Assert.That(tx.GetInputs() == null);
+        if (copy.GetInputs() == null) Assert.Null(tx.GetInputs());
         else
         {
-            Assert.That(copy.GetInputs() != tx.GetInputs());
+            Assert.True(copy.GetInputs() != tx.GetInputs());
             for (int i = 0; i < copy.GetInputs().Count; i++)
             {
-                Assert.That(tx.GetInputs()[i].GetAmount().Equals(copy.GetInputs()[i].GetAmount()));
+                Assert.True(tx.GetInputs()[i].GetAmount().Equals(copy.GetInputs()[i].GetAmount()));
             }
         }
 
         // test different output references
-        if (copy.GetOutputs() == null) Assert.That(null == tx.GetOutputs());
+        if (copy.GetOutputs() == null) Assert.Null(tx.GetOutputs());
         else
         {
-            Assert.That(copy.GetOutputs() != tx.GetOutputs());
+            Assert.True(copy.GetOutputs() != tx.GetOutputs());
             for (int i = 0; i < copy.GetOutputs().Count; i++)
             {
-                Assert.That(tx.GetOutputs()[i].GetAmount().Equals(copy.GetOutputs()[i].GetAmount()));
+                Assert.True(tx.GetOutputs()[i].GetAmount().Equals(copy.GetOutputs()[i].GetAmount()));
             }
         }
 
@@ -1762,45 +1762,45 @@ public class TestMoneroDaemonRpc
 
     private static void TestTxPoolStats(MoneroTxPoolStats? stats)
     {
-        Assert.That(stats != null);
-        Assert.That(stats.GetNumTxs() >= 0);
+        Assert.NotNull(stats);
+        Assert.True(stats.GetNumTxs() >= 0);
         if (stats.GetNumTxs() > 0)
         {
-            if (stats.GetNumTxs() == 1) Assert.That(stats.GetHisto() == null);
+            if (stats.GetNumTxs() == 1) Assert.Null(stats.GetHisto());
             else
             {
                 Dictionary<ulong, int> histo = stats.GetHisto();
-                Assert.That(histo != null);
-                Assert.That(histo.Count > 0);
+                Assert.NotNull(histo);
+                Assert.True(histo.Count > 0);
                 foreach (var kv in histo)
                 {
-                    Assert.That(kv.Value >= 0);
+                    Assert.True(kv.Value >= 0);
                 }
             }
-            Assert.That(stats.GetBytesMax() > 0);
-            Assert.That(stats.GetBytesMed() > 0);
-            Assert.That(stats.GetBytesMin() > 0);
-            Assert.That(stats.GetBytesTotal() > 0);
-            Assert.That(stats.GetHisto98pc() == null || stats.GetHisto98pc() > 0);
-            Assert.That(stats.GetOldestTimestamp() > 0);
-            Assert.That(stats.GetNum10m() >= 0);
-            Assert.That(stats.GetNumDoubleSpends() >= 0);
-            Assert.That(stats.GetNumFailing() >= 0);
-            Assert.That(stats.GetNumNotRelayed() >= 0);
+            Assert.True(stats.GetBytesMax() > 0);
+            Assert.True(stats.GetBytesMed() > 0);
+            Assert.True(stats.GetBytesMin() > 0);
+            Assert.True(stats.GetBytesTotal() > 0);
+            Assert.True(stats.GetHisto98pc() == null || stats.GetHisto98pc() > 0);
+            Assert.True(stats.GetOldestTimestamp() > 0);
+            Assert.True(stats.GetNum10m() >= 0);
+            Assert.True(stats.GetNumDoubleSpends() >= 0);
+            Assert.True(stats.GetNumFailing() >= 0);
+            Assert.True(stats.GetNumNotRelayed() >= 0);
         }
         else
         {
-            Assert.That(null == stats.GetBytesMax());
-            Assert.That(null == stats.GetBytesMed());
-            Assert.That(null == stats.GetBytesMin());
-            Assert.That(0 == (long)stats.GetBytesTotal());
-            Assert.That(null == stats.GetHisto98pc());
-            Assert.That(null == stats.GetOldestTimestamp());
-            Assert.That(0 == (int)stats.GetNum10m());
-            Assert.That(0 == (int)stats.GetNumDoubleSpends());
-            Assert.That(0 == (int)stats.GetNumFailing());
-            Assert.That(0 == (int)stats.GetNumNotRelayed());
-            Assert.That(null == stats.GetHisto());
+            Assert.Null(stats.GetBytesMax());
+            Assert.Null(stats.GetBytesMed());
+            Assert.Null(stats.GetBytesMin());
+            Assert.True(0 == (long)stats.GetBytesTotal());
+            Assert.Null(stats.GetHisto98pc());
+            Assert.Null(stats.GetOldestTimestamp());
+            Assert.True(0 == (int)stats.GetNum10m());
+            Assert.True(0 == (int)stats.GetNumDoubleSpends());
+            Assert.True(0 == (int)stats.GetNumFailing());
+            Assert.True(0 == (int)stats.GetNumNotRelayed());
+            Assert.Null(stats.GetHisto());
         }
     }
 
@@ -1811,13 +1811,13 @@ public class TestMoneroDaemonRpc
         // test image
         foreach (string keyImage in keyImages)
         {
-            Assert.That(expectedStatus == daemon.GetKeyImageSpentStatus(keyImage));
+            Assert.True(expectedStatus == daemon.GetKeyImageSpentStatus(keyImage));
         }
 
         // test array of images
         List<MoneroKeyImage.SpentStatus> statuses = keyImages.Count == 0 ? new List<MoneroKeyImage.SpentStatus>() : daemon.GetKeyImageSpentStatuses(keyImages);
-        Assert.That(keyImages.Count == statuses.Count);
-        foreach (MoneroKeyImage.SpentStatus status in statuses) Assert.That(expectedStatus == status);
+        Assert.True(keyImages.Count == statuses.Count);
+        foreach (MoneroKeyImage.SpentStatus status in statuses) Assert.True(expectedStatus == status);
     }
 
     private static List<MoneroTx> GetConfirmedTxs(MoneroDaemon daemon, int numTxs)
@@ -1843,55 +1843,55 @@ public class TestMoneroDaemonRpc
     private static void TestOutputDistributionEntry(MoneroOutputDistributionEntry entry)
     {
         //TestUtils.testUnsignedBigInteger(entry.GetAmount());
-        Assert.That(entry.GetBase() >= 0);
-        Assert.That(entry.GetDistribution().Count > 0);
-        Assert.That(entry.GetStartHeight() >= 0);
+        Assert.True(entry.GetBase() >= 0);
+        Assert.True(entry.GetDistribution().Count > 0);
+        Assert.True(entry.GetStartHeight() >= 0);
     }
 
     private static void TestInfo(MoneroDaemonInfo info)
     {
-        Assert.That(info.GetVersion() != null);
-        Assert.That(info.GetNumAltBlocks() >= 0);
-        Assert.That(info.GetBlockSizeLimit() > 0);
-        Assert.That(info.GetBlockSizeMedian() > 0);
-        Assert.That(info.GetBootstrapDaemonAddress() == null || info.GetBootstrapDaemonAddress().Length > 0);
+        Assert.NotNull(info.GetVersion());
+        Assert.True(info.GetNumAltBlocks() >= 0);
+        Assert.True(info.GetBlockSizeLimit() > 0);
+        Assert.True(info.GetBlockSizeMedian() > 0);
+        Assert.True(info.GetBootstrapDaemonAddress() == null || info.GetBootstrapDaemonAddress().Length > 0);
         //TestUtils.testUnsignedBigInteger(info.GetCumulativeDifficulty());
         //TestUtils.testUnsignedBigInteger(info.GetFreeSpace());
-        Assert.That(info.GetNumOfflinePeers() >= 0);
-        Assert.That(info.GetNumOnlinePeers() >= 0);
-        Assert.That(info.GetHeight() >= 0);
-        Assert.That(info.GetHeightWithoutBootstrap() > 0);
-        Assert.That(info.GetNumIncomingConnections() >= 0);
-        Assert.That(info.GetNetworkType() != null);
-        Assert.That(info.IsOffline() != null);
-        Assert.That(info.GetNumOutgoingConnections() >= 0);
-        Assert.That(info.GetNumRpcConnections() >= 0);
-        Assert.That(info.GetStartTimestamp() > 0);
-        Assert.That(info.GetAdjustedTimestamp() > 0);
-        Assert.That(info.GetTarget() > 0);
-        Assert.That(info.GetTargetHeight() >= 0);
-        Assert.That(info.GetNumTxs() >= 0);
-        Assert.That(info.GetNumTxsPool() >= 0);
-        Assert.That(info.GetWasBootstrapEverUsed() != null);
-        Assert.That(info.GetBlockWeightLimit() > 0);
-        Assert.That(info.GetBlockWeightMedian() > 0);
-        Assert.That(info.GetDatabaseSize() > 0);
-        Assert.That(info.GetUpdateAvailable() != null);
+        Assert.True(info.GetNumOfflinePeers() >= 0);
+        Assert.True(info.GetNumOnlinePeers() >= 0);
+        Assert.True(info.GetHeight() >= 0);
+        Assert.True(info.GetHeightWithoutBootstrap() > 0);
+        Assert.True(info.GetNumIncomingConnections() >= 0);
+        Assert.NotNull(info.GetNetworkType());
+        Assert.NotNull(info.IsOffline());
+        Assert.True(info.GetNumOutgoingConnections() >= 0);
+        Assert.True(info.GetNumRpcConnections() >= 0);
+        Assert.True(info.GetStartTimestamp() > 0);
+        Assert.True(info.GetAdjustedTimestamp() > 0);
+        Assert.True(info.GetTarget() > 0);
+        Assert.True(info.GetTargetHeight() >= 0);
+        Assert.True(info.GetNumTxs() >= 0);
+        Assert.True(info.GetNumTxsPool() >= 0);
+        Assert.NotNull(info.GetWasBootstrapEverUsed());
+        Assert.True(info.GetBlockWeightLimit() > 0);
+        Assert.True(info.GetBlockWeightMedian() > 0);
+        Assert.True(info.GetDatabaseSize() > 0);
+        Assert.NotNull(info.GetUpdateAvailable());
         //TestUtils.testUnsignedBigInteger(info.GetCredits(), false); // 0 credits
-        Assert.That(info.GetTopBlockHash().Length > 0);
-        Assert.That(info.IsBusySyncing() != null);
-        Assert.That(info.IsSynchronized() != null);
+        Assert.True(info.GetTopBlockHash().Length > 0);
+        Assert.NotNull(info.IsBusySyncing());
+        Assert.NotNull(info.IsSynchronized());
     }
 
     private static void TestSyncInfo(MoneroDaemonSyncInfo syncInfo)
     { // TODO: consistent naming, daemon in name?
         MoneroDaemonSyncInfo testObj = new();
 
-        Assert.That(testObj.GetType().IsInstanceOfType(syncInfo));
-        Assert.That(syncInfo.GetHeight() >= 0);
+        Assert.True(testObj.GetType().IsInstanceOfType(syncInfo));
+        Assert.True(syncInfo.GetHeight() >= 0);
         if (syncInfo.GetPeers() != null)
         {
-            Assert.That(syncInfo.GetPeers().Count > 0);
+            Assert.True(syncInfo.GetPeers().Count > 0);
             foreach (MoneroPeer connection in syncInfo.GetPeers())
             {
                 TestPeer(connection);
@@ -1899,120 +1899,120 @@ public class TestMoneroDaemonRpc
         }
         if (syncInfo.GetSpans() != null)
         {  // TODO: test that this is being hit, so far not used
-            Assert.That(syncInfo.GetSpans().Count > 0);
+            Assert.True(syncInfo.GetSpans().Count > 0);
             foreach (MoneroConnectionSpan span in syncInfo.GetSpans())
             {
                 TestConnectionSpan(span);
             }
         }
-        Assert.That(syncInfo.GetNextNeededPruningSeed() >= 0);
-        Assert.That(syncInfo.GetOverview() == null);
+        Assert.True(syncInfo.GetNextNeededPruningSeed() >= 0);
+        Assert.Null(syncInfo.GetOverview());
         //TestUtils.testUnsignedBigInteger(syncInfo.GetCredits(), false); // 0 credits
-        Assert.That(syncInfo.GetTopBlockHash() == null);
+        Assert.Null(syncInfo.GetTopBlockHash());
     }
 
     private static void TestConnectionSpan(MoneroConnectionSpan? span)
     {
-        Assert.That(span != null);
-        Assert.That(span.GetConnectionId() != null);
-        Assert.That(span.GetConnectionId().Length > 0);
-        Assert.That(span.GetStartHeight() > 0);
-        Assert.That(span.GetNumBlocks() > 0);
-        Assert.That(span.GetRemoteAddress() == null || span.GetRemoteAddress().Length > 0);
-        Assert.That(span.GetRate() > 0);
-        Assert.That(span.GetSpeed() >= 0);
-        Assert.That(span.GetSize() > 0);
+        Assert.NotNull(span);
+        Assert.NotNull(span.GetConnectionId());
+        Assert.True(span.GetConnectionId().Length > 0);
+        Assert.True(span.GetStartHeight() > 0);
+        Assert.True(span.GetNumBlocks() > 0);
+        Assert.True(span.GetRemoteAddress() == null || span.GetRemoteAddress().Length > 0);
+        Assert.True(span.GetRate() > 0);
+        Assert.True(span.GetSpeed() >= 0);
+        Assert.True(span.GetSize() > 0);
     }
 
     private static void TestHardForkInfo(MoneroHardForkInfo hardForkInfo)
     {
-        Assert.That(null != hardForkInfo.GetEarliestHeight());
-        Assert.That(null != hardForkInfo.IsEnabled());
-        Assert.That(null != hardForkInfo.GetState());
-        Assert.That(null != hardForkInfo.GetThreshold());
-        Assert.That(null != hardForkInfo.GetVersion());
-        Assert.That(null != hardForkInfo.GetNumVotes());
-        Assert.That(null != hardForkInfo.GetVoting());
-        Assert.That(null != hardForkInfo.GetWindow());
+        Assert.NotNull(hardForkInfo.GetEarliestHeight());
+        Assert.NotNull(hardForkInfo.IsEnabled());
+        Assert.NotNull(hardForkInfo.GetState());
+        Assert.NotNull(hardForkInfo.GetThreshold());
+        Assert.NotNull(hardForkInfo.GetVersion());
+        Assert.NotNull(hardForkInfo.GetNumVotes());
+        Assert.NotNull(hardForkInfo.GetVoting());
+        Assert.NotNull(hardForkInfo.GetWindow());
         //TestUtils.testUnsignedBigInteger(hardForkInfo.GetCredits(), false); // 0 credits
-        Assert.That(null == hardForkInfo.GetTopBlockHash());
+        Assert.Null(hardForkInfo.GetTopBlockHash());
     }
 
     private static void TestMoneroBan(MoneroBan ban)
     {
-        Assert.That(null != ban.GetHost());
-        Assert.That(null != ban.GetIp());
-        Assert.That(null != ban.GetSeconds());
+        Assert.NotNull(ban.GetHost());
+        Assert.NotNull(ban.GetIp());
+        Assert.NotNull(ban.GetSeconds());
     }
 
     private static void TestAltChain(MoneroAltChain altChain)
     {
-        Assert.That(null != (altChain));
-        Assert.That(altChain.GetBlockHashes().Count > 0);
+        Assert.NotNull((altChain));
+        Assert.True(altChain.GetBlockHashes().Count > 0);
         //TestUtils.testUnsignedBigInteger(altChain.GetDifficulty(), true);
-        Assert.That(altChain.GetHeight() > 0);
-        Assert.That(altChain.GetLength() > 0);
-        Assert.That(64 == altChain.GetMainChainParentBlockHash().Length);
+        Assert.True(altChain.GetHeight() > 0);
+        Assert.True(altChain.GetLength() > 0);
+        Assert.True(64 == altChain.GetMainChainParentBlockHash().Length);
     }
 
     private static void TestPeer(MoneroPeer peer)
     {
         //Assert.That(peer instanceof MoneroPeer);
         TestKnownPeer(peer, true);
-        Assert.That(peer.GetHash().Length > 0);
-        Assert.That(peer.GetAvgDownload() >= 0);
-        Assert.That(peer.GetAvgUpload() >= 0);
-        Assert.That(peer.GetCurrentDownload() >= 0);
-        Assert.That(peer.GetCurrentUpload() >= 0);
-        Assert.That(peer.GetHeight() >= 0);
-        Assert.That(peer.GetLiveTime() >= 0);
-        Assert.That(null != peer.IsLocalIp());
-        Assert.That(null != peer.IsLocalHost());
-        Assert.That(peer.GetNumReceives() >= 0);
-        Assert.That(peer.GetReceiveIdleTime() >= 0);
-        Assert.That(peer.GetNumSends() >= 0);
-        Assert.That(peer.GetSendIdleTime() >= 0);
-        Assert.That(null != peer.GetState());
-        Assert.That(peer.GetNumSupportFlags() >= 0);
-        Assert.That(null != peer.GetType());
+        Assert.True(peer.GetHash().Length > 0);
+        Assert.True(peer.GetAvgDownload() >= 0);
+        Assert.True(peer.GetAvgUpload() >= 0);
+        Assert.True(peer.GetCurrentDownload() >= 0);
+        Assert.True(peer.GetCurrentUpload() >= 0);
+        Assert.True(peer.GetHeight() >= 0);
+        Assert.True(peer.GetLiveTime() >= 0);
+        Assert.NotNull(peer.IsLocalIp());
+        Assert.NotNull(peer.IsLocalHost());
+        Assert.True(peer.GetNumReceives() >= 0);
+        Assert.True(peer.GetReceiveIdleTime() >= 0);
+        Assert.True(peer.GetNumSends() >= 0);
+        Assert.True(peer.GetSendIdleTime() >= 0);
+        Assert.NotNull(peer.GetState());
+        Assert.True(peer.GetNumSupportFlags() >= 0);
+        Assert.NotNull(peer.GetType());
     }
 
     private static void TestKnownPeer(MoneroPeer peer, bool fromConnection)
     {
-        Assert.That(null != peer);
-        Assert.That(peer.GetId().Length > 0);
-        Assert.That(peer.GetHost().Length > 0);
-        Assert.That(peer.GetPort() > 0);
-        Assert.That(peer.GetRpcPort() == null || peer.GetRpcPort() >= 0);
-        Assert.That(null != peer.IsOnline());
+        Assert.NotNull(peer);
+        Assert.True(peer.GetId().Length > 0);
+        Assert.True(peer.GetHost().Length > 0);
+        Assert.True(peer.GetPort() > 0);
+        Assert.True(peer.GetRpcPort() == null || peer.GetRpcPort() >= 0);
+        Assert.NotNull(peer.IsOnline());
         //if (peer.GetRpcCreditsPerHash() != null) TestUtils.testUnsignedBigInteger(peer.GetRpcCreditsPerHash());
-        if (fromConnection) Assert.That(null == peer.GetLastSeenTimestamp());
+        if (fromConnection) Assert.Null(peer.GetLastSeenTimestamp());
         else
         {
             if (peer.GetLastSeenTimestamp() < 0) MoneroUtils.Log(0, "Last seen timestamp is invalid: " + peer.GetLastSeenTimestamp());
-            Assert.That(peer.GetLastSeenTimestamp() >= 0);
+            Assert.True(peer.GetLastSeenTimestamp() >= 0);
         }
-        Assert.That(peer.GetPruningSeed() == null || peer.GetPruningSeed() >= 0);
+        Assert.True(peer.GetPruningSeed() == null || peer.GetPruningSeed() >= 0);
     }
 
     private static void TestUpdateCheckResult(MoneroDaemonUpdateCheckResult result)
     {
         //Assert.That(result instanceof MoneroDaemonUpdateCheckResult);
-        Assert.That(result.IsUpdateAvailable() != null);
+        Assert.NotNull(result.IsUpdateAvailable());
         if (result.IsUpdateAvailable() == true)
         {
-            Assert.That(result.GetAutoUri().Length > 0, "No auto uri; is daemon online?");
-            Assert.That(result.GetUserUri().Length > 0);
-            Assert.That(result.GetVersion().Length > 0);
-            Assert.That(result.GetHash().Length > 0);
-            Assert.That(64 == result.GetHash().Length);
+            Assert.True(result.GetAutoUri().Length > 0, "No auto uri; is daemon online?");
+            Assert.True(result.GetUserUri().Length > 0);
+            Assert.True(result.GetVersion().Length > 0);
+            Assert.True(result.GetHash().Length > 0);
+            Assert.True(64 == result.GetHash().Length);
         }
         else
         {
-            Assert.That(result.GetAutoUri() == null);
-            Assert.That(result.GetUserUri() == null);
-            Assert.That(result.GetVersion() == null);
-            Assert.That(result.GetHash() == null);
+            Assert.Null(result.GetAutoUri());
+            Assert.Null(result.GetUserUri());
+            Assert.Null(result.GetVersion());
+            Assert.Null(result.GetHash());
         }
     }
 
@@ -2021,12 +2021,12 @@ public class TestMoneroDaemonRpc
         TestUpdateCheckResult(result);
         if (result.IsUpdateAvailable() == true)
         {
-            if (path != null) Assert.That(path == result.GetDownloadPath());
-            else Assert.That(result.GetDownloadPath() != null);
+            if (path != null) Assert.True(path == result.GetDownloadPath());
+            else Assert.NotNull(result.GetDownloadPath());
         }
         else
         {
-            Assert.That(result.GetDownloadPath() == null);
+            Assert.Null(result.GetDownloadPath());
         }
     }
 
@@ -2035,20 +2035,20 @@ public class TestMoneroDaemonRpc
         TestSubmitTxResultCommon(result);
         try
         {
-            Assert.That(false == result.IsDoubleSpend(), "tx submission is double spend.");
-            Assert.That(false == result.IsFeeTooLow());
-            Assert.That(false == result.IsMixinTooLow());
-            Assert.That(false == result.HasInvalidInput());
-            Assert.That(false == result.HasInvalidOutput());
-            Assert.That(false == result.HasTooFewOutputs());
-            Assert.That(false == result.IsOverspend());
-            Assert.That(false == result.IsTooBig());
-            Assert.That(false == result.GetSanityCheckFailed());
+            Assert.False(result.IsDoubleSpend(), "tx submission is double spend.");
+            Assert.False(result.IsFeeTooLow());
+            Assert.False(result.IsMixinTooLow());
+            Assert.False(result.HasInvalidInput());
+            Assert.False(result.HasInvalidOutput());
+            Assert.False(result.HasTooFewOutputs());
+            Assert.False(result.IsOverspend());
+            Assert.False(result.IsTooBig());
+            Assert.False(result.GetSanityCheckFailed());
             //TestUtils.testUnsignedBigInteger(result.getCredits(), false); // 0 credits
-            Assert.That(result.GetTopBlockHash() == null);
-            Assert.That(false == result.IsTxExtraTooBig());
-            Assert.That(true == result.IsGood());
-            Assert.That(false == result.IsNonzeroUnlockTime());
+            Assert.Null(result.GetTopBlockHash());
+            Assert.False(result.IsTxExtraTooBig());
+            Assert.True(result.IsGood());
+            Assert.False(result.IsNonzeroUnlockTime());
         }
         catch (Exception e)
         {
@@ -2060,37 +2060,37 @@ public class TestMoneroDaemonRpc
     private static void TestSubmitTxResultDoubleSpend(MoneroSubmitTxResult result)
     {
         TestSubmitTxResultCommon(result);
-        Assert.That(false == result.IsGood());
-        Assert.That(true == result.IsDoubleSpend());
-        Assert.That(false == result.IsFeeTooLow());
-        Assert.That(false == result.IsMixinTooLow());
-        Assert.That(false == result.HasInvalidInput());
-        Assert.That(false == result.HasInvalidOutput());
-        Assert.That(false == result.IsOverspend());
-        Assert.That(false== result.IsTooBig());
+        Assert.False(result.IsGood());
+        Assert.True(result.IsDoubleSpend());
+        Assert.False(result.IsFeeTooLow());
+        Assert.False(result.IsMixinTooLow());
+        Assert.False(result.HasInvalidInput());
+        Assert.False(result.HasInvalidOutput());
+        Assert.False(result.IsOverspend());
+        Assert.False(result.IsTooBig());
     }
 
     private static void TestSubmitTxResultCommon(MoneroSubmitTxResult result)
     {
-        Assert.That(result.IsGood() != null);
-        Assert.That(result.IsRelayed() != null);
-        Assert.That(result.IsDoubleSpend() != null);
-        Assert.That(result.IsFeeTooLow() != null);
-        Assert.That(result.IsMixinTooLow() != null);
-        Assert.That(result.HasInvalidInput() != null);
-        Assert.That(result.HasInvalidOutput() != null);
-        Assert.That(result.IsOverspend() != null);
-        Assert.That(result.IsTooBig() != null);
-        Assert.That(result.GetSanityCheckFailed() != null);
-        Assert.That(result.GetReason() == null || result.GetReason().Length > 0);
+        Assert.NotNull(result.IsGood());
+        Assert.NotNull(result.IsRelayed());
+        Assert.NotNull(result.IsDoubleSpend());
+        Assert.NotNull(result.IsFeeTooLow());
+        Assert.NotNull(result.IsMixinTooLow());
+        Assert.NotNull(result.HasInvalidInput());
+        Assert.NotNull(result.HasInvalidOutput());
+        Assert.NotNull(result.IsOverspend());
+        Assert.NotNull(result.IsTooBig());
+        Assert.NotNull(result.GetSanityCheckFailed());
+        Assert.True(result.GetReason() == null || result.GetReason().Length > 0);
     }
 
     private static void TestOutputHistogramEntry(MoneroOutputHistogramEntry entry)
     {
         //TestUtils.testUnsignedBigInteger(entry.getAmount());
-        Assert.That(entry.GetNumInstances() >= 0);
-        Assert.That(entry.GetNumUnlockedInstances() >= 0);
-        Assert.That(entry.GetNumRecentInstances() >= 0);
+        Assert.True(entry.GetNumInstances() >= 0);
+        Assert.True(entry.GetNumUnlockedInstances() >= 0);
+        Assert.True(entry.GetNumRecentInstances() >= 0);
     }
 
     private static void TestSubmitThenRelay(List<MoneroTx> txs)
@@ -2102,7 +2102,7 @@ public class TestMoneroDaemonRpc
             txHashes.Add(tx.GetHash());
             MoneroSubmitTxResult result = daemon.SubmitTxHex(tx.GetFullHex(), true);
             TestSubmitTxResultGood(result);
-            Assert.That(false == result.IsRelayed());
+            Assert.False(result.IsRelayed());
 
             // ensure tx is in pool
             List<MoneroTx> _poolTxs = daemon.GetTxPool();
@@ -2111,16 +2111,16 @@ public class TestMoneroDaemonRpc
             {
                 if (aTx.GetHash().Equals(tx.GetHash()))
                 {
-                    Assert.That(false == aTx.IsRelayed());
+                    Assert.False(aTx.IsRelayed());
                     found = true;
                     break;
                 }
             }
-            Assert.That(found, "Tx was not found after being submitted to the daemon's tx pool");
+            Assert.True(found, "Tx was not found after being submitted to the daemon's tx pool");
 
             // fetch tx by hash and ensure not relayed
             MoneroTx fetchedTx = daemon.GetTx(tx.GetHash());
-            Assert.That(false == fetchedTx.IsRelayed());
+            Assert.False(fetchedTx.IsRelayed());
         }
 
         // relay the txs
@@ -2147,12 +2147,12 @@ public class TestMoneroDaemonRpc
             {
                 if (aTx.GetHash().Equals(tx.GetHash()))
                 {
-                    Assert.That(true == aTx.IsRelayed());
+                    Assert.True(aTx.IsRelayed());
                     found = true;
                     break;
                 }
             }
-            Assert.That(found, "Tx was not found after being submitted to the daemon's tx pool");
+            Assert.True(found, "Tx was not found after being submitted to the daemon's tx pool");
         }
 
         // wallets will need to wait for tx to confirm in order to properly sync
@@ -2179,7 +2179,7 @@ internal class TestContext
     public TestContext? txContext;
 
     public TestContext() { }
-    
+
     public TestContext(TestContext ctx)
     {
         hasJson = ctx.hasJson;

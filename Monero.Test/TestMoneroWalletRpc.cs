@@ -9,15 +9,9 @@ namespace Monero.Test
 
     public class TestMoneroWalletRpc : TestMoneroWalletCommon
     {
-        [SetUp]
-        public void Setup()
+        public TestMoneroWalletRpc()
         {
-        }
 
-        [Test]
-        public void Test1()
-        {
-            Assert.Pass();
         }
 
         protected override void CloseWallet(MoneroWallet wallet, bool save)

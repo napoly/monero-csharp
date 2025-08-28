@@ -2,12 +2,9 @@
 
 public class TestMoneroWalletFull
 {
-    [SetUp]
-    public void Setup()
-    {
-    }
+    public TestMoneroWalletFull() { }
 
-    [Test]
+    [Fact]
     public void Test1()
     {
         var manager = Monero.Wallet.MoneroWalletManager.Instance;
