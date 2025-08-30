@@ -155,7 +155,7 @@ public class TestMoneroUtils
     public void TestAtomicUnitConversion()
     {
         Assert.True(1000000000000 == MoneroUtils.XmrToAtomicUnits(1));
-        Assert.True(1000000000000 == MoneroUtils.AtomicUnitsToXmr(1000000000000));
+        Assert.True(1 == MoneroUtils.AtomicUnitsToXmr(1000000000000));
         Assert.True(1000000000 == MoneroUtils.XmrToAtomicUnits(0.001));
         Assert.True(.001 == MoneroUtils.AtomicUnitsToXmr(1000000000));
         Assert.True(250000000000 == MoneroUtils.XmrToAtomicUnits(.25));

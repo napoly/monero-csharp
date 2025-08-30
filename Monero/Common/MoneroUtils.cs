@@ -40,12 +40,12 @@ namespace Monero.Common
         private const int FULL_BLOCK_SIZE = 8;
         private const int FULL_ENCODED_BLOCK_SIZE = 11;
 
-        private static readonly ulong UINT64_MAX = ((ulong)BigInteger.Pow(2, 64));
+        private static readonly ulong UINT64_MAX = ulong.MaxValue;
 
         private static readonly Regex STANDARD_ADDRESS_PATTERN = new("^[" + ALPHABET + "]{95}$", RegexOptions.Compiled);
         private static readonly Regex INTEGRATED_ADDRESS_PATTERN = new("^[" + ALPHABET + "]{106}$", RegexOptions.Compiled);
 
-        public static bool WalletExists(string path)
+        public static bool WalletExists(string? path)
         {
             if (string.IsNullOrEmpty(path))
             {
@@ -55,7 +55,7 @@ namespace Monero.Common
             return File.Exists(path);
         }
 
-        private static bool IsHex(string str)
+        private static bool IsHex(string? str)
         {
             if (string.IsNullOrEmpty(str))
                 return false;
@@ -63,7 +63,7 @@ namespace Monero.Common
             return Regex.IsMatch(str, @"^-?[0-9a-fA-F]+$");
         }
 
-        private static bool IsHex64(string str)
+        private static bool IsHex64(string? str)
         {
             return str != null && str.Length == 64 && IsHex(str);
         }
@@ -119,7 +119,7 @@ namespace Monero.Common
             }
         }
 
-        public static bool IsValidPrivateViewKey(string privateViewKey)
+        public static bool IsValidPrivateViewKey(string? privateViewKey)
         {
             try
             {
@@ -171,7 +171,7 @@ namespace Monero.Common
             }
         }
 
-        public static void ValidatePrivateViewKey(string privateViewKey)
+        public static void ValidatePrivateViewKey(string? privateViewKey)
         {
             if (!IsHex64(privateViewKey)) throw new MoneroError("private view key expected to be 64 hex characters");
         }
@@ -191,20 +191,22 @@ namespace Monero.Common
             if (!IsHex64(publicSpendKey)) throw new MoneroError("public spend key expected to be 64 hex characters");
         }
 
-        public static bool IsValidAddress(string address, MoneroNetworkType networkType)
+        public static bool IsValidAddress(string? address, MoneroNetworkType networkType)
         {
             try
             {
                 ValidateAddress(address, networkType);
                 return true;
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 return false;
             }
         }
 
-        public static void ValidateAddress(string address, MoneroNetworkType networkType)
+        public static void ValidateAddress(string? address, MoneroNetworkType networkType)
         {
+            if (address == null) throw new MoneroError("Address is null");
             DecodeAddress(address);
         }
 
@@ -414,8 +416,8 @@ namespace Monero.Common
             {
                 throw new MoneroError("Invalid block size");
             }
-            int resNum = 0;
-            int order = 1;
+            BigInteger resNum = 0;
+            BigInteger order = 1;
             for (int i = data.Length - 1; i >= 0; i--)
             {
                 int digit = ALPHABET.IndexOf((char)data[i]);
@@ -423,7 +425,7 @@ namespace Monero.Common
                 {
                     throw new MoneroError("Invalid symbol");
                 }
-                int product = (order * digit) + resNum;
+                BigInteger product = (order * digit) + resNum;
                 // if product > UINT64_MAX
                 if (product.CompareTo(UINT64_MAX) > 0)
                 {
@@ -453,7 +455,7 @@ namespace Monero.Common
             {
                 throw new MoneroError("Invalid input length");
             }
-            BigInteger twopow8 = BigInteger.Pow(2,8);
+            BigInteger twopow8 = BigInteger.Pow(2, 8);
             for (int i = size - 1; i >= 0; i--)
             {
                 res[i] = (int)BigInteger.Remainder(num, twopow8);
@@ -481,10 +483,10 @@ namespace Monero.Common
 
         private static string BinToHex(int[] data)
         {
-            StringBuilder builder = new();
+            var builder = new StringBuilder();
             foreach (int i in data)
             {
-                builder.Append(string.Format("%02x", i));
+                builder.Append(i.ToString("x2"));
             }
             return builder.ToString();
         }
