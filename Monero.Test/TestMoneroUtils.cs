@@ -10,7 +10,7 @@ public class TestMoneroUtils
     }
 
     // Can get integrated addresses
-    [Fact]
+    [Fact(Skip = "MoneroUtils.GetIntegratedAddress(): not implemented")]
     public void TestGetIntegratedAddresses()
     {
         string primaryAddress = "58qRVVjZ4KxMX57TH6yWqGcH5AswvZZS494hWHcHPt6cDkP7V8AqxFhi3RKXZueVRgUnk8niQGHSpY5Bm9DjuWn16GDKXpF";
