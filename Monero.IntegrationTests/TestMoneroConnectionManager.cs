@@ -79,7 +79,7 @@ public class TestMoneroConnectionManager
             // start periodically checking connection without auto switch
             connectionManager.StartPolling((ulong)TestUtils.SYNC_PERIOD_IN_MS, false);
 
-            // connect to best available connection in order of priority and response time
+            // connect to the best available connection in order of priority and response time
             connection = connectionManager.GetBestAvailableConnection();
             connectionManager.SetConnection(connection);
             Assert.True(connection == walletRpcs[4].GetRpcConnection());
@@ -267,7 +267,8 @@ public class TestMoneroConnectionManager
             Assert.True(connectionManager.IsConnected());
 
             // test polling current connection
-            connectionManager.SetConnection(null);
+            MoneroRpcConnection? nullConnection = null;
+            connectionManager.SetConnection(nullConnection);
             Assert.False(connectionManager.IsConnected());
             numExpectedChanges++;
             Assert.True(numExpectedChanges == listener.ChangedConnections.Count);
@@ -279,7 +280,7 @@ public class TestMoneroConnectionManager
             Assert.True(numExpectedChanges == listener.ChangedConnections.Count);
 
             // test polling all connections
-            connectionManager.SetConnection(null);
+            connectionManager.SetConnection(nullConnection);
             numExpectedChanges++;
             Assert.True(numExpectedChanges == listener.ChangedConnections.Count);
             connectionManager.StartPolling((ulong)TestUtils.SYNC_PERIOD_IN_MS, null, null,
