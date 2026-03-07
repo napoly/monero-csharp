@@ -7,4 +7,6 @@ public class CreateAddressRequest
     [JsonPropertyName("account_index")] public long AccountIndex { get; set; }
 
     [JsonPropertyName("label")] public string? Label { get; set; }
+
+    [JsonPropertyName("count")] public uint? Count { get; set; }
 }
