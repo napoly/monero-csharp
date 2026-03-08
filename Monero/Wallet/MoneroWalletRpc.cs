@@ -778,22 +778,30 @@ public class MoneroWalletRpc : IMoneroWallet
         return subaddresses;
     }
 
-    public async Task<MoneroSubaddress> CreateSubaddress(uint accountIdx, string? label)
+    public async Task<List<MoneroSubaddress>> CreateAddress(uint accountIdx, string? label, uint count = 1)
     {
-        // send request
-        CreateAddressRequest parameters = new() { AccountIndex = accountIdx, Label = label };
+        CreateAddressRequest parameters = new() { AccountIndex = accountIdx, Label = label, Count = count };
         var result = await _rpc.SendCommandAsync<CreateAddressRequest, CreateAddressResponse>("create_address", parameters);
 
-        // build subaddress object
-        MoneroSubaddress subaddress = new() { AccountIndex = accountIdx, Index = Convert.ToUInt32(result.Index) };
-        subaddress.SetAddress((string?)result.Address);
-        subaddress.SetLabel(string.IsNullOrEmpty(label) ? "" : label);
-        subaddress.SetBalance(0);
-        subaddress.SetUnlockedBalance(0);
-        subaddress.SetNumUnspentOutputs(0);
-        subaddress.SetIsUsed(false);
-        subaddress.SetNumBlocksToUnlock(0);
-        return subaddress;
+        List<MoneroSubaddress> subaddresses = [];
+        for (int i = 0; i < result.Addresses.Length; i++)
+        {
+            MoneroSubaddress subaddress = new()
+            {
+                AccountIndex = accountIdx,
+                Index = result.AddressIndices[i]
+            };
+            subaddress.SetAddress(result.Addresses[i]);
+            subaddress.SetLabel(string.IsNullOrEmpty(label) ? "" : label);
+            subaddress.SetBalance(0);
+            subaddress.SetUnlockedBalance(0);
+            subaddress.SetNumUnspentOutputs(0);
+            subaddress.SetIsUsed(false);
+            subaddress.SetNumBlocksToUnlock(0);
+            subaddresses.Add(subaddress);
+        }
+
+        return subaddresses;
     }
 
     public async Task SetAccountLabel(uint accountIdx, uint subaddressIdx, string label)

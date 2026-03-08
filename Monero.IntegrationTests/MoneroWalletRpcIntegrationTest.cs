@@ -488,11 +488,11 @@ public class MoneroWalletRpcIntegrationTest
         Assert.Equal(label, (await _wallet.GetSubaddress(1, 0)).GetLabel());
     }
 
-    // Can create a subaddress with and without a label
+    // Can create an address with and without a label
     [Fact]
-    public async Task TestCreateSubaddress()
+    public async Task TestCreateAddress()
     {
-        // create subaddresses across accounts
+        // create addresses across accounts
         List<MoneroAccount> accounts = await _wallet.GetAccounts(true, false, null);
         if (accounts.Count < 2)
         {
@@ -503,25 +503,47 @@ public class MoneroWalletRpcIntegrationTest
         Assert.True(accounts.Count > 1);
         for (uint accountIdx = 0; accountIdx < 2; accountIdx++)
         {
-            // create a subaddress with no label
+            // create an address with no label
             List<MoneroSubaddress> subaddresses = await _wallet.GetSubaddresses(accountIdx, false, null);
-            MoneroSubaddress subaddress = await _wallet.CreateSubaddress(accountIdx, null);
+            MoneroSubaddress subaddress = (await _wallet.CreateAddress(accountIdx, null))[0];
             Assert.Equal("", subaddress.GetLabel());
             TestSubaddress(subaddress);
             List<MoneroSubaddress> subaddressesNew = await _wallet.GetSubaddresses(accountIdx, false, null);
             Assert.Equal(subaddressesNew.Count - 1, subaddresses.Count);
             Assert.True(subaddress.Equals(subaddressesNew[subaddressesNew.Count - 1]));
 
-            // create subaddress with label
+            // create an address with label
             subaddresses = await _wallet.GetSubaddresses(accountIdx, false, null);
             string uuid = GenUtils.GetGuid();
-            subaddress = await _wallet.CreateSubaddress(accountIdx, uuid);
+            subaddress = (await _wallet.CreateAddress(accountIdx, uuid))[0];
             Assert.Equal(uuid, subaddress.GetLabel());
             TestSubaddress(subaddress);
             subaddressesNew = await _wallet.GetSubaddresses(accountIdx, false, null);
             Assert.Equal(subaddresses.Count, subaddressesNew.Count - 1);
             Assert.True(subaddress.Equals(subaddressesNew[subaddressesNew.Count - 1]));
         }
+    }
+
+    // Can create multiple subaddresses at once
+    [Fact]
+    public async Task TestCreateAddressMultiple()
+    {
+        const uint count = 3;
+        List<MoneroSubaddress> subaddressesBeforeCreate = await _wallet.GetSubaddresses(0, false, null);
+        List<MoneroSubaddress> created = await _wallet.CreateAddress(0, null, count);
+        Assert.Equal((int)count, created.Count);
+
+        foreach (MoneroSubaddress subaddress in created)
+        {
+            var address = subaddress.GetAddress();
+            Assert.Equal(0u, subaddress.AccountIndex);
+            Assert.NotNull(address);
+            Assert.NotEmpty(address);
+            TestSubaddress(subaddress);
+        }
+
+        List<MoneroSubaddress> subaddressesAfterCreate = await _wallet.GetSubaddresses(0, false, null);
+        Assert.Equal(subaddressesBeforeCreate.Count + count, subaddressesAfterCreate.Count);
     }
 
     // Can get subaddresses at a specified account index
@@ -641,7 +663,7 @@ public class MoneroWalletRpcIntegrationTest
         // create subaddresses
         while ((await _wallet.GetSubaddresses(0, true, null)).Count < 3)
         {
-            await _wallet.CreateSubaddress(0, null);
+            await _wallet.CreateAddress(0, null);
         }
 
         uint subaddressesCount = (uint)(await _wallet.GetSubaddresses(0, true, null)).Count;

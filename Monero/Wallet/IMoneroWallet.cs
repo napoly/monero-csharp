@@ -80,7 +80,7 @@ public interface IMoneroWallet
 
     Task<MoneroSubaddress> GetSubaddress(uint accountIdx, uint subaddressIdx);
 
-    Task<MoneroSubaddress> CreateSubaddress(uint accountIdx, string? label);
+    Task<List<MoneroSubaddress>> CreateAddress(uint accountIdx, string? label, uint count = 1);
 
     Task<GetTransfersResponse> GetTransfers(MoneroTransferQuery query);
 
