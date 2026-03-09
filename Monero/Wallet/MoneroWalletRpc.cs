@@ -711,21 +711,21 @@ public class MoneroWalletRpc : IMoneroWallet
         bool skipBalances, List<uint>? subaddressIndices)
     {
         // fetch subaddresses
-        MoneroJsonRpcParams parameters = [];
-        parameters.Add("account_index", accountIdx);
-        if (subaddressIndices != null && subaddressIndices.Count > 0)
-        {
-            parameters.Add("address_index", subaddressIndices);
-        }
-
-        var result = await _rpc.SendCommandAsync<MoneroJsonRpcParams, GetAddressResponse>("get_address", parameters);
+        GetAddressRequest addressRequest = new() { AccountIndex = accountIdx, AddressIndex = subaddressIndices };
+        var result = await _rpc.SendCommandAsync<GetAddressRequest, GetAddressResponse>("get_address", addressRequest);
 
         // initialize subaddresses
         List<MoneroSubaddress> subaddresses = [];
-        foreach (RpcBalanceInfo rpcSubaddress in result.Addresses)
+        foreach (RpcAddressInfo rpcAddress in result.Addresses)
         {
-            MoneroSubaddress subaddress = ConvertRpcSubaddress(rpcSubaddress);
-            subaddress.AccountIndex = accountIdx;
+            MoneroSubaddress subaddress = new()
+            {
+                AccountIndex = accountIdx,
+                Index = rpcAddress.AddressIndex
+            };
+            subaddress.SetAddress(rpcAddress.Address);
+            subaddress.SetLabel(rpcAddress.Label);
+            subaddress.SetIsUsed(rpcAddress.Used);
             subaddresses.Add(subaddress);
         }
 
@@ -742,7 +742,8 @@ public class MoneroWalletRpc : IMoneroWallet
             }
 
             // fetch and initialize balances
-            var getBalanceResult = await _rpc.SendCommandAsync<MoneroJsonRpcParams, GetBalanceResponse>("get_balance", parameters);
+            GetBalanceRequest balanceRequest = new() { AccountIndex = accountIdx, AddressIndices = subaddressIndices };
+            var getBalanceResult = await _rpc.SendCommandAsync<GetBalanceRequest, GetBalanceResponse>("get_balance", balanceRequest);
             foreach (RpcBalanceInfo rpcSubaddress in
                      getBalanceResult.PerSubaddress)
             {
@@ -1484,10 +1485,12 @@ public class MoneroWalletRpc : IMoneroWallet
             return [balance, unlockedBalance];
         }
 
-        MoneroJsonRpcParams parameters = [];
-        parameters.Add("account_index", accountIdx);
-        parameters.Add("address_indices", subaddressIdx == null ? null : new List<uint?> { subaddressIdx });
-        var result = await _rpc.SendCommandAsync<MoneroJsonRpcParams, GetBalanceResponse>("get_balance", parameters);
+        GetBalanceRequest balanceRequest = new()
+        {
+            AccountIndex = accountIdx.Value,
+            AddressIndices = subaddressIdx.HasValue ? [subaddressIdx.Value] : null
+        };
+        var result = await _rpc.SendCommandAsync<GetBalanceRequest, GetBalanceResponse>("get_balance", balanceRequest);
         if (subaddressIdx == null)
         {
             return [result.Balance, result.UnlockedBalance];
@@ -1613,7 +1616,6 @@ public class MoneroWalletRpc : IMoneroWallet
         subaddress.SetUnlockedBalance(rpcSubaddress.UnlockedBalance);
         subaddress.SetNumUnspentOutputs(rpcSubaddress.NumUnspentOutputs);
         subaddress.SetLabel(rpcSubaddress.Label);
-        subaddress.SetIsUsed(rpcSubaddress.Used);
         subaddress.SetNumBlocksToUnlock(rpcSubaddress.BlocksToUnlock);
 
         return subaddress;

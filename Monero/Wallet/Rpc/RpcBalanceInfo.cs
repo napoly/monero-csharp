@@ -17,6 +17,6 @@ public class RpcBalanceInfo
     [JsonPropertyName("address")] public string Address { get; set; } = "";
     [JsonPropertyName("num_unspent_outputs")] public ulong NumUnspentOutputs { get; set; }
     [JsonPropertyName("label")] public string Label { get; set; } = "";
-    [JsonPropertyName("used")] public bool Used { get; set; }
+    [JsonPropertyName("time_to_unlock")] public ulong TimeToUnlock { get; set; }
     [JsonPropertyName("blocks_to_unlock")] public ulong BlocksToUnlock { get; set; }
 }
