@@ -10,5 +10,7 @@ public class GetBalanceResponse
     public ulong Balance { get; set; }
 
     [JsonPropertyName("unlocked_balance")] public ulong UnlockedBalance { get; set; }
+    [JsonPropertyName("time_to_unlock")] public ulong TimeToUnlock { get; set; }
+    [JsonPropertyName("blocks_to_unlock")] public ulong BlocksToUnlock { get; set; }
     [JsonPropertyName("per_subaddress")] public List<RpcBalanceInfo> PerSubaddress { get; set; } = [];
 }

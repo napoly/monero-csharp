@@ -4,5 +4,6 @@ namespace Monero.Wallet.Rpc;
 
 public class GetAddressResponse
 {
-    [JsonPropertyName("addresses")] public List<RpcBalanceInfo> Addresses { get; set; } = [];
+    [JsonPropertyName("address")] public string Address { get; set; } = "";
+    [JsonPropertyName("addresses")] public List<RpcAddressInfo> Addresses { get; set; } = [];
 }
