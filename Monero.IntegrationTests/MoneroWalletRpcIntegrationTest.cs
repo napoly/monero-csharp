@@ -786,6 +786,24 @@ public class MoneroWalletRpcIntegrationTest : MoneroIntegrationTestBase
         await CloseWallet(moneroWallet);
     }
 
+    //Can change password
+    [Test]
+    public async Task TestChangePassword()
+    {
+        const string oldPassword = "oldPassword";
+        const string newPassword = "newPassword";
+
+        IMoneroWallet moneroWallet = await CreateWallet(new MoneroWalletConfig().SetPassword(oldPassword));
+        string path = await moneroWallet.GetPath();
+
+        await moneroWallet.ChangePassword(oldPassword, newPassword);
+        await CloseWallet(moneroWallet, true);
+
+        moneroWallet = await OpenWallet(new MoneroWalletConfig().SetPath(path).SetPassword(newPassword));
+        Assert.That(await moneroWallet.GetPath(), Is.EqualTo(path));
+        await CloseWallet(moneroWallet);
+    }
+
     // Can validate address
     [Test]
     public async Task TestValidateAddress()

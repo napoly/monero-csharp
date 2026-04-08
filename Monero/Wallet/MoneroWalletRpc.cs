@@ -1378,10 +1378,12 @@ public class MoneroWalletRpc : IMoneroWallet
 
     public async Task ChangePassword(string oldPassword, string newPassword)
     {
-        MoneroJsonRpcParams parameters = [];
-        parameters.Add("old_password", oldPassword);
-        parameters.Add("new_password", newPassword);
-        await _rpc.SendCommandAsync<MoneroJsonRpcParams, MoneroRpcResponse>("change_wallet_password", parameters);
+        ChangePasswordRequest parameters = new()
+        {
+            OldPassword = oldPassword,
+            NewPassword = newPassword
+        };
+        await _rpc.SendCommandAsync<ChangePasswordRequest, MoneroRpcResponse>("change_wallet_password", parameters);
     }
 
     public async Task Save()
